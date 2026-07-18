@@ -164,6 +164,7 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
 });
 
 // 結果を表示する関数
+// 結果を表示する関数
 function displayResults(results, selectedCount) {
     const container = document.getElementById('results-container');
     container.innerHTML = '<h2>診断結果</h2>';
@@ -262,7 +263,6 @@ function displayResults(results, selectedCount) {
         const otherLabs = results.filter(lab => lab.Match_Score === 0);
 
         if (recommendedLabs.length > 0) {
-            // LINEシェアボタンのURLも自動的に短縮版になります
             const top3 = recommendedLabs.slice(0, 3);
             let shareText = "【ME研究室マッチング診断】\n私の診断結果トップ3：\n";
             const medals = ["🥇 1位", "🥈 2位", "🥉 3位"];
@@ -307,4 +307,10 @@ function displayResults(results, selectedCount) {
             otherLabs.forEach(lab => container.appendChild(createLabCard(lab)));
         }
     }
+
+    // --- 追加実装：結果画面へ自動スクロール ---
+    setTimeout(() => {
+        container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+    // ----------------------------------------
 }
