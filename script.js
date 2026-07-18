@@ -171,23 +171,18 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
         let score = 0;
         
         // JSONのフォーマットに合わせた処理
-        // Pythonのタプル文字列 "('ドローン', 'ロボット工学・メカトロニクス')" のような形式を想定しつつ，
-        // 安全のために文字列内からキーワードを抽出する
         let labKeywords = [];
         if (typeof lab.キーワードデータ === 'string') {
-            // 文字列として保存されている配列風データを簡易的にパース
             const matches = lab.キーワードデータ.match(/'([^']+)'/g);
             if (matches) {
-                // シングルクォーテーションを外す
                 labKeywords = matches.map(s => s.replace(/'/g, '')); 
             }
         } else if (Array.isArray(lab.キーワードデータ)) {
-            // 配列として存在する場合はそのまま処理
             labKeywords = lab.キーワードデータ.map(kwTuple => {
                 if (Array.isArray(kwTuple)) {
                     return kwTuple[0];
                 }
-                return kwTuple; // 念のためのフォールバック
+                return kwTuple; 
             });
         }
         
@@ -209,18 +204,14 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
 
 // リセット処理の共通関数
 function resetApp() {
-    // チェックボックスを全てクリア
     document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
     
-    // URLのパラメータを消去
     const url = new URL(window.location);
     url.search = '';
     window.history.replaceState({}, '', url);
     
-    // 結果表示エリアを空にする
     document.getElementById('results-container').innerHTML = '';
     
-    // ページの一番上（タイトル付近）へスクロール
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -229,19 +220,16 @@ function displayResults(results, selectedCount) {
     const container = document.getElementById('results-container');
     container.innerHTML = '<h2>診断結果</h2>';
 
+    // 上部の青い説明枠（「参考」ブロックを分離し、文章をコンパクトに）
     container.innerHTML += `
-        <div style="background-color: #e7f3ff; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #b3d7ff;">
-            <p style="margin: 0 0 10px 0;"><strong>💡 診断の仕組み</strong></p>
-            <p style="margin: 0 0 5px 0;">あなたが選択したキーワードと，各研究室が登録したキーワードが一致した場合，以下の基準で加点を行っています．<br>
-            ・主要キーワードが一致：30点<br>
-            ・専門・詳細キーワードが一致：10点</p>
-            <p style="margin: 0 0 15px 0; font-size: 0.9em; color: #555;">※各研究室で登録キーワード数に差があるため，総数が多い研究室ほど点数が高くなる傾向があります．このスコアはあくまで一つの目安ですので，詳細は各研究室のホームページを必ず確認してください．</p>
-            <p style="margin: 0; padding-top: 10px; border-top: 1px solid #b3d7ff;"><strong>💡 【参考】機械工学科の公式ページも確認してみましょう</strong><br>
-            <a href="https://www.rs.tus.ac.jp/me/laboratory.html" target="_blank">学科公式HP 研究室一覧はこちら</a></p>
+        <div style="background-color: #e7f3ff; padding: 12px 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #b3d7ff; font-size: 0.9em;">
+            <p style="margin: 0 0 5px 0;"><strong>💡 診断の仕組み</strong></p>
+            <p style="margin: 0 0 5px 0;">選択したキーワードと一致した場合に加点を行っています（主要一致:30点, 専門一致:10点）．</p>
+            <p style="margin: 0; color: #555; font-size: 0.9em;">※登録キーワード数が多い研究室ほど点数が高くなる傾向があります．詳細は各HPをご確認ください．</p>
         </div>
     `;
 
-    // 上部のリセットボタン等のコンテナ
+    // シェアボタン・もう一度診断ボタンのコンテナ
     const topActionsDiv = document.createElement('div');
     topActionsDiv.style.display = "flex";
     topActionsDiv.style.flexWrap = "wrap";
@@ -251,7 +239,7 @@ function displayResults(results, selectedCount) {
     const recommendedLabs = results.filter(lab => lab.Match_Score > 0);
     const otherLabs = results.filter(lab => lab.Match_Score === 0);
 
-    // キーワードが選択されていて、おすすめがある場合のみLINEボタンを作成
+    // LINEボタンを作成
     if (selectedCount > 0 && recommendedLabs.length > 0) {
         const top3 = recommendedLabs.slice(0, 3);
         let shareText = "【ME研究室マッチング診断】\n私の診断結果トップ3：\n";
@@ -267,14 +255,14 @@ function displayResults(results, selectedCount) {
         const lineBtn = document.createElement('a');
         lineBtn.href = lineUrl;
         lineBtn.target = "_blank";
-        lineBtn.style.cssText = "display: inline-block; background-color: #06C755; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);";
+        lineBtn.style.cssText = "display: inline-block; background-color: #06C755; color: #fff; padding: 10px 15px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 0.95em; box-shadow: 0 2px 4px rgba(0,0,0,0.2);";
         lineBtn.innerHTML = "💬 LINEで結果をシェアする";
         topActionsDiv.appendChild(lineBtn);
     }
 
     // 上部の「もう一度診断する」ボタンを作成
     const topResetBtn = document.createElement('button');
-    topResetBtn.style.cssText = "background-color: #6c757d; color: #fff; padding: 10px 20px; border: none; border-radius: 5px; font-size: 1em; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2);";
+    topResetBtn.style.cssText = "background-color: #6c757d; color: #fff; padding: 10px 15px; border: none; border-radius: 5px; font-size: 0.95em; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2);";
     topResetBtn.innerHTML = "🔄 もう一度診断する";
     topResetBtn.addEventListener('click', resetApp);
     topActionsDiv.appendChild(topResetBtn);
@@ -282,7 +270,6 @@ function displayResults(results, selectedCount) {
     container.appendChild(topActionsDiv);
 
     function createEvalBlock(left, val, right) {
-        // 値が設定されていない，または空文字の場合は表示しない
         if (!val || val === "") return "";
         
         let dots = "";
@@ -302,7 +289,6 @@ function displayResults(results, selectedCount) {
         cat["主要"].forEach(kw => allMainSet.add(kw));
     });
 
-    // キーワードがどのカテゴリに属するかを逆引きするためのマップを作成
     const keywordToCategoryMap = {};
     for (const [category, groups] of Object.entries(PREDEFINED_KEYWORDS)) {
         groups["主要"].forEach(kw => keywordToCategoryMap[kw] = category);
@@ -316,13 +302,10 @@ function displayResults(results, selectedCount) {
 
         const categorizedKws = {};
         
-        // パース済みのキーワードリストを利用して表示用のカテゴリ分けを行う
         lab.parsedKeywords.forEach(kw => {
             let cat = keywordToCategoryMap[kw];
-            
-            // 辞書に見つからない場合や、古いカテゴリ名の場合はフォールバック
             if (!cat) {
-                cat = "実験設備・ツール・その他"; // 未定義はその他へ
+                cat = "実験設備・ツール・その他"; 
             }
             
             const type = allMainSet.has(kw) ? "主要" : "専門・詳細";
@@ -343,7 +326,6 @@ function displayResults(results, selectedCount) {
             lab.関連URL1 ? `<a href="${lab.関連URL1}" target="_blank">関連URL</a>` : null
         ].filter(Boolean).join(' / ');
         
-        // 分野データも文字列から安全に配列化して表示
         let fieldDisplay = lab.分野;
         if (typeof lab.分野 === 'string') {
             const fieldMatches = lab.分野.match(/'([^']+)'/g);
@@ -377,8 +359,20 @@ function displayResults(results, selectedCount) {
         return card;
     }
 
+    // --- 【参考】ブロックを作成するヘルパー関数 ---
+    function appendReferenceBlock(parentNode) {
+        const refDiv = document.createElement('div');
+        refDiv.style.cssText = "background-color: #f8f9fa; padding: 20px 15px; border-radius: 5px; margin: 30px 0; border: 1px dashed #ccc; text-align: center;";
+        refDiv.innerHTML = `
+            <p style="margin: 0 0 8px 0; font-weight: bold; color: #333;">💡 【参考】機械工学科の公式ページも確認してみましょう</p>
+            <a href="https://www.rs.tus.ac.jp/me/laboratory.html" target="_blank" style="color: #007bff; text-decoration: underline; font-size: 1.05em;">学科公式HP 研究室一覧はこちら</a>
+        `;
+        parentNode.appendChild(refDiv);
+    }
+
     if (selectedCount === 0) {
         results.forEach(lab => container.appendChild(createLabCard(lab)));
+        appendReferenceBlock(container); // 条件未指定時は一番下に追加
     } else {
         if (recommendedLabs.length > 0) {
             const recTitle = document.createElement('h3');
@@ -393,9 +387,12 @@ function displayResults(results, selectedCount) {
             container.appendChild(noRec);
         }
 
+        // --- ここで「おすすめ」と「その他」の間に【参考】ブロックを挿入 ---
+        appendReferenceBlock(container);
+
         if (otherLabs.length > 0) {
             const hr = document.createElement('hr');
-            hr.style.margin = "30px 0";
+            hr.style.margin = "30px 0 20px 0";
             hr.style.borderColor = "#ddd";
             container.appendChild(hr);
 
