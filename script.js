@@ -197,7 +197,7 @@ function displayResults(results, selectedCount) {
         </div>
     `;
 
-    // --- 追加実装：LINEシェアボタン＆上部のリセットボタンのコンテナ ---
+    // --- LINEシェアボタン＆上部のリセットボタンのコンテナ ---
     const topActionsDiv = document.createElement('div');
     topActionsDiv.style.display = "flex";
     topActionsDiv.style.flexWrap = "wrap";
@@ -297,11 +297,10 @@ function displayResults(results, selectedCount) {
                 <div style="padding: 15px; border-top: 1px solid #eee; margin-top: 10px;">
                     <p><strong>分野：</strong> ${lab.分野.join('，')}</p>
                     <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 15px 0;">
-                        ${createEvalBlock("実験メイン", lab.eval_1, "解析メイン")}
-                        ${createEvalBlock("自主性に任せる", lab.eval_2, "手厚い管理")}
+                        ${createEvalBlock("実験中心", lab.eval_1, "解析・計算中心")}
+                        ${createEvalBlock("自主性重視", lab.eval_2, "進捗管理あり")}
                         ${createEvalBlock("教授指導", lab.eval_3, "学生間サポート")}
                         ${createEvalBlock("理学(原理解明)", lab.eval_4, "工学(社会実装)")}
-                        ${createEvalBlock("和気あいあい", lab.eval_5, "規律・礼儀重視")}
                         ${createEvalBlock("個人作業中心", lab.eval_6, "チーム作業中心")}
                     </div>
                     <p><strong>関連キーワード:</strong></p>
