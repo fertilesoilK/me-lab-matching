@@ -1,6 +1,6 @@
 let labData = [];
 
-// カテゴリとキーワードの定義
+// カテゴリとキーワードの定義（13カテゴリへ細分化）
 const PREDEFINED_KEYWORDS = {
     "流体工学": {
         "主要": ["流体力学"],
@@ -169,7 +169,27 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
 
     let results = labData.map(lab => {
         let score = 0;
-        const labKeywords = lab.キーワードデータ.map(kwTuple => kwTuple[0]);
+        
+        // JSONのフォーマットに合わせた処理
+        // Pythonのタプル文字列 "('ドローン', 'ロボット工学・メカトロニクス')" のような形式を想定しつつ，
+        // 安全のために文字列内からキーワードを抽出する
+        let labKeywords = [];
+        if (typeof lab.キーワードデータ === 'string') {
+            // 文字列として保存されている配列風データを簡易的にパース
+            const matches = lab.キーワードデータ.match(/'([^']+)'/g);
+            if (matches) {
+                // シングルクォーテーションを外す
+                labKeywords = matches.map(s => s.replace(/'/g, '')); 
+            }
+        } else if (Array.isArray(lab.キーワードデータ)) {
+            // 配列として存在する場合はそのまま処理
+            labKeywords = lab.キーワードデータ.map(kwTuple => {
+                if (Array.isArray(kwTuple)) {
+                    return kwTuple[0];
+                }
+                return kwTuple; // 念のためのフォールバック
+            });
+        }
         
         selectedThemes.forEach(theme => {
             if (labKeywords.includes(theme)) {
@@ -180,7 +200,7 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
                 }
             }
         });
-        return { ...lab, Match_Score: score };
+        return { ...lab, Match_Score: score, parsedKeywords: labKeywords };
     });
 
     results.sort((a, b) => b.Match_Score - a.Match_Score);
@@ -221,7 +241,7 @@ function displayResults(results, selectedCount) {
         </div>
     `;
 
-    // --- LINEシェアボタン＆上部のリセットボタンのコンテナ ---
+    // 上部のリセットボタン等のコンテナ
     const topActionsDiv = document.createElement('div');
     topActionsDiv.style.display = "flex";
     topActionsDiv.style.flexWrap = "wrap";
@@ -260,9 +280,11 @@ function displayResults(results, selectedCount) {
     topActionsDiv.appendChild(topResetBtn);
 
     container.appendChild(topActionsDiv);
-    // -----------------------------------------------------------
 
     function createEvalBlock(left, val, right) {
+        // 値が設定されていない，または空文字の場合は表示しない
+        if (!val || val === "") return "";
+        
         let dots = "";
         for (let i = 1; i <= 5; i++) {
             dots += (i == val) ? '<span style="color:#ffcc00; font-size:1.4em; line-height:1;">●</span>' : '<span style="color:#ddd; font-size:1.2em; line-height:1;">●</span>';
@@ -280,21 +302,29 @@ function displayResults(results, selectedCount) {
         cat["主要"].forEach(kw => allMainSet.add(kw));
     });
 
+    // キーワードがどのカテゴリに属するかを逆引きするためのマップを作成
+    const keywordToCategoryMap = {};
+    for (const [category, groups] of Object.entries(PREDEFINED_KEYWORDS)) {
+        groups["主要"].forEach(kw => keywordToCategoryMap[kw] = category);
+        groups["専門・詳細"].forEach(kw => keywordToCategoryMap[kw] = category);
+    }
+
     function createLabCard(lab) {
         const card = document.createElement('div');
         card.className = 'result-card';
         card.style.marginBottom = "15px";
 
         const categorizedKws = {};
-        lab.キーワードデータ.forEach(kwTuple => {
-            const kw = kwTuple[0];
-            let cat = kwTuple[1];
+        
+        // パース済みのキーワードリストを利用して表示用のカテゴリ分けを行う
+        lab.parsedKeywords.forEach(kw => {
+            let cat = keywordToCategoryMap[kw];
             
-            const mergeTargets = ["実験・設備・その他ツール", "その他・環境・設備", "設備・実験手法・ツール", "設備・実験手法・その他ツール"];
-            if (mergeTargets.includes(cat)) {
-                cat = "設備・実験手法・その他ツール";
+            // 辞書に見つからない場合や、古いカテゴリ名の場合はフォールバック
+            if (!cat) {
+                cat = "実験設備・ツール・その他"; // 未定義はその他へ
             }
-
+            
             const type = allMainSet.has(kw) ? "主要" : "専門・詳細";
             if (!categorizedKws[cat]) categorizedKws[cat] = { "主要": [], "専門・詳細": [] };
             categorizedKws[cat][type].push(kw);
@@ -312,6 +342,17 @@ function displayResults(results, selectedCount) {
             lab.公式HP ? `<a href="${lab.公式HP}" target="_blank">公式HP</a>` : null,
             lab.関連URL1 ? `<a href="${lab.関連URL1}" target="_blank">関連URL</a>` : null
         ].filter(Boolean).join(' / ');
+        
+        // 分野データも文字列から安全に配列化して表示
+        let fieldDisplay = lab.分野;
+        if (typeof lab.分野 === 'string') {
+            const fieldMatches = lab.分野.match(/'([^']+)'/g);
+            if (fieldMatches) {
+                fieldDisplay = fieldMatches.map(s => s.replace(/'/g, '')).join('，');
+            }
+        } else if (Array.isArray(lab.分野)) {
+            fieldDisplay = lab.分野.join('，');
+        }
 
         card.innerHTML = `
             <details style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; background: #fff;">
@@ -319,7 +360,7 @@ function displayResults(results, selectedCount) {
                     【${lab.研究室名}】 Score: ${lab.Match_Score} <span style="color: #007bff; font-size: 0.8em; margin-left: 10px;">[▼ 詳細を表示]</span>
                 </summary>
                 <div style="padding: 15px; border-top: 1px solid #eee; margin-top: 10px;">
-                    <p><strong>分野：</strong> ${lab.分野.join('，')}</p>
+                    <p><strong>分野：</strong> ${fieldDisplay || '未設定'}</p>
                     <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 15px 0;">
                         ${createEvalBlock("実験中心", lab.eval_1, "解析・計算中心")}
                         ${createEvalBlock("自主性重視", lab.eval_2, "進捗管理あり")}
