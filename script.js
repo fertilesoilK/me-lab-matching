@@ -163,6 +163,23 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
     displayResults(results, selectedThemes.length);
 });
 
+// リセット処理の共通関数
+function resetApp() {
+    // チェックボックスを全てクリア
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+    
+    // URLのパラメータを消去
+    const url = new URL(window.location);
+    url.search = '';
+    window.history.replaceState({}, '', url);
+    
+    // 結果表示エリアを空にする
+    document.getElementById('results-container').innerHTML = '';
+    
+    // ページの一番上（タイトル付近）へスクロール
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 // 結果を表示する関数
 function displayResults(results, selectedCount) {
     const container = document.getElementById('results-container');
@@ -179,6 +196,47 @@ function displayResults(results, selectedCount) {
             <a href="https://www.rs.tus.ac.jp/me/laboratory.html" target="_blank">学科公式HP 研究室一覧はこちら</a></p>
         </div>
     `;
+
+    // --- 追加実装：LINEシェアボタン＆上部のリセットボタンのコンテナ ---
+    const topActionsDiv = document.createElement('div');
+    topActionsDiv.style.display = "flex";
+    topActionsDiv.style.flexWrap = "wrap";
+    topActionsDiv.style.gap = "10px";
+    topActionsDiv.style.marginBottom = "20px";
+
+    const recommendedLabs = results.filter(lab => lab.Match_Score > 0);
+    const otherLabs = results.filter(lab => lab.Match_Score === 0);
+
+    // キーワードが選択されていて、おすすめがある場合のみLINEボタンを作成
+    if (selectedCount > 0 && recommendedLabs.length > 0) {
+        const top3 = recommendedLabs.slice(0, 3);
+        let shareText = "【ME研究室マッチング診断】\n私の診断結果トップ3：\n";
+        const medals = ["🥇 1位", "🥈 2位", "🥉 3位"];
+        
+        top3.forEach((lab, index) => {
+            shareText += `${medals[index]}：${lab.研究室名} (Score: ${lab.Match_Score})\n`;
+        });
+        shareText += "\nあなたも診断してみよう！\n" + window.location.href;
+        
+        const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(shareText)}`;
+        
+        const lineBtn = document.createElement('a');
+        lineBtn.href = lineUrl;
+        lineBtn.target = "_blank";
+        lineBtn.style.cssText = "display: inline-block; background-color: #06C755; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);";
+        lineBtn.innerHTML = "💬 LINEで結果をシェアする";
+        topActionsDiv.appendChild(lineBtn);
+    }
+
+    // 上部の「もう一度診断する」ボタンを作成
+    const topResetBtn = document.createElement('button');
+    topResetBtn.style.cssText = "background-color: #6c757d; color: #fff; padding: 10px 20px; border: none; border-radius: 5px; font-size: 1em; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2);";
+    topResetBtn.innerHTML = "🔄 もう一度診断する";
+    topResetBtn.addEventListener('click', resetApp);
+    topActionsDiv.appendChild(topResetBtn);
+
+    container.appendChild(topActionsDiv);
+    // -----------------------------------------------------------
 
     function createEvalBlock(left, val, right) {
         let dots = "";
@@ -258,30 +316,7 @@ function displayResults(results, selectedCount) {
     if (selectedCount === 0) {
         results.forEach(lab => container.appendChild(createLabCard(lab)));
     } else {
-        const recommendedLabs = results.filter(lab => lab.Match_Score > 0);
-        const otherLabs = results.filter(lab => lab.Match_Score === 0);
-
         if (recommendedLabs.length > 0) {
-            const top3 = recommendedLabs.slice(0, 3);
-            let shareText = "【ME研究室マッチング診断】\n私の診断結果トップ3：\n";
-            const medals = ["🥇 1位", "🥈 2位", "🥉 3位"];
-            
-            top3.forEach((lab, index) => {
-                shareText += `${medals[index]}：${lab.研究室名} (Score: ${lab.Match_Score})\n`;
-            });
-            shareText += "\nあなたも診断してみよう！\n" + window.location.href;
-            
-            const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(shareText)}`;
-            
-            const shareDiv = document.createElement('div');
-            shareDiv.style.margin = "0 0 20px 0";
-            shareDiv.innerHTML = `
-                <a href="${lineUrl}" target="_blank" style="display: inline-block; background-color: #06C755; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-                    💬 LINEで結果をシェアする
-                </a>
-            `;
-            container.appendChild(shareDiv);
-
             const recTitle = document.createElement('h3');
             recTitle.innerText = "おすすめの研究室";
             recTitle.style.marginTop = "0px";
@@ -307,33 +342,17 @@ function displayResults(results, selectedCount) {
         }
     }
 
-    // --- 追加実装：リセット（もう一度診断する）ボタン ---
-    const resetDiv = document.createElement('div');
-    resetDiv.style.marginTop = "30px";
-    resetDiv.style.textAlign = "center";
-    resetDiv.innerHTML = `
-        <button id="reset-btn" style="background-color: #6c757d; color: #fff; padding: 12px 24px; border: none; border-radius: 5px; font-size: 1.1em; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+    // 画面下部のリセット（もう一度診断する）ボタン
+    const bottomResetDiv = document.createElement('div');
+    bottomResetDiv.style.marginTop = "30px";
+    bottomResetDiv.style.textAlign = "center";
+    bottomResetDiv.innerHTML = `
+        <button style="background-color: #6c757d; color: #fff; padding: 12px 24px; border: none; border-radius: 5px; font-size: 1.1em; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
             🔄 もう一度診断する（条件をクリア）
         </button>
     `;
-    container.appendChild(resetDiv);
-
-    document.getElementById('reset-btn').addEventListener('click', () => {
-        // チェックボックスを全てクリア
-        document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-        
-        // URLのパラメータを消去
-        const url = new URL(window.location);
-        url.search = '';
-        window.history.replaceState({}, '', url);
-        
-        // 結果表示エリアを空にする
-        container.innerHTML = '';
-        
-        // ページの一番上（タイトル付近）へスクロール
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-    // ------------------------------------------------
+    bottomResetDiv.querySelector('button').addEventListener('click', resetApp);
+    container.appendChild(bottomResetDiv);
 
     // 結果画面へ自動スクロール
     setTimeout(() => {
