@@ -1,0 +1,106 @@
+body {
+    font-family: sans-serif;
+    background-color: #f0f2f6;
+    color: #31333F;
+    padding: 20px;
+    margin: 0;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+h1 {
+    color: #0f52ba;
+    font-size: 1.8em;
+}
+
+.category-section {
+    margin-bottom: 30px;
+}
+
+.category-title {
+    background: #e0e6ed;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.kw-group-title {
+    font-size: 0.9em;
+    font-weight: bold;
+    color: #555;
+    margin: 10px 0 5px 0;
+}
+
+.kw-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.kw-label {
+    background: #f8f9fa;
+    border: 1px solid #ccc;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background 0.2s;
+}
+
+.kw-label:hover {
+    background: #e2e6ea;
+}
+
+.kw-label input {
+    margin-right: 5px;
+}
+
+#diagnose-btn {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background: #ff4b4b;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2em;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 30px;
+}
+
+#diagnose-btn:hover {
+    background: #ff3333;
+}
+
+.result-card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 5px;
+    background: #fafafa;
+}
+
+.result-score {
+    font-weight: bold;
+    color: #ff4b4b;
+    font-size: 1.2em;
+}
+
+/* 折りたたみのスタイル調整 */
+details summary:hover {
+    background-color: #f0f0f0 !important;
+}
+details[open] summary {
+    border-bottom: none;
+    border-radius: 5px 5px 0 0;
+}
