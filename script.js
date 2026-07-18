@@ -132,7 +132,7 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
     const selectedIndices = selectedThemes.map(theme => allKeywordsList.indexOf(theme)).filter(i => i !== -1);
     const url = new URL(window.location);
     if (selectedIndices.length > 0) {
-        url.searchParams.set('k', selectedIndices.join('-')); // 「-」で繋ぐ
+        url.searchParams.set('k', selectedIndices.join('-'));
     } else {
         url.searchParams.delete('k');
     }
@@ -163,7 +163,6 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
     displayResults(results, selectedThemes.length);
 });
 
-// 結果を表示する関数
 // 結果を表示する関数
 function displayResults(results, selectedCount) {
     const container = document.getElementById('results-container');
@@ -308,9 +307,36 @@ function displayResults(results, selectedCount) {
         }
     }
 
-    // --- 追加実装：結果画面へ自動スクロール ---
+    // --- 追加実装：リセット（もう一度診断する）ボタン ---
+    const resetDiv = document.createElement('div');
+    resetDiv.style.marginTop = "30px";
+    resetDiv.style.textAlign = "center";
+    resetDiv.innerHTML = `
+        <button id="reset-btn" style="background-color: #6c757d; color: #fff; padding: 12px 24px; border: none; border-radius: 5px; font-size: 1.1em; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+            🔄 もう一度診断する（条件をクリア）
+        </button>
+    `;
+    container.appendChild(resetDiv);
+
+    document.getElementById('reset-btn').addEventListener('click', () => {
+        // チェックボックスを全てクリア
+        document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+        
+        // URLのパラメータを消去
+        const url = new URL(window.location);
+        url.search = '';
+        window.history.replaceState({}, '', url);
+        
+        // 結果表示エリアを空にする
+        container.innerHTML = '';
+        
+        // ページの一番上（タイトル付近）へスクロール
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    // ------------------------------------------------
+
+    // 結果画面へ自動スクロール
     setTimeout(() => {
         container.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
-    // ----------------------------------------
 }
