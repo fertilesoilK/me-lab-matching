@@ -318,7 +318,7 @@ function displayResults(results, isSelected, mode) {
             <p style="margin: 0 0 5px 0;">選択したキーワードと一致した場合に加点を行っています（主要:30点，専門:10点）．</p>
             <p style="margin: 0; color: #555; font-size: 0.9em;">※登録キーワード数が多い研究室ほど点数が高くなる傾向があります．詳細は各HPをご確認ください．</p>
         `;
-   } else {
+    } else {
         descHtml = `
             <p style="margin: 0 0 5px 0;"><strong>💡 診断の仕組み（スタイル・雰囲気）</strong></p>
             <p style="margin: 0 0 8px 0;">あなたが選んだ理想のスタイルと，先輩が登録した実際の雰囲気の「近さ」を項目ごとに比較し，相性度（最大100点）として算出しています．</p>
