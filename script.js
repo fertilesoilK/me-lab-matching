@@ -211,7 +211,7 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
     url.searchParams.set('m', mode);
 
     let results = [];
-    let isSelected = false; // 何か1つでも条件を選択したか
+    let isSelected = false; 
 
     if (mode === 'keyword') {
         const checkedInputs = document.querySelectorAll('#keywords-container input[type="checkbox"]:checked');
@@ -221,7 +221,7 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
         const selectedIndices = selectedThemes.map(theme => allKeywordsList.indexOf(theme)).filter(i => i !== -1);
         if (selectedIndices.length > 0) url.searchParams.set('k', selectedIndices.join('-'));
         else url.searchParams.delete('k');
-        url.searchParams.delete('s'); // スタイル用パラメータ削除
+        url.searchParams.delete('s'); 
 
         const allMainKeywords = [];
         for (const cat in PREDEFINED_KEYWORDS) {
@@ -254,12 +254,11 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
         else url.searchParams.delete('s');
         url.searchParams.delete('k');
 
-        // スコア差分テーブル（差が小さいほど高得点）
         const scoreTable = { 0: 10, 1: 7, 2: 4, 3: 1, 4: 0 };
 
         results = labData.map(lab => {
             let score = 0;
-            let maxPossibleScore = 0; // 選んだ項目数 × 10
+            let maxPossibleScore = 0; 
 
             EVAL_QUESTIONS.forEach((q, i) => {
                 const userVal = parseInt(selectedVals[i]);
@@ -272,13 +271,11 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
                 }
             });
 
-            // 100点満点に正規化（表示を分かりやすくするため）
             let finalScore = 0;
             if (maxPossibleScore > 0) {
                 finalScore = Math.round((score / maxPossibleScore) * 100);
             }
 
-            // parsedKeywordsはカード表示用に入れておく
             let labKeywords = [];
             if (typeof lab.キーワードデータ === 'string') {
                 const matches = lab.キーワードデータ.match(/'([^']+)'/g);
@@ -299,7 +296,7 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
 // リセット処理
 function resetApp() {
     document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-    document.querySelectorAll('input[type="radio"][value="0"]').forEach(r => r.checked = true); // スタイルを「指定しない」に
+    document.querySelectorAll('input[type="radio"][value="0"]').forEach(r => r.checked = true); 
     
     const url = new URL(window.location);
     url.search = '';
@@ -314,7 +311,6 @@ function displayResults(results, isSelected, mode) {
     const container = document.getElementById('results-container');
     container.innerHTML = '<h2>診断結果</h2>';
 
-    // モードに応じた説明枠
     let descHtml = "";
     if (mode === 'keyword') {
         descHtml = `
@@ -330,7 +326,6 @@ function displayResults(results, isSelected, mode) {
     }
     container.innerHTML += `<div style="background-color: #e7f3ff; padding: 12px 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #b3d7ff; font-size: 0.9em;">${descHtml}</div>`;
 
-    // シェアボタン等のコンテナ
     const topActionsDiv = document.createElement('div');
     topActionsDiv.style.display = "flex";
     topActionsDiv.style.flexWrap = "wrap";
@@ -340,7 +335,6 @@ function displayResults(results, isSelected, mode) {
     const recommendedLabs = results.filter(lab => lab.Match_Score > 0);
     const otherLabs = results.filter(lab => lab.Match_Score === 0);
 
-    // LINEボタン
     if (isSelected && recommendedLabs.length > 0) {
         const top3 = recommendedLabs.slice(0, 3);
         let modeText = mode === 'keyword' ? "キーワード" : "雰囲気・スタイル";
@@ -440,7 +434,6 @@ function displayResults(results, isSelected, mode) {
                 </summary>
                 <div style="padding: 15px; border-top: 1px solid #eee; margin-top: 10px;">
                     <p style="margin: 5px 0;"><strong>分野：</strong> ${fieldDisplay || '未設定'}</p>
-                    <p style="margin: 5px 0;"><strong>コアタイム：</strong> ${coreStr}</p>
                     <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 15px 0;">
                         ${createEvalBlock("実験中心", lab.eval_1, "解析・計算中心")}
                         ${createEvalBlock("自主性重視", lab.eval_2, "進捗管理あり")}
@@ -449,6 +442,7 @@ function displayResults(results, isSelected, mode) {
                         ${createEvalBlock("にぎやか", lab.eval_5, "落ち着いた")}
                         ${createEvalBlock("個人作業中心", lab.eval_6, "チーム作業中心")}
                     </div>
+                    <p style="margin: 5px 0 15px 0;"><strong>コアタイム：</strong> ${coreStr}</p>
                     <p><strong>関連キーワード:</strong></p>
                     ${kwHtml}
                     <p><strong>関連リンク:</strong> ${links || 'なし'}</p>
