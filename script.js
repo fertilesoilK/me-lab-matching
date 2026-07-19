@@ -224,7 +224,7 @@ function displayResults(results, selectedCount) {
     container.innerHTML += `
         <div style="background-color: #e7f3ff; padding: 12px 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #b3d7ff; font-size: 0.9em;">
             <p style="margin: 0 0 5px 0;"><strong>💡 診断の仕組み</strong></p>
-            <p style="margin: 0 0 5px 0;">選択したキーワードと一致した場合に加点を行っています（主要一致:30点, 専門一致:10点）．</p>
+            <p style="margin: 0 0 5px 0;">選択したキーワードと一致した場合に加点を行っています（主要一致:30点，専門一致:10点）．</p>
             <p style="margin: 0; color: #555; font-size: 0.9em;">※登録キーワード数が多い研究室ほど点数が高くなる傾向があります．詳細は各HPをご確認ください．</p>
         </div>
     `;
@@ -336,6 +336,7 @@ function displayResults(results, selectedCount) {
             fieldDisplay = lab.分野.join('，');
         }
 
+        // ここで「にぎやか ⇔ 落ち着いた」を追加
         card.innerHTML = `
             <details style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; background: #fff;">
                 <summary style="cursor: pointer; font-weight: bold; padding: 5px;">
@@ -348,6 +349,7 @@ function displayResults(results, selectedCount) {
                         ${createEvalBlock("自主性重視", lab.eval_2, "進捗管理あり")}
                         ${createEvalBlock("教授指導", lab.eval_3, "学生間サポート")}
                         ${createEvalBlock("理学(原理解明)", lab.eval_4, "工学(社会実装)")}
+                        ${createEvalBlock("にぎやか", lab.eval_5, "落ち着いた")}
                         ${createEvalBlock("個人作業中心", lab.eval_6, "チーム作業中心")}
                     </div>
                     <p><strong>関連キーワード:</strong></p>
