@@ -38,7 +38,10 @@
     "eval_3": 4,
     "eval_4": 3,
     "eval_5": 3,
-    "eval_6": 1
+    "eval_6": 1,
+    "core_time": "あり",
+    "core_start": "09:00",
+    "core_end": "17:00"
   },
   {
     "Lab_ID": "takahashi",
@@ -66,7 +69,10 @@
     "eval_3": 4,
     "eval_4": 3,
     "eval_5": 4,
-    "eval_6": 4
+    "eval_6": 4,
+    "core_time": "あり",
+    "core_start": "09:00",
+    "core_end": "17:00"
   },
   {
     "Lab_ID": "hayase",
@@ -89,7 +95,10 @@
     "eval_3": 4,
     "eval_4": 1,
     "eval_5": 2,
-    "eval_6": 5
+    "eval_6": 5,
+    "core_time": "あり",
+    "core_start": "10:00",
+    "core_end": "17:00"
   },
   {
     "Lab_ID": "ogihara",
@@ -122,7 +131,10 @@
     "eval_3": 1,
     "eval_4": 5,
     "eval_5": 3,
-    "eval_6": 4
+    "eval_6": 4,
+    "core_time": "あり",
+    "core_start": "09:00",
+    "core_end": "17:00"
   },
   {
     "Lab_ID": "taguchi",
@@ -166,7 +178,10 @@
     "eval_3": 2,
     "eval_4": 2,
     "eval_5": 3,
-    "eval_6": 2
+    "eval_6": 2,
+    "core_time": "あり",
+    "core_start": "09:30",
+    "core_end": "17:00"
   },
   {
     "Lab_ID": "aono",
@@ -218,7 +233,10 @@
     "eval_3": 1,
     "eval_4": 5,
     "eval_5": 2,
-    "eval_6": 5
+    "eval_6": 5,
+    "core_time": "あり",
+    "core_start": "09:00",
+    "core_end": "17:00"
   },
   {
     "Lab_ID": "okada",
@@ -266,7 +284,10 @@
     "eval_3": 3,
     "eval_4": 1,
     "eval_5": 4,
-    "eval_6": 1
+    "eval_6": 1,
+    "core_time": "あり",
+    "core_start": "09:00",
+    "core_end": "18:00"
   },
   {
     "Lab_ID": "asakura",
@@ -295,7 +316,10 @@
     "eval_3": 5,
     "eval_4": 4,
     "eval_5": 3,
-    "eval_6": 2
+    "eval_6": 2,
+    "core_time": "あり",
+    "core_start": "09:00",
+    "core_end": "17:00"
   },
   {
     "Lab_ID": "tsukahara",
@@ -343,7 +367,10 @@
     "eval_3": 4,
     "eval_4": 2,
     "eval_5": 3,
-    "eval_6": 2
+    "eval_6": 2,
+    "core_time": "あり",
+    "core_start": "09:00",
+    "core_end": "17:30"
   },
   {
     "Lab_ID": "ueno",
@@ -392,7 +419,10 @@
     "eval_3": 5,
     "eval_4": 2,
     "eval_5": 4,
-    "eval_6": 2
+    "eval_6": 2,
+    "core_time": "なし",
+    "core_start": "",
+    "core_end": ""
   },
   {
     "Lab_ID": "matsuzaki",
@@ -425,7 +455,10 @@
     "eval_3": 2,
     "eval_4": 5,
     "eval_5": 2,
-    "eval_6": 2
+    "eval_6": 2,
+    "core_time": "あり",
+    "core_start": "10:00",
+    "core_end": "16:00"
   },
   {
     "Lab_ID": "arai",
@@ -460,6 +493,9 @@
     "eval_3": 3,
     "eval_4": 4,
     "eval_5": 3,
-    "eval_6": 5
+    "eval_6": 5,
+    "core_time": "あり",
+    "core_start": "09:00",
+    "core_end": "17:00"
   }
 ]

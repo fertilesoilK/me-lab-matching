@@ -220,7 +220,7 @@ function displayResults(results, selectedCount) {
     const container = document.getElementById('results-container');
     container.innerHTML = '<h2>診断結果</h2>';
 
-    // 上部の青い説明枠（「参考」ブロックを分離し、文章をコンパクトに）
+    // 上部の青い説明枠
     container.innerHTML += `
         <div style="background-color: #e7f3ff; padding: 12px 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #b3d7ff; font-size: 0.9em;">
             <p style="margin: 0 0 5px 0;"><strong>💡 診断の仕組み</strong></p>
@@ -336,14 +336,22 @@ function displayResults(results, selectedCount) {
             fieldDisplay = lab.分野.join('，');
         }
 
-        // ここで「にぎやか ⇔ 落ち着いた」を追加
+        // コアタイムの文字列作成
+        let coreStr = "未設定";
+        if (lab.core_time === "あり") {
+            coreStr = `あり（${lab.core_start || ''} 〜 ${lab.core_end || ''}）`;
+        } else if (lab.core_time === "なし") {
+            coreStr = "なし";
+        }
+
         card.innerHTML = `
             <details style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; background: #fff;">
                 <summary style="cursor: pointer; font-weight: bold; padding: 5px;">
                     【${lab.研究室名}】 Score: ${lab.Match_Score} <span style="color: #007bff; font-size: 0.8em; margin-left: 10px;">[▼ 詳細を表示]</span>
                 </summary>
                 <div style="padding: 15px; border-top: 1px solid #eee; margin-top: 10px;">
-                    <p><strong>分野：</strong> ${fieldDisplay || '未設定'}</p>
+                    <p style="margin: 5px 0;"><strong>分野：</strong> ${fieldDisplay || '未設定'}</p>
+                    <p style="margin: 5px 0;"><strong>コアタイム：</strong> ${coreStr}</p>
                     <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 15px 0;">
                         ${createEvalBlock("実験中心", lab.eval_1, "解析・計算中心")}
                         ${createEvalBlock("自主性重視", lab.eval_2, "進捗管理あり")}
