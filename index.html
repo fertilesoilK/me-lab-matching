@@ -16,19 +16,43 @@
             ⚠️ <strong>注意事項（非公式ツールです）</strong><br>
             本サイトの情報はあくまで参考目安です．情報を鵜呑みにせず，最終的な詳細は必ず各研究室の公式ホームページや見学等で確認してください．
         </p>
+
+        <!-- 診断モードの選択エリア -->
+        <div style="background-color: #e6f7ff; padding: 15px; border-radius: 5px; margin: 25px 0; border: 1px solid #b3d7ff;">
+            <p style="margin-top: 0; font-weight: bold; color: #0056b3;">💡 どのように診断しますか？</p>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <label style="cursor: pointer; font-size: 1.05em;">
+                    <input type="radio" name="diag-mode" value="keyword" checked style="transform: scale(1.2); margin-right: 8px;"> 
+                    🔍 <strong>研究キーワードから探す</strong>（やりたい研究や技術が決まっている方向け）
+                </label>
+                <label style="cursor: pointer; font-size: 1.05em;">
+                    <input type="radio" name="diag-mode" value="style" style="transform: scale(1.2); margin-right: 8px;"> 
+                    💬 <strong>雰囲気・スタイルから探す</strong>（自分に合った環境やカルチャーを重視する方向け）
+                </label>
+            </div>
+        </div>
         
-        <p style="background-color: #e2e3e5; padding: 10px; border-radius: 5px; font-size: 0.9em; margin-bottom: 25px;">
-            💡 <strong>キーワード選びのコツ</strong><br>
-            専門的な単語も多数含まれています．見慣れない単語がある場合は無理に選ばず，まずは直感的に気になる「主要キーワード」を中心にチェックしてみてください．
-        </p>
+        <hr style="margin-bottom: 25px;">
         
-        <hr>
-        
+        <!-- キーワード診断用のコンテナ -->
         <div id="keywords-container">
-            <!-- ここにJavaScriptでキーワードのチェックボックスが自動生成されます -->
+            <p style="background-color: #e2e3e5; padding: 10px; border-radius: 5px; font-size: 0.9em; margin-bottom: 20px;">
+                💡 <strong>キーワード選びのコツ</strong><br>
+                専門的な単語も多数含まれています．見慣れない単語がある場合は無理に選ばず，まずは直感的に気になる「主要キーワード」を中心にチェックしてみてください．
+            </p>
+            <!-- ここにJavaScriptでチェックボックスが自動生成されます -->
         </div>
 
-        <button id="diagnose-btn">診断する</button>
+        <!-- 雰囲気・スタイル診断用のコンテナ（初期は非表示） -->
+        <div id="styles-container" style="display: none;">
+            <p style="background-color: #e2e3e5; padding: 10px; border-radius: 5px; font-size: 0.9em; margin-bottom: 20px;">
+                💡 <strong>スタイル選びのコツ</strong><br>
+                あなたが理想とする研究室の環境に近いものを選んでください．特にこだわりがない項目は「指定しない」のままで構いません．
+            </p>
+            <!-- ここにJavaScriptで5段階評価のUIが自動生成されます -->
+        </div>
+
+        <button id="diagnose-btn" style="margin-top: 20px;">診断する</button>
         
         <div id="results-container">
             <!-- ここに診断結果が表示されます -->

@@ -1,6 +1,6 @@
 let labData = [];
 
-// カテゴリとキーワードの定義（13カテゴリへ細分化）
+// カテゴリとキーワードの定義
 const PREDEFINED_KEYWORDS = {
     "流体工学": {
         "主要": ["流体力学"],
@@ -56,6 +56,33 @@ const PREDEFINED_KEYWORDS = {
     }
 };
 
+// スタイル診断用の評価項目定義
+const EVAL_QUESTIONS = [
+    { id: "eval_1", left: "実験中心", right: "解析・計算中心" },
+    { id: "eval_2", left: "自主性重視", right: "進捗管理あり" },
+    { id: "eval_3", left: "教授指導", right: "学生間サポート" },
+    { id: "eval_4", left: "理学(原理解明)", right: "工学(社会実装)" },
+    { id: "eval_5", left: "にぎやか", right: "落ち着いた" },
+    { id: "eval_6", left: "個人作業中心", right: "チーム作業中心" }
+];
+
+// 診断モードの切り替え処理
+const modeRadios = document.querySelectorAll('input[name="diag-mode"]');
+const keywordsContainer = document.getElementById('keywords-container');
+const stylesContainer = document.getElementById('styles-container');
+
+modeRadios.forEach(radio => {
+    radio.addEventListener('change', (e) => {
+        if (e.target.value === 'keyword') {
+            keywordsContainer.style.display = 'block';
+            stylesContainer.style.display = 'none';
+        } else {
+            keywordsContainer.style.display = 'none';
+            stylesContainer.style.display = 'block';
+        }
+    });
+});
+
 // URL短縮用の全キーワード配列を作成
 const allKeywordsList = [];
 for (const cat in PREDEFINED_KEYWORDS) {
@@ -69,27 +96,35 @@ fetch('data.json')
     .then(data => {
         labData = data;
         renderKeywordsUI();
+        renderStylesUI();
 
-        // URLパラメータ（番号）からキーワードを復元して診断
+        // URLパラメータの処理
         const params = new URLSearchParams(window.location.search);
-        if (params.has('k')) {
-            const indices = params.get('k').split('-');
-            const keywordsFromUrl = indices.map(i => allKeywordsList[parseInt(i)]).filter(Boolean);
+        if (params.has('m')) {
+            const mode = params.get('m');
+            document.querySelector(`input[name="diag-mode"][value="${mode}"]`).click();
             
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(cb => {
-                if (keywordsFromUrl.includes(cb.value)) {
-                    cb.checked = true;
-                }
-            });
-            
-            // 自動で診断ボタンをクリック
-            document.getElementById('diagnose-btn').click();
+            if (mode === 'keyword' && params.has('k')) {
+                const indices = params.get('k').split('-');
+                const keywordsFromUrl = indices.map(i => allKeywordsList[parseInt(i)]).filter(Boolean);
+                document.querySelectorAll('#keywords-container input[type="checkbox"]').forEach(cb => {
+                    if (keywordsFromUrl.includes(cb.value)) cb.checked = true;
+                });
+                document.getElementById('diagnose-btn').click();
+            } else if (mode === 'style' && params.has('s')) {
+                const vals = params.get('s').split('-');
+                EVAL_QUESTIONS.forEach((q, i) => {
+                    if (vals[i] !== '0') {
+                        document.querySelector(`input[name="${q.id}"][value="${vals[i]}"]`).checked = true;
+                    }
+                });
+                document.getElementById('diagnose-btn').click();
+            }
         }
     })
     .catch(error => console.error('データの読み込みに失敗しました:', error));
 
-// 画面にキーワードのチェックボックスを生成する関数
+// キーワードUIの生成
 function renderKeywordsUI() {
     const container = document.getElementById('keywords-container');
     
@@ -137,99 +172,165 @@ function renderKeywordsUI() {
 function createCheckbox(keyword) {
     const label = document.createElement('label');
     label.className = 'kw-label';
-    
     const input = document.createElement('input');
     input.type = 'checkbox';
     input.value = keyword;
-    
     label.appendChild(input);
     label.appendChild(document.createTextNode(keyword));
     return label;
 }
 
-// 診断ボタンが押された時の処理
-document.getElementById('diagnose-btn').addEventListener('click', () => {
-    const checkedInputs = document.querySelectorAll('input[type="checkbox"]:checked');
-    const selectedThemes = Array.from(checkedInputs).map(input => input.value);
+// スタイルUIの生成（5段階ラジオボタン）
+function renderStylesUI() {
+    const container = document.getElementById('styles-container');
     
-    // 選ばれたキーワードを番号（インデックス）に変換してURLを更新
-    const selectedIndices = selectedThemes.map(theme => allKeywordsList.indexOf(theme)).filter(i => i !== -1);
-    const url = new URL(window.location);
-    if (selectedIndices.length > 0) {
-        url.searchParams.set('k', selectedIndices.join('-'));
-    } else {
-        url.searchParams.delete('k');
-    }
-    window.history.replaceState({}, '', url);
-
-    const allMainKeywords = [];
-    for (const cat in PREDEFINED_KEYWORDS) {
-        allMainKeywords.push(...PREDEFINED_KEYWORDS[cat]["主要"]);
-    }
-
-    let results = labData.map(lab => {
-        let score = 0;
+    EVAL_QUESTIONS.forEach(q => {
+        const wrapper = document.createElement('div');
+        wrapper.style.cssText = "background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #e9ecef;";
         
-        // JSONのフォーマットに合わせた処理
-        let labKeywords = [];
-        if (typeof lab.キーワードデータ === 'string') {
-            const matches = lab.キーワードデータ.match(/'([^']+)'/g);
-            if (matches) {
-                labKeywords = matches.map(s => s.replace(/'/g, '')); 
-            }
-        } else if (Array.isArray(lab.キーワードデータ)) {
-            labKeywords = lab.キーワードデータ.map(kwTuple => {
-                if (Array.isArray(kwTuple)) {
-                    return kwTuple[0];
-                }
-                return kwTuple; 
-            });
+        let html = `
+            <div style="text-align: center; margin-bottom: 10px; font-weight: bold; color: #333;">
+                ${q.left} ⇔ ${q.right}
+            </div>
+            <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                <label style="cursor:pointer;"><input type="radio" name="${q.id}" value="0" checked> 指定しない</label>
+        `;
+        for (let i = 1; i <= 5; i++) {
+            html += `<label style="cursor:pointer;"><input type="radio" name="${q.id}" value="${i}"> ${i}</label>`;
         }
-        
-        selectedThemes.forEach(theme => {
-            if (labKeywords.includes(theme)) {
-                if (allMainKeywords.includes(theme)) {
-                    score += 30;
-                } else {
-                    score += 10;
-                }
-            }
-        });
-        return { ...lab, Match_Score: score, parsedKeywords: labKeywords };
+        html += `</div>`;
+        wrapper.innerHTML = html;
+        container.appendChild(wrapper);
     });
+}
 
+// 診断ボタン処理
+document.getElementById('diagnose-btn').addEventListener('click', () => {
+    const mode = document.querySelector('input[name="diag-mode"]:checked').value;
+    const url = new URL(window.location);
+    url.searchParams.set('m', mode);
+
+    let results = [];
+    let isSelected = false; // 何か1つでも条件を選択したか
+
+    if (mode === 'keyword') {
+        const checkedInputs = document.querySelectorAll('#keywords-container input[type="checkbox"]:checked');
+        const selectedThemes = Array.from(checkedInputs).map(input => input.value);
+        if (selectedThemes.length > 0) isSelected = true;
+
+        const selectedIndices = selectedThemes.map(theme => allKeywordsList.indexOf(theme)).filter(i => i !== -1);
+        if (selectedIndices.length > 0) url.searchParams.set('k', selectedIndices.join('-'));
+        else url.searchParams.delete('k');
+        url.searchParams.delete('s'); // スタイル用パラメータ削除
+
+        const allMainKeywords = [];
+        for (const cat in PREDEFINED_KEYWORDS) {
+            allMainKeywords.push(...PREDEFINED_KEYWORDS[cat]["主要"]);
+        }
+
+        results = labData.map(lab => {
+            let score = 0;
+            let labKeywords = [];
+            if (typeof lab.キーワードデータ === 'string') {
+                const matches = lab.キーワードデータ.match(/'([^']+)'/g);
+                if (matches) labKeywords = matches.map(s => s.replace(/'/g, ''));
+            } else if (Array.isArray(lab.キーワードデータ)) {
+                labKeywords = lab.キーワードデータ.map(kwTuple => Array.isArray(kwTuple) ? kwTuple[0] : kwTuple);
+            }
+            
+            selectedThemes.forEach(theme => {
+                if (labKeywords.includes(theme)) {
+                    score += allMainKeywords.includes(theme) ? 30 : 10;
+                }
+            });
+            return { ...lab, Match_Score: score, parsedKeywords: labKeywords };
+        });
+
+    } else if (mode === 'style') {
+        const selectedVals = EVAL_QUESTIONS.map(q => document.querySelector(`input[name="${q.id}"]:checked`).value);
+        if (selectedVals.some(v => v !== '0')) isSelected = true;
+        
+        if (isSelected) url.searchParams.set('s', selectedVals.join('-'));
+        else url.searchParams.delete('s');
+        url.searchParams.delete('k');
+
+        // スコア差分テーブル（差が小さいほど高得点）
+        const scoreTable = { 0: 10, 1: 7, 2: 4, 3: 1, 4: 0 };
+
+        results = labData.map(lab => {
+            let score = 0;
+            let maxPossibleScore = 0; // 選んだ項目数 × 10
+
+            EVAL_QUESTIONS.forEach((q, i) => {
+                const userVal = parseInt(selectedVals[i]);
+                const labVal = parseInt(lab[q.id]);
+                
+                if (userVal !== 0 && !isNaN(labVal)) {
+                    maxPossibleScore += 10;
+                    const diff = Math.abs(userVal - labVal);
+                    score += scoreTable[diff] || 0;
+                }
+            });
+
+            // 100点満点に正規化（表示を分かりやすくするため）
+            let finalScore = 0;
+            if (maxPossibleScore > 0) {
+                finalScore = Math.round((score / maxPossibleScore) * 100);
+            }
+
+            // parsedKeywordsはカード表示用に入れておく
+            let labKeywords = [];
+            if (typeof lab.キーワードデータ === 'string') {
+                const matches = lab.キーワードデータ.match(/'([^']+)'/g);
+                if (matches) labKeywords = matches.map(s => s.replace(/'/g, ''));
+            } else if (Array.isArray(lab.キーワードデータ)) {
+                labKeywords = lab.キーワードデータ.map(kwTuple => Array.isArray(kwTuple) ? kwTuple[0] : kwTuple);
+            }
+
+            return { ...lab, Match_Score: finalScore, parsedKeywords: labKeywords };
+        });
+    }
+
+    window.history.replaceState({}, '', url);
     results.sort((a, b) => b.Match_Score - a.Match_Score);
-    displayResults(results, selectedThemes.length);
+    displayResults(results, isSelected, mode);
 });
 
-// リセット処理の共通関数
+// リセット処理
 function resetApp() {
     document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+    document.querySelectorAll('input[type="radio"][value="0"]').forEach(r => r.checked = true); // スタイルを「指定しない」に
     
     const url = new URL(window.location);
     url.search = '';
     window.history.replaceState({}, '', url);
     
     document.getElementById('results-container').innerHTML = '';
-    
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // 結果を表示する関数
-function displayResults(results, selectedCount) {
+function displayResults(results, isSelected, mode) {
     const container = document.getElementById('results-container');
     container.innerHTML = '<h2>診断結果</h2>';
 
-    // 上部の青い説明枠
-    container.innerHTML += `
-        <div style="background-color: #e7f3ff; padding: 12px 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #b3d7ff; font-size: 0.9em;">
-            <p style="margin: 0 0 5px 0;"><strong>💡 診断の仕組み</strong></p>
-            <p style="margin: 0 0 5px 0;">選択したキーワードと一致した場合に加点を行っています（主要一致:30点，専門一致:10点）．</p>
+    // モードに応じた説明枠
+    let descHtml = "";
+    if (mode === 'keyword') {
+        descHtml = `
+            <p style="margin: 0 0 5px 0;"><strong>💡 診断の仕組み（キーワード）</strong></p>
+            <p style="margin: 0 0 5px 0;">選択したキーワードと一致した場合に加点を行っています（主要:30点，専門:10点）．</p>
             <p style="margin: 0; color: #555; font-size: 0.9em;">※登録キーワード数が多い研究室ほど点数が高くなる傾向があります．詳細は各HPをご確認ください．</p>
-        </div>
-    `;
+        `;
+    } else {
+        descHtml = `
+            <p style="margin: 0 0 5px 0;"><strong>💡 診断の仕組み（スタイル・雰囲気）</strong></p>
+            <p style="margin: 0 0 5px 0;">あなたが選んだ理想のスタイルと、先輩が登録した実際の雰囲気の「近さ」を計算し、相性度（最大100点）として表示しています。</p>
+        `;
+    }
+    container.innerHTML += `<div style="background-color: #e7f3ff; padding: 12px 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #b3d7ff; font-size: 0.9em;">${descHtml}</div>`;
 
-    // シェアボタン・もう一度診断ボタンのコンテナ
+    // シェアボタン等のコンテナ
     const topActionsDiv = document.createElement('div');
     topActionsDiv.style.display = "flex";
     topActionsDiv.style.flexWrap = "wrap";
@@ -239,10 +340,11 @@ function displayResults(results, selectedCount) {
     const recommendedLabs = results.filter(lab => lab.Match_Score > 0);
     const otherLabs = results.filter(lab => lab.Match_Score === 0);
 
-    // LINEボタンを作成
-    if (selectedCount > 0 && recommendedLabs.length > 0) {
+    // LINEボタン
+    if (isSelected && recommendedLabs.length > 0) {
         const top3 = recommendedLabs.slice(0, 3);
-        let shareText = "【ME研究室マッチング診断】\n私の診断結果トップ3：\n";
+        let modeText = mode === 'keyword' ? "キーワード" : "雰囲気・スタイル";
+        let shareText = `【ME研究室マッチング（${modeText}診断）】\n私の診断結果トップ3：\n`;
         const medals = ["🥇 1位", "🥈 2位", "🥉 3位"];
         
         top3.forEach((lab, index) => {
@@ -251,7 +353,6 @@ function displayResults(results, selectedCount) {
         shareText += "\nあなたも診断してみよう！\n" + window.location.href;
         
         const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(shareText)}`;
-        
         const lineBtn = document.createElement('a');
         lineBtn.href = lineUrl;
         lineBtn.target = "_blank";
@@ -260,7 +361,6 @@ function displayResults(results, selectedCount) {
         topActionsDiv.appendChild(lineBtn);
     }
 
-    // 上部の「もう一度診断する」ボタンを作成
     const topResetBtn = document.createElement('button');
     topResetBtn.style.cssText = "background-color: #6c757d; color: #fff; padding: 10px 15px; border: none; border-radius: 5px; font-size: 0.95em; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2);";
     topResetBtn.innerHTML = "🔄 もう一度診断する";
@@ -271,7 +371,6 @@ function displayResults(results, selectedCount) {
 
     function createEvalBlock(left, val, right) {
         if (!val || val === "") return "";
-        
         let dots = "";
         for (let i = 1; i <= 5; i++) {
             dots += (i == val) ? '<span style="color:#ffcc00; font-size:1.4em; line-height:1;">●</span>' : '<span style="color:#ddd; font-size:1.2em; line-height:1;">●</span>';
@@ -285,9 +384,7 @@ function displayResults(results, selectedCount) {
     }
 
     const allMainSet = new Set();
-    Object.values(PREDEFINED_KEYWORDS).forEach(cat => {
-        cat["主要"].forEach(kw => allMainSet.add(kw));
-    });
+    Object.values(PREDEFINED_KEYWORDS).forEach(cat => { cat["主要"].forEach(kw => allMainSet.add(kw)); });
 
     const keywordToCategoryMap = {};
     for (const [category, groups] of Object.entries(PREDEFINED_KEYWORDS)) {
@@ -301,13 +398,8 @@ function displayResults(results, selectedCount) {
         card.style.marginBottom = "15px";
 
         const categorizedKws = {};
-        
         lab.parsedKeywords.forEach(kw => {
-            let cat = keywordToCategoryMap[kw];
-            if (!cat) {
-                cat = "実験設備・ツール・その他"; 
-            }
-            
+            let cat = keywordToCategoryMap[kw] || "実験設備・ツール・その他"; 
             const type = allMainSet.has(kw) ? "主要" : "専門・詳細";
             if (!categorizedKws[cat]) categorizedKws[cat] = { "主要": [], "専門・詳細": [] };
             categorizedKws[cat][type].push(kw);
@@ -329,14 +421,11 @@ function displayResults(results, selectedCount) {
         let fieldDisplay = lab.分野;
         if (typeof lab.分野 === 'string') {
             const fieldMatches = lab.分野.match(/'([^']+)'/g);
-            if (fieldMatches) {
-                fieldDisplay = fieldMatches.map(s => s.replace(/'/g, '')).join('，');
-            }
+            if (fieldMatches) fieldDisplay = fieldMatches.map(s => s.replace(/'/g, '')).join('，');
         } else if (Array.isArray(lab.分野)) {
             fieldDisplay = lab.分野.join('，');
         }
 
-        // コアタイムの文字列作成
         let coreStr = "未設定";
         if (lab.core_time === "あり") {
             coreStr = `あり（${lab.core_start || ''} 〜 ${lab.core_end || ''}）`;
@@ -369,7 +458,6 @@ function displayResults(results, selectedCount) {
         return card;
     }
 
-    // --- 【参考】ブロックを作成するヘルパー関数 ---
     function appendReferenceBlock(parentNode) {
         const refDiv = document.createElement('div');
         refDiv.style.cssText = "background-color: #f8f9fa; padding: 20px 15px; border-radius: 5px; margin: 30px 0; border: 1px dashed #ccc; text-align: center;";
@@ -380,9 +468,9 @@ function displayResults(results, selectedCount) {
         parentNode.appendChild(refDiv);
     }
 
-    if (selectedCount === 0) {
+    if (!isSelected) {
         results.forEach(lab => container.appendChild(createLabCard(lab)));
-        appendReferenceBlock(container); // 条件未指定時は一番下に追加
+        appendReferenceBlock(container);
     } else {
         if (recommendedLabs.length > 0) {
             const recTitle = document.createElement('h3');
@@ -397,7 +485,6 @@ function displayResults(results, selectedCount) {
             container.appendChild(noRec);
         }
 
-        // --- ここで「おすすめ」と「その他」の間に【参考】ブロックを挿入 ---
         appendReferenceBlock(container);
 
         if (otherLabs.length > 0) {
@@ -413,7 +500,6 @@ function displayResults(results, selectedCount) {
         }
     }
 
-    // 画面下部のリセット（もう一度診断する）ボタン
     const bottomResetDiv = document.createElement('div');
     bottomResetDiv.style.marginTop = "30px";
     bottomResetDiv.style.textAlign = "center";
@@ -425,8 +511,5 @@ function displayResults(results, selectedCount) {
     bottomResetDiv.querySelector('button').addEventListener('click', resetApp);
     container.appendChild(bottomResetDiv);
 
-    // 結果画面へ自動スクロール
-    setTimeout(() => {
-        container.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
+    setTimeout(() => { container.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
 }
