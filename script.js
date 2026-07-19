@@ -68,11 +68,13 @@ const EVAL_QUESTIONS = [
 
 // 診断モードの切り替え処理
 const modeRadios = document.querySelectorAll('input[name="diag-mode"]');
+const formArea = document.getElementById('form-area');
 const keywordsContainer = document.getElementById('keywords-container');
 const stylesContainer = document.getElementById('styles-container');
 
 modeRadios.forEach(radio => {
     radio.addEventListener('change', (e) => {
+        formArea.style.display = 'block'; // 選択されたらフォームエリアを表示
         if (e.target.value === 'keyword') {
             keywordsContainer.style.display = 'block';
             stylesContainer.style.display = 'none';
@@ -102,7 +104,10 @@ fetch('data.json')
         const params = new URLSearchParams(window.location.search);
         if (params.has('m')) {
             const mode = params.get('m');
-            document.querySelector(`input[name="diag-mode"][value="${mode}"]`).click();
+            const targetRadio = document.querySelector(`input[name="diag-mode"][value="${mode}"]`);
+            if (targetRadio) {
+                targetRadio.click(); // URLパラメータがある場合は自動で選択
+            }
             
             if (mode === 'keyword' && params.has('k')) {
                 const indices = params.get('k').split('-');
@@ -212,7 +217,10 @@ function renderStylesUI() {
 
 // 診断ボタン処理
 document.getElementById('diagnose-btn').addEventListener('click', () => {
-    const mode = document.querySelector('input[name="diag-mode"]:checked').value;
+    const checkedRadio = document.querySelector('input[name="diag-mode"]:checked');
+    if (!checkedRadio) return; // 何も選ばれていない場合は処理しない
+    
+    const mode = checkedRadio.value;
     const url = new URL(window.location);
     url.searchParams.set('m', mode);
 
@@ -296,6 +304,10 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
 function resetApp() {
     document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
     document.querySelectorAll('input[type="radio"][value="0"]').forEach(r => r.checked = true); 
+    
+    // ラジオボタンの選択を解除し、入力エリアを隠す
+    document.querySelectorAll('input[name="diag-mode"]').forEach(r => r.checked = false);
+    document.getElementById('form-area').style.display = 'none';
     
     const url = new URL(window.location);
     url.search = '';
@@ -442,7 +454,6 @@ function displayResults(results, isSelected, mode) {
             coreStr = "なし";
         }
 
-        // ★ [詳細を表示] や [研究室名] が折り返されないように修正
         card.innerHTML = `
             <details style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; background: #fff;">
                 <summary style="cursor: pointer; font-weight: bold; padding: 5px; line-height: 1.5;">
