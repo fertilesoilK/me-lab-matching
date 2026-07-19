@@ -180,7 +180,7 @@ function createCheckbox(keyword) {
     return label;
 }
 
-// ★ スマホでも見やすいスタイルUIの生成（2段レイアウトに変更）
+// スマホでも見やすいスタイルUIの生成（2段レイアウト）
 function renderStylesUI() {
     const container = document.getElementById('styles-container');
     
@@ -373,7 +373,7 @@ function displayResults(results, isSelected, mode) {
 
     container.appendChild(topActionsDiv);
 
-    // ★ スマホでも見やすい評価ブロックの生成（テキストとドットを2段に分ける）
+    // スマホでも見やすい評価ブロックの生成（テキストとドットを2段に分ける）
     function createEvalBlock(left, val, right) {
         if (!val || val === "") return "";
         let dots = "";
@@ -442,10 +442,13 @@ function displayResults(results, isSelected, mode) {
             coreStr = "なし";
         }
 
+        // ★ [詳細を表示] や [研究室名] が折り返されないように修正
         card.innerHTML = `
             <details style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; background: #fff;">
-                <summary style="cursor: pointer; font-weight: bold; padding: 5px;">
-                    【${lab.研究室名}】 Score: ${lab.Match_Score} <span style="color: #007bff; font-size: 0.8em; margin-left: 10px;">[▼ 詳細を表示]</span>
+                <summary style="cursor: pointer; font-weight: bold; padding: 5px; line-height: 1.5;">
+                    <span style="display: inline-block;">【${lab.研究室名}】</span> 
+                    <span style="display: inline-block; margin: 0 5px;">Score: ${lab.Match_Score}</span> 
+                    <span style="color: #007bff; font-size: 0.8em; white-space: nowrap;">[▼ 詳細を表示]</span>
                 </summary>
                 <div style="padding: 15px; border-top: 1px solid #eee; margin-top: 10px;">
                     <p style="margin: 5px 0;"><strong>分野：</strong> ${fieldDisplay || '未設定'}</p>
