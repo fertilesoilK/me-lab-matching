@@ -40,7 +40,7 @@
     "eval_5": 3,
     "eval_6": 1,
     "core_time": "あり",
-    "core_start": "09:00",
+    "core_start": "9:00",
     "core_end": "17:00"
   },
   {
@@ -71,7 +71,7 @@
     "eval_5": 4,
     "eval_6": 4,
     "core_time": "あり",
-    "core_start": "09:00",
+    "core_start": "9:00",
     "core_end": "17:00"
   },
   {
@@ -88,7 +88,7 @@
       ["ロバスト制御", "制御工学・振動・機械要素"]
     ],
     "公式HP": "https://www.rs.noda.tus.ac.jp/mhayase/",
-    "関連URL1": "",
+    "関連URL1": "https://dept.tus.ac.jp/st/souiki-journal/5941/",
     "関連URL2": "",
     "eval_1": 1,
     "eval_2": 2,
@@ -133,7 +133,7 @@
     "eval_5": 3,
     "eval_6": 4,
     "core_time": "あり",
-    "core_start": "09:00",
+    "core_start": "9:00",
     "core_end": "17:00"
   },
   {
@@ -180,7 +180,7 @@
     "eval_5": 3,
     "eval_6": 2,
     "core_time": "あり",
-    "core_start": "09:30",
+    "core_start": "9:30",
     "core_end": "17:00"
   },
   {
@@ -235,7 +235,7 @@
     "eval_5": 2,
     "eval_6": 5,
     "core_time": "あり",
-    "core_start": "09:00",
+    "core_start": "9:00",
     "core_end": "17:00"
   },
   {
@@ -286,7 +286,7 @@
     "eval_5": 4,
     "eval_6": 1,
     "core_time": "あり",
-    "core_start": "09:00",
+    "core_start": "9:00",
     "core_end": "18:00"
   },
   {
@@ -309,7 +309,7 @@
       ["バイオメカニクス", "バイオメカニクス・生体工学"]
     ],
     "公式HP": "https://asakura-lab.labby.jp/",
-    "関連URL1": "",
+    "関連URL1": "https://dept.tus.ac.jp/st/souiki-journal/7288/",
     "関連URL2": "",
     "eval_1": 2,
     "eval_2": 1,
@@ -318,7 +318,7 @@
     "eval_5": 3,
     "eval_6": 2,
     "core_time": "あり",
-    "core_start": "09:00",
+    "core_start": "9:00",
     "core_end": "17:00"
   },
   {
@@ -369,7 +369,7 @@
     "eval_5": 3,
     "eval_6": 2,
     "core_time": "あり",
-    "core_start": "09:00",
+    "core_start": "9:00",
     "core_end": "17:30"
   },
   {
@@ -448,7 +448,7 @@
       ["プログラミング", "AI・情報・プログラミング"]
     ],
     "公式HP": "https://www.rs.tus.ac.jp/rmatsuza/",
-    "関連URL1": "",
+    "関連URL1": "https://dept.tus.ac.jp/st/souiki-journal/2972/",
     "関連URL2": "",
     "eval_1": 3,
     "eval_2": 4,
@@ -495,7 +495,7 @@
     "eval_5": 3,
     "eval_6": 5,
     "core_time": "あり",
-    "core_start": "09:00",
+    "core_start": "9:00",
     "core_end": "17:00"
   }
 ]
