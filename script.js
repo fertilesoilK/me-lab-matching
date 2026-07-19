@@ -258,23 +258,16 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
 
         results = labData.map(lab => {
             let score = 0;
-            let maxPossibleScore = 0; 
 
             EVAL_QUESTIONS.forEach((q, i) => {
                 const userVal = parseInt(selectedVals[i]);
                 const labVal = parseInt(lab[q.id]);
                 
                 if (userVal !== 0 && !isNaN(labVal)) {
-                    maxPossibleScore += 10;
                     const diff = Math.abs(userVal - labVal);
                     score += scoreTable[diff] || 0;
                 }
             });
-
-            let finalScore = 0;
-            if (maxPossibleScore > 0) {
-                finalScore = Math.round((score / maxPossibleScore) * 100);
-            }
 
             let labKeywords = [];
             if (typeof lab.キーワードデータ === 'string') {
@@ -284,7 +277,8 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
                 labKeywords = lab.キーワードデータ.map(kwTuple => Array.isArray(kwTuple) ? kwTuple[0] : kwTuple);
             }
 
-            return { ...lab, Match_Score: finalScore, parsedKeywords: labKeywords };
+            // 100点満点への換算を廃止し、純粋な合計点（最大60点）を使用する
+            return { ...lab, Match_Score: score, parsedKeywords: labKeywords };
         });
     }
 
@@ -321,7 +315,7 @@ function displayResults(results, isSelected, mode) {
     } else {
         descHtml = `
             <p style="margin: 0 0 5px 0;"><strong>💡 診断の仕組み（スタイル・雰囲気）</strong></p>
-            <p style="margin: 0 0 8px 0;">あなたが選んだ理想のスタイルと，先輩が登録した実際の雰囲気の「近さ」を項目ごとに比較し，相性度（最大100点）として算出しています．</p>
+            <p style="margin: 0 0 8px 0;">あなたが選んだ理想のスタイルと，先輩が登録した実際の雰囲気の「近さ」を項目ごとに比較し，相性スコア（最大60点）として算出しています．</p>
             <div style="background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 8px;">
                 <p style="margin: 0 0 5px 0;"><strong>【項目ごとの加点ルール】</strong></p>
                 <ul style="margin: 0; padding-left: 20px; font-size: 0.95em;">
@@ -333,7 +327,6 @@ function displayResults(results, isSelected, mode) {
                 </ul>
                 <p style="margin: 5px 0 0 0; font-size: 0.85em; color: #666;">※「指定しない」を選んだ項目は計算から除外されます．</p>
             </div>
-            <p style="margin: 0; font-size: 0.95em;">獲得した合計点を，選択した項目の最大点数に対する割合で計算し，100点満点に換算して表示しています．</p>
         `;
     }
     container.innerHTML += `<div style="background-color: #e7f3ff; padding: 12px 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #b3d7ff; font-size: 0.9em;">${descHtml}</div>`;
