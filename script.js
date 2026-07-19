@@ -180,7 +180,7 @@ function createCheckbox(keyword) {
     return label;
 }
 
-// スタイルUIの生成（5段階ラジオボタン）
+// ★ スマホでも見やすいスタイルUIの生成（2段レイアウトに変更）
 function renderStylesUI() {
     const container = document.getElementById('styles-container');
     
@@ -189,16 +189,22 @@ function renderStylesUI() {
         wrapper.style.cssText = "background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #e9ecef;";
         
         let html = `
-            <div style="text-align: center; margin-bottom: 10px; font-weight: bold; color: #333;">
+            <div style="text-align: center; margin-bottom: 15px; font-weight: bold; color: #333; font-size: 1.05em;">
                 ${q.left} ⇔ ${q.right}
             </div>
-            <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                <label style="cursor:pointer;"><input type="radio" name="${q.id}" value="0" checked> 指定しない</label>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+                <label style="cursor:pointer; background-color: #e9ecef; padding: 6px 16px; border-radius: 20px; font-size: 0.9em; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                    <input type="radio" name="${q.id}" value="0" checked style="transform: scale(1.2); margin-right: 5px;"> 指定しない
+                </label>
+                <div style="display: flex; justify-content: center; gap: 15px; width: 100%; flex-wrap: wrap;">
         `;
         for (let i = 1; i <= 5; i++) {
-            html += `<label style="cursor:pointer;"><input type="radio" name="${q.id}" value="${i}"> ${i}</label>`;
+            html += `<label style="cursor:pointer; font-size: 1.1em; white-space: nowrap;"><input type="radio" name="${q.id}" value="${i}" style="transform: scale(1.3); margin-right: 4px;"> ${i}</label>`;
         }
-        html += `</div>`;
+        html += `
+                </div>
+            </div>
+        `;
         wrapper.innerHTML = html;
         container.appendChild(wrapper);
     });
@@ -277,7 +283,6 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
                 labKeywords = lab.キーワードデータ.map(kwTuple => Array.isArray(kwTuple) ? kwTuple[0] : kwTuple);
             }
 
-            // 100点満点への換算を廃止し、純粋な合計点（最大60点）を使用する
             return { ...lab, Match_Score: score, parsedKeywords: labKeywords };
         });
     }
@@ -368,6 +373,7 @@ function displayResults(results, isSelected, mode) {
 
     container.appendChild(topActionsDiv);
 
+    // ★ スマホでも見やすい評価ブロックの生成（テキストとドットを2段に分ける）
     function createEvalBlock(left, val, right) {
         if (!val || val === "") return "";
         let dots = "";
@@ -375,10 +381,14 @@ function displayResults(results, isSelected, mode) {
             dots += (i == val) ? '<span style="color:#ffcc00; font-size:1.4em; line-height:1;">●</span>' : '<span style="color:#ddd; font-size:1.2em; line-height:1;">●</span>';
         }
         return `
-            <div style="display: flex; align-items: center; justify-content: space-between; margin: 8px 0; font-size: 0.9em;">
-                <span style="flex: 1; text-align: right; margin-right: 15px;">${left}</span>
-                <span style="flex: 0 0 auto; display: flex; gap: 4px; align-items: center;">${dots}</span>
-                <span style="flex: 1; text-align: left; margin-left: 15px;">${right}</span>
+            <div style="margin: 12px 0;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.85em; font-weight: bold; color: #555; margin-bottom: 4px;">
+                    <span style="flex: 1; text-align: left;">${left}</span>
+                    <span style="flex: 1; text-align: right;">${right}</span>
+                </div>
+                <div style="display: flex; justify-content: center; gap: 8px; align-items: center;">
+                    ${dots}
+                </div>
             </div>`;
     }
 
