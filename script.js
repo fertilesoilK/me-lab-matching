@@ -318,10 +318,22 @@ function displayResults(results, isSelected, mode) {
             <p style="margin: 0 0 5px 0;">選択したキーワードと一致した場合に加点を行っています（主要:30点，専門:10点）．</p>
             <p style="margin: 0; color: #555; font-size: 0.9em;">※登録キーワード数が多い研究室ほど点数が高くなる傾向があります．詳細は各HPをご確認ください．</p>
         `;
-    } else {
+   } else {
         descHtml = `
             <p style="margin: 0 0 5px 0;"><strong>💡 診断の仕組み（スタイル・雰囲気）</strong></p>
-            <p style="margin: 0 0 5px 0;">あなたが選んだ理想のスタイルと、先輩が登録した実際の雰囲気の「近さ」を計算し、相性度（最大100点）として表示しています。</p>
+            <p style="margin: 0 0 8px 0;">あなたが選んだ理想のスタイルと，先輩が登録した実際の雰囲気の「近さ」を項目ごとに比較し，相性度（最大100点）として算出しています．</p>
+            <div style="background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 8px;">
+                <p style="margin: 0 0 5px 0;"><strong>【項目ごとの加点ルール】</strong></p>
+                <ul style="margin: 0; padding-left: 20px; font-size: 0.95em;">
+                    <li>ピッタリ一致：10点</li>
+                    <li>1メモリずれ：7点</li>
+                    <li>2メモリずれ：4点</li>
+                    <li>3メモリずれ：1点</li>
+                    <li>真逆（4メモリずれ）：0点</li>
+                </ul>
+                <p style="margin: 5px 0 0 0; font-size: 0.85em; color: #666;">※「指定しない」を選んだ項目は計算から除外されます．</p>
+            </div>
+            <p style="margin: 0; font-size: 0.95em;">獲得した合計点を，選択した項目の最大点数に対する割合で計算し，100点満点に換算して表示しています．</p>
         `;
     }
     container.innerHTML += `<div style="background-color: #e7f3ff; padding: 12px 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #b3d7ff; font-size: 0.9em;">${descHtml}</div>`;
