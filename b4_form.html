@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【B4向け】研究室情報登録フォーム</title>
+    <style>
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f0f2f6; color: #31333F; padding: 20px; line-height: 1.6; }
+        .container { max-width: 800px; margin: 0 auto; background: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        h1 { font-size: 1.8em; margin-bottom: 5px; border-bottom: 2px solid #f0f2f6; padding-bottom: 10px; }
+        .info-box { background-color: #e6f7ff; padding: 15px; border-radius: 5px; border-left: 5px solid #0056b3; margin-bottom: 25px; font-size: 0.95em; }
+        .section-header { background-color: #e6f7ff; padding: 10px 15px; border-radius: 5px; border-left: 5px solid #0056b3; font-weight: bold; color: #0056b3; margin-top: 40px; margin-bottom: 20px; font-size: 1.2em; }
+        .form-group { margin-bottom: 20px; }
+        label.block-label { display: block; font-weight: bold; margin-bottom: 8px; }
+        select, input[type="text"], input[type="time"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 1em; box-sizing: border-box; }
+        
+        /* 複数選択チェックボックス群（基本情報用） */
+        .checkbox-group { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 10px; }
+        .checkbox-label { display: flex; align-items: center; cursor: pointer; font-size: 1.05em; }
+        .checkbox-label input { transform: scale(1.3); margin-right: 8px; }
+        
+        /* キーワードのピル型デザイン */
+        .category-header { background-color: #e2e3e5; padding: 10px 15px; border-radius: 5px; font-weight: bold; margin-top: 30px; margin-bottom: 15px; font-size: 1.05em; }
+        .sub-header { font-weight: bold; color: #555; margin-bottom: 10px; }
+        .pill-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+        .pill-label { display: flex; align-items: center; border: 1px solid #ccc; padding: 6px 15px; border-radius: 20px; cursor: pointer; background: #fff; font-size: 0.95em; transition: background-color 0.2s; }
+        .pill-label:hover { background-color: #f8f9fa; }
+        .pill-label input { margin-right: 8px; transform: scale(1.2); }
+        
+        /* 追加キーワード領域 */
+        .custom-kw-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
+        .custom-kw-row input { flex: 2; margin: 0; }
+        .custom-kw-row select { flex: 1; margin: 0; }
+        .remove-btn { background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer; padding: 10px 15px; font-weight: bold; }
+        .add-btn { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 5px; display: inline-block; }
+        
+        /* 5段階評価 */
+        .scale-q { margin-bottom: 25px; }
+        .scale-labels { text-align: center; font-weight: bold; font-size: 1.05em; margin-bottom: 10px; }
+        .scale-radios { display: flex; justify-content: center; gap: 20px; background: #f8f9fa; padding: 12px; border-radius: 8px; }
+        .scale-radios label { display: flex; flex-direction: column; align-items: center; cursor: pointer; font-weight: bold; }
+        .scale-radios input { transform: scale(1.3); margin-bottom: 5px; }
+        
+        button[type="submit"] { background-color: #ff4b4b; color: white; padding: 15px; border: none; border-radius: 5px; font-size: 1.2em; font-weight: bold; cursor: pointer; width: 100%; margin-top: 30px; transition: background 0.3s; }
+        button[type="submit"]:hover { background-color: #ff3333; }
+        button[type="submit"]:disabled { background-color: #ccc; cursor: not-allowed; }
+        
+        hr { border: none; border-top: 1px solid #eee; margin: 30px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>B4向け研究室情報 登録フォーム</h1>
+        <div class="info-box">
+            💡 <strong>登録のコツ</strong><br>
+            ここで選んだキーワードや評価が，そのままB3の診断に影響します．
+        </div>
+
+        <form id="labForm">
+            <div class="section-header">1. 基本情報</div>
+            <div class="form-group">
+                <label class="block-label">■ 研究室名</label>
+                <select id="labName" required>
+                    <option value="">選択してください</option>
+                    <option value="上野研究室">上野研究室</option>
+                    <option value="塚原研究室">塚原研究室</option>
+                    <option value="青野研究室">青野研究室</option>
+                    <option value="田口研究室">田口研究室</option>
+                    <option value="高橋研究室">高橋研究室</option>
+                    <option value="岡田研究室">岡田研究室</option>
+                    <option value="松崎研究室">松崎研究室</option>
+                    <option value="荻原研究室">荻原研究室</option>
+                    <option value="早瀬研究室">早瀬研究室</option>
+                    <option value="荒井研究室">荒井研究室</option>
+                    <option value="竹村研究室">竹村研究室</option>
+                    <option value="朝倉研究室">朝倉研究室</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="block-label">■ 研究室全体の分野（複数選択可）</label>
+                <div class="checkbox-group">
+                    <label class="checkbox-label"><input type="checkbox" name="fields" value="熱"> 熱</label>
+                    <label class="checkbox-label"><input type="checkbox" name="fields" value="流体"> 流体</label>
+                    <label class="checkbox-label"><input type="checkbox" name="fields" value="材料"> 材料</label>
+                    <label class="checkbox-label"><input type="checkbox" name="fields" value="制御"> 制御</label>
+                    <label class="checkbox-label"><input type="checkbox" name="fields" value="振動学"> 振動学</label>
+                </div>
+            </div>
+
+            <div class="section-header">2. 研究キーワードの登録</div>
+            <p>研究室に当てはまるキーワードにチェックを入れてください．</p>
+            <div id="keywordsArea"></div>
+
+            <hr>
+            <label class="block-label">■ 選択肢にないキーワードを追加</label>
+            <p style="font-size: 0.9em; color: #666;">※ 上記の中に適当なキーワードがない場合，適宜追加してください．B3が興味をひかれるような単語を追加することをお勧めします．</p>
+            <div id="customKwArea">
+                <!-- JSで動的に行を生成 -->
+            </div>
+            <button type="button" class="add-btn" id="addKwBtn">＋ 欄を追加</button>
+
+            <div class="section-header">3. 研究室のカルチャー・雰囲気 (5段階評価)</div>
+            <p>研究室の実際のスタイルに最も近いものを 1〜5 の中で選んでください．</p>
+            <div id="evalArea"></div>
+
+            <div class="section-header">4. コアタイムについて</div>
+            <div class="form-group">
+                <label class="block-label">■ コアタイムはありますか？</label>
+                <div class="checkbox-group">
+                    <label class="checkbox-label"><input type="radio" name="core_time" value="なし" checked onchange="toggleCoreTime()"> なし</label>
+                    <label class="checkbox-label"><input type="radio" name="core_time" value="あり" onchange="toggleCoreTime()"> あり</label>
+                </div>
+            </div>
+            <div id="coreTimeInputs" style="display: none; gap: 15px;">
+                <div style="flex: 1;">
+                    <label class="block-label">開始時刻</label>
+                    <input type="time" id="coreStart" value="09:00">
+                </div>
+                <div style="flex: 1;">
+                    <label class="block-label">終了時刻</label>
+                    <input type="time" id="coreEnd" value="17:00">
+                </div>
+            </div>
+
+            <div class="section-header">5. 研究室の関連URLの登録（任意）</div>
+            <div class="form-group">
+                <label class="block-label">■ 公式HPのURL</label>
+                <input type="text" id="officialUrl" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label class="block-label">■ 関連URL 1</label>
+                <input type="text" id="relatedUrl1" placeholder="その他の関連URL">
+            </div>
+            <div class="form-group">
+                <label class="block-label">■ 関連URL 2</label>
+                <input type="text" id="relatedUrl2" placeholder="その他の関連URL">
+            </div>
+
+            <button type="submit" id="submitBtn">この内容で登録する</button>
+        </form>
+    </div>
+
+    <script>
+        // ★★★ 以下の行の "" の中に、先ほどコピーしたGASのURLを貼り付けてください ★★★
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbxginhhG8gfgGLXbGql12dUzO_6xBLqdDoG70s-soMJyft8aqKus5kiGW_XhJyaFEd6uw/exec";
+        
+        const ROMAJI_DICT = {
+            "上野研究室": "ueno", "塚原研究室": "tsukahara", "青野研究室": "aono",
+            "田口研究室": "taguchi", "高橋研究室": "takahashi", "岡田研究室": "okada",
+            "松崎研究室": "matsuzaki", "荻原研究室": "ogihara", "早瀬研究室": "hayase",
+            "荒井研究室": "arai", "竹村研究室": "takemura", "朝倉研究室": "asakura"
+        };
+
+        const CATEGORY_LIST = [
+            "流体工学", "熱工学・エネルギー", "航空工学・飛行システム", "宇宙工学・推進エンジン",
+            "材料科学・新素材", "固体力学・構造・強度", "ロボット工学・メカトロニクス",
+            "制御工学・振動・機械要素", "数値解析・シミュレーション", "AI・情報・プログラミング",
+            "バイオメカニクス・生体工学", "医療福祉・人間工学", "実験設備・ツール・その他"
+        ];
+
+        const categorized_keywords = {
+            "流体工学": {
+                "主要": ["流体力学"],
+                "専門・詳細": ["ナビエ・ストークス方程式", "層流", "流れの遷移", "乱流", "低レイノルズ数", "高レイノルズ数流れ", "亜音速", "境界層", "粘弾性流体", "気液混相流", "複雑な流れ現象", "マイクロ流路"]
+            },
+            "熱工学・エネルギー": {
+                "主要": ["伝熱", "熱流体", "エネルギー効率化"],
+                "専門・詳細": ["表面張力", "濡れ現象", "沸騰現象", "マランゴニ対流", "冷却技術", "熱交換器", "プラントのガス漏洩検知", "有害物質拡散源推定"]
+            },
+            "航空工学・飛行システム": {
+                "主要": ["航空機", "翼の最適化設計", "羽ばたき飛行", "空気力学"],
+                "専門・詳細": ["航空機設計", "航空機翼", "風洞実験", "離陸飛行実験"]
+            },
+            "宇宙工学・推進エンジン": {
+                "主要": ["宇宙環境", "エンジン"],
+                "専門・詳細": ["ターボジェットエンジン", "極超音速エンジン", "複合サイクルエンジン", "エンジン設計", "エンジン制御", "流路切替機構設計", "スペースプレーン", "火星飛行探索機", "火星利用", "生命維持", "水電解", "航空宇宙用複合材料", "JAXA"]
+            },
+            "材料科学・新素材": {
+                "主要": ["複合材料", "CFRP", "炭素繊維・連続繊維", "微細加工"],
+                "専門・詳細": ["セラミックス", "合金", "析出物", "転位", "ダイヤモンド半導体", "GFRP", "リサイクルCFRP", "フラン樹脂", "知的材料・構造", "白金触媒", "VARTM(樹脂注入成形)", "成膜", "プラズマ照射", "銅メッキと集積回路", "マルチスケール解析"]
+            },
+            "固体力学・構造・強度": {
+                "主要": ["材料力学", "材料強度学", "破壊力学", "計算固体力学"],
+                "専門・詳細": ["連続体力学", "弾塑性力学", "強度評価", "損傷力学", "非線形破壊力学", "疲労", "繰り返し荷重", "溶接き裂", "微視き裂", "亀裂進展解析", "計算破壊力学", "J積分", "固体力学解析手法構築", "分子動力学", "転位動力学", "引張試験", "曲げ試験", "衝撃強度試験", "DCB試験(層間破壊靭性試験)", "破面観察", "走査電子顕微鏡"]
+            },
+            "ロボット工学・メカトロニクス": {
+                "主要": ["ロボット工学", "産業用ロボット", "ドローン", "自動化"],
+                "専門・詳細": ["協働ロボット(UR等)", "ロボットアーム", "小型ロボットヘリコプター", "マイクロ航空機", "機械機構・ロボット設計", "人工筋肉", "ロボットマニピュレーション", "自立飛行", "ロボットビジョン", "ロボット視覚機能付与"]
+            },
+            "制御工学・振動・機械要素": {
+                "主要": ["振動工学", "音響シミュレーション", "自動車"],
+                "専門・詳細": ["ロバスト制御", "ロボット制御", "飛行制御", "ビジュアルサーボ", "モーションキャプチャ", "センサ", "ギア", "MEMS", "電子工作", "レーザー加工", "流量計開発・評価", "警告音設計(自転車等)"]
+            },
+            "数値解析・シミュレーション": {
+                "主要": ["数値解析", "有限要素法", "フーリエ解析"],
+                "専門・詳細": ["テンソル解析", "CAE", "数値流体解析", "分子シミュレーション", "IGA(アイソジオメトリック解析)", "FPM(粒子法)", "重合メッシュ法", "領域積分法", "独自解析手法の構築", "サンプリングモアレ法", "marc(非線形構造解析ソフト)", "ポテンシャル解析"]
+            },
+            "AI・情報・プログラミング": {
+                "主要": ["プログラミング", "人工知能", "機械学習"],
+                "専門・詳細": ["python", "c言語", "fortran", "MATLAB", "Simulink", "情報理論・データサイエンス", "統計解析", "最適化", "深層学習・CNN", "強化学習", "フィジカルAI", "画像解析", "画像処理・物体認識", "点群処理", "サウンドスケープ評価"]
+            },
+            "バイオメカニクス・生体工学": {
+                "主要": ["バイオメカニクス", "生体工学", "生物模倣"],
+                "専門・詳細": ["DNA", "がん細胞", "血栓解析", "血流・血管の解析", "聴覚・音声メカニズム", "嚥下(えんげ)音解析", "アクティブマター・自己駆動粒子", "生体機械", "人工心臓・人工弁", "内視鏡", "においセンサー"]
+            },
+            "医療福祉・人間工学": {
+                "主要": ["医療工学", "医療・福祉支援技術", "介護支援", "感性工学"],
+                "専門・詳細": ["脳波解析(睡眠・音楽)", "聴力評価(DINテスト)", "病院の音環境"]
+            },
+            "実験設備・ツール・その他": {
+                "主要": ["3Dプリンタ", "設計"],
+                "専門・詳細": ["電子顕微鏡", "マイクロスコープ", "ハイスピードカメラ", "三次元計測", "真空装置", "着磁", "フォトリソグラフィー", "スパコン", "実験装置設計", "小型燃料電池", "電気化学", "Fusion", "ROS", "Mac", "Claude", "Notion", "VR音響評価", "快適性評価(well-being)", "プラント安全設計"]
+            }
+        };
+
+        const EVAL_QUESTIONS = [
+            { id: "eval_1", left: "実験中心", right: "解析・計算中心" },
+            { id: "eval_2", left: "自主性重視", right: "進捗管理あり" },
+            { id: "eval_3", left: "教授指導", right: "学生間サポート" },
+            { id: "eval_4", left: "理学(原理解明)", right: "工学(社会実装)" },
+            { id: "eval_5", left: "にぎやか", right: "落ち着いた" },
+            { id: "eval_6", left: "個人作業中心", right: "チーム作業中心" }
+        ];
+
+        // キーワードエリアの生成（展開表示＆ピル型）
+        const kwArea = document.getElementById('keywordsArea');
+        for (const [category, groups] of Object.entries(categorized_keywords)) {
+            const catDiv = document.createElement('div');
+            catDiv.innerHTML = `<div class="category-header">▼ 【${category}】</div>`;
+            
+            if (groups["主要"].length > 0) {
+                catDiv.innerHTML += `<div class="sub-header">■ 主要キーワード</div>`;
+                const grid = document.createElement('div');
+                grid.className = 'pill-grid';
+                groups["主要"].forEach(kw => {
+                    grid.innerHTML += `<label class="pill-label"><input type="checkbox" name="keywords" value="${kw}"> ${kw}</label>`;
+                });
+                catDiv.appendChild(grid);
+            }
+            if (groups["専門・詳細"].length > 0) {
+                catDiv.innerHTML += `<div class="sub-header">■ 専門・詳細キーワード</div>`;
+                const grid = document.createElement('div');
+                grid.className = 'pill-grid';
+                groups["専門・詳細"].forEach(kw => {
+                    grid.innerHTML += `<label class="pill-label"><input type="checkbox" name="keywords" value="${kw}"> ${kw}</label>`;
+                });
+                catDiv.appendChild(grid);
+            }
+            kwArea.appendChild(catDiv);
+        }
+
+        // 追加キーワード行の動的生成
+        const customKwArea = document.getElementById('customKwArea');
+        const addKwBtn = document.getElementById('addKwBtn');
+        let catOptions = CATEGORY_LIST.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+
+        function addCustomRow() {
+            const row = document.createElement('div');
+            row.className = 'custom-kw-row';
+            row.innerHTML = `
+                <input type="text" class="custom-kw-input" placeholder="追加キーワード">
+                <select class="custom-cat-select">${catOptions}</select>
+                <button type="button" class="remove-btn" onclick="this.parentElement.remove()">－</button>
+            `;
+            customKwArea.appendChild(row);
+        }
+        
+        // 初期状態として1行用意しておく
+        addCustomRow();
+        addKwBtn.addEventListener('click', addCustomRow);
+
+        // 評価エリアの生成
+        const evalArea = document.getElementById('evalArea');
+        EVAL_QUESTIONS.forEach(q => {
+            let html = `
+                <div class="scale-q">
+                    <div class="scale-labels">${q.left} ⇔ ${q.right}</div>
+                    <div class="scale-radios">
+            `;
+            for (let i = 1; i <= 5; i++) {
+                html += `<label><input type="radio" name="${q.id}" value="${i}" ${i===3 ? 'checked' : ''}>${i}</label>`;
+            }
+            html += `</div></div>`;
+            evalArea.innerHTML += html;
+        });
+
+        // コアタイム入力の表示切り替え
+        function toggleCoreTime() {
+            const hasCore = document.querySelector('input[name="core_time"]:checked').value;
+            const timeInputs = document.getElementById('coreTimeInputs');
+            if (hasCore === "あり") {
+                timeInputs.style.display = 'flex';
+            } else {
+                timeInputs.style.display = 'none';
+            }
+        }
+
+        // フォーム送信処理
+        document.getElementById('labForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (GAS_URL === "ここにコピーしたウェブアプリのURLを貼り付けてください") {
+                alert("プログラム内の「GAS_URL」が設定されていません．VS CodeでURLを貼り付けてください．");
+                return;
+            }
+
+            const labName = document.getElementById('labName').value;
+            if (!labName) {
+                alert("研究室名を選択してください．");
+                return;
+            }
+
+            const fields = Array.from(document.querySelectorAll('input[name="fields"]:checked')).map(cb => cb.value);
+            if (fields.length === 0) {
+                alert("分野を少なくとも1つ選択してください．");
+                return;
+            }
+
+            // チェックされた既存のキーワードを取得
+            const keywords = Array.from(document.querySelectorAll('input[name="keywords"]:checked')).map(cb => cb.value);
+            
+            // 入力された独自の追加キーワードを取得
+            const customInputs = document.querySelectorAll('.custom-kw-input');
+            customInputs.forEach(input => {
+                const kw = input.value.trim();
+                if(kw) keywords.push(kw);
+            });
+
+            if (keywords.length === 0) {
+                alert("少なくとも1つのキーワードを選択または入力してください．");
+                return;
+            }
+
+            // B3のJSONと同じ形式（配列の文字列表現）にする
+            const kwDataString = JSON.stringify(keywords).replace(/"/g, "'"); 
+            const fieldsString = JSON.stringify(fields).replace(/"/g, "'");
+
+            let coreTime = document.querySelector('input[name="core_time"]:checked').value;
+            let coreStart = "", coreEnd = "";
+            if (coreTime === "あり") {
+                coreStart = document.getElementById('coreStart').value;
+                coreEnd = document.getElementById('coreEnd').value;
+            }
+
+            const data = {
+                "Lab_ID": ROMAJI_DICT[labName],
+                "研究室名": labName,
+                "分野": fieldsString,
+                "キーワードデータ": kwDataString,
+                "公式HP": document.getElementById('officialUrl').value,
+                "関連URL1": document.getElementById('relatedUrl1').value,
+                "関連URL2": document.getElementById('relatedUrl2').value,
+                "eval_1": document.querySelector('input[name="eval_1"]:checked').value,
+                "eval_2": document.querySelector('input[name="eval_2"]:checked').value,
+                "eval_3": document.querySelector('input[name="eval_3"]:checked').value,
+                "eval_4": document.querySelector('input[name="eval_4"]:checked').value,
+                "eval_5": document.querySelector('input[name="eval_5"]:checked').value,
+                "eval_6": document.querySelector('input[name="eval_6"]:checked').value,
+                "core_time": coreTime,
+                "core_start": coreStart,
+                "core_end": coreEnd
+            };
+
+            const btn = document.getElementById('submitBtn');
+            btn.innerText = "送信中...";
+            btn.disabled = true;
+
+            fetch(GAS_URL, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if(result.status === "success") {
+                    alert(`「${labName}」のデータを登録しました！`);
+                    document.getElementById('labForm').reset();
+                    
+                    // 追加されたカスタムキーワードの行をリセット
+                    customKwArea.innerHTML = "";
+                    addCustomRow();
+                    
+                    toggleCoreTime();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    alert("エラーが発生しました: " + result.message);
+                }
+            })
+            .catch(error => {
+                alert("通信エラーが発生しました．URLが正しいか確認してください．");
+            })
+            .finally(() => {
+                btn.innerText = "この内容で登録する";
+                btn.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>
