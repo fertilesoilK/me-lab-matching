@@ -41,7 +41,10 @@
         .scale-radios label { display: flex; flex-direction: column; align-items: center; cursor: pointer; font-weight: bold; }
         .scale-radios input { transform: scale(1.3); margin-bottom: 5px; }
         
-        button[type="submit"] { background-color: #ff4b4b; color: white; padding: 15px; border: none; border-radius: 5px; font-size: 1.2em; font-weight: bold; cursor: pointer; width: 100%; margin-top: 30px; transition: background 0.3s; }
+        /* エラーメッセージ領域 */
+        #errorMessage { color: #ff4b4b; background-color: #ffe6e6; border: 1px solid #ff4b4b; padding: 15px; border-radius: 5px; margin-bottom: 20px; display: none; line-height: 1.8; }
+        
+        button[type="submit"] { background-color: #ff4b4b; color: white; padding: 15px; border: none; border-radius: 5px; font-size: 1.2em; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; transition: background 0.3s; }
         button[type="submit"]:hover { background-color: #ff3333; }
         button[type="submit"]:disabled { background-color: #ccc; cursor: not-allowed; }
         
@@ -62,7 +65,8 @@
             <div class="section-header">1. 基本情報</div>
             <div class="form-group">
                 <label class="block-label">■ 研究室名</label>
-                <select id="labName" required>
+                <!-- requiredを外してJavaScript側で独自にエラーチェックします -->
+                <select id="labName">
                     <option value="">選択してください</option>
                     <option value="上野研究室">上野研究室</option>
                     <option value="塚原研究室">塚原研究室</option>
@@ -139,12 +143,14 @@
                 <input type="text" id="relatedUrl2" placeholder="その他の関連URL">
             </div>
 
+            <!-- エラーメッセージを表示する領域 -->
+            <div id="errorMessage"></div>
+
             <button type="submit" id="submitBtn">この内容で登録する</button>
         </form>
     </div>
 
     <script>
-        // ★★★ 以下の行の "" の中に、先ほどコピーしたGASのURLを貼り付けてください ★★★
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxginhhG8gfgGLXbGql12dUzO_6xBLqdDoG70s-soMJyft8aqKus5kiGW_XhJyaFEd6uw/exec";
         
         const ROMAJI_DICT = {
@@ -302,21 +308,21 @@
         document.getElementById('labForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            if (GAS_URL === "ここにコピーしたウェブアプリのURLを貼り付けてください") {
-                alert("プログラム内の「GAS_URL」が設定されていません．VS CodeでURLを貼り付けてください．");
-                return;
-            }
+            // エラーメッセージの初期化
+            const errorMsgDiv = document.getElementById('errorMessage');
+            errorMsgDiv.style.display = 'none';
+            errorMsgDiv.innerHTML = '';
+            let errorList = [];
 
+            // 必須項目のチェック
             const labName = document.getElementById('labName').value;
             if (!labName) {
-                alert("研究室名を選択してください．");
-                return;
+                errorList.push("・「研究室名」を選択してください．");
             }
 
             const fields = Array.from(document.querySelectorAll('input[name="fields"]:checked')).map(cb => cb.value);
             if (fields.length === 0) {
-                alert("分野を少なくとも1つ選択してください．");
-                return;
+                errorList.push("・「研究室全体の分野」を少なくとも1つ選択してください．");
             }
 
             // チェックされた既存のキーワードを取得
@@ -330,7 +336,17 @@
             });
 
             if (keywords.length === 0) {
-                alert("少なくとも1つのキーワードを選択または入力してください．");
+                errorList.push("・「キーワード」を少なくとも1つ選択または入力してください．");
+            }
+
+            // エラーがある場合は表示して処理を中断
+            if (errorList.length > 0) {
+                errorMsgDiv.innerHTML = "<strong>【必須項目の入力エラー】</strong><br>" + errorList.join("<br>");
+                errorMsgDiv.style.display = 'block';
+                // エラーメッセージが画面の中央付近にくるようにスクロール
+                const yOffset = -150;
+                const y = errorMsgDiv.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                window.scrollTo({ top: y, behavior: 'smooth' });
                 return;
             }
 
