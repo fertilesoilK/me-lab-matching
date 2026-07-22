@@ -121,11 +121,12 @@
             <div id="coreTimeInputs" style="display: none; gap: 15px;">
                 <div style="flex: 1;">
                     <label class="block-label">開始時刻</label>
-                    <input type="time" id="coreStart" value="09:00">
+                    <!-- 初期値(value)を削除し、空欄になるようにしました -->
+                    <input type="time" id="coreStart">
                 </div>
                 <div style="flex: 1;">
                     <label class="block-label">終了時刻</label>
-                    <input type="time" id="coreEnd" value="17:00">
+                    <input type="time" id="coreEnd">
                 </div>
             </div>
 
@@ -339,9 +340,20 @@
                 errorList.push("・「キーワード」を少なくとも1つ選択または入力してください．");
             }
 
+            // コアタイムのチェック
+            let coreTime = document.querySelector('input[name="core_time"]:checked').value;
+            let coreStart = "", coreEnd = "";
+            if (coreTime === "あり") {
+                coreStart = document.getElementById('coreStart').value;
+                coreEnd = document.getElementById('coreEnd').value;
+                if (!coreStart || !coreEnd) {
+                    errorList.push("・コアタイムの「開始時刻」と「終了時刻」を設定してください．");
+                }
+            }
+
             // エラーがある場合は表示して処理を中断
             if (errorList.length > 0) {
-                errorMsgDiv.innerHTML = "<strong>【必須項目の入力エラー】</strong><br>" + errorList.join("<br>");
+                errorMsgDiv.innerHTML = "<span style='font-weight: bold;'>【必須項目の入力エラー】</span><br>" + errorList.join("<br>");
                 errorMsgDiv.style.display = 'block';
                 // エラーメッセージが画面の中央付近にくるようにスクロール
                 const yOffset = -150;
@@ -353,13 +365,6 @@
             // B3のJSONと同じ形式（配列の文字列表現）にする
             const kwDataString = JSON.stringify(keywords).replace(/"/g, "'"); 
             const fieldsString = JSON.stringify(fields).replace(/"/g, "'");
-
-            let coreTime = document.querySelector('input[name="core_time"]:checked').value;
-            let coreStart = "", coreEnd = "";
-            if (coreTime === "あり") {
-                coreStart = document.getElementById('coreStart').value;
-                coreEnd = document.getElementById('coreEnd').value;
-            }
 
             const data = {
                 "Lab_ID": ROMAJI_DICT[labName],
