@@ -468,7 +468,8 @@ function displayResults(results, isSelected, mode) {
 
         let coreStr = "未設定";
         if (lab.core_time === "あり") {
-            coreStr = `あり（${lab.core_start || ''} 〜 ${lab.core_end || ''}）`;
+            // ★変更箇所：コアタイム「あり」の直後に改行(<br>)を追加
+            coreStr = `あり<br>（${lab.core_start || ''} 〜 ${lab.core_end || ''}）`;
         } else if (lab.core_time === "なし") {
             coreStr = "なし";
         }
