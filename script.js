@@ -58,12 +58,12 @@ const PREDEFINED_KEYWORDS = {
 
 // スタイル診断用の評価項目定義
 const EVAL_QUESTIONS = [
-    { id: "eval_1", left: "実験", right: "解析・計算" },
+    { id: "eval_1", left: "実験中心", right: "解析・計算中心" },
     { id: "eval_2", left: "自主性重視", right: "進捗管理あり" },
     { id: "eval_3", left: "教授指導", right: "学生間サポート" },
     { id: "eval_4", left: "理学(原理解明)", right: "工学(社会実装)" },
     { id: "eval_5", left: "にぎやか", right: "落ち着いた" },
-    { id: "eval_6", left: "個人作業", right: "チーム作業" }
+    { id: "eval_6", left: "個人作業中心", right: "チーム作業中心" }
 ];
 
 // 診断モードの切り替え処理
@@ -445,7 +445,9 @@ function displayResults(results, isSelected, mode) {
             categorizedKws[cat][type].push(kw);
         });
 
-        const kwHtml = Object.keys(categorizedKws).map(cat => `
+        // 修正箇所：PREDEFINED_KEYWORDS の定義順に基づいて並び替えてから表示する
+        const sortedCats = Object.keys(PREDEFINED_KEYWORDS).filter(cat => categorizedKws[cat]);
+        const kwHtml = sortedCats.map(cat => `
             <div style="margin-bottom: 10px;">
                 <strong style="color: #444;">・${cat}</strong>
                 ${categorizedKws[cat]["主要"].length > 0 ? `<div style="margin-left:15px; font-size:0.85em;"><em>[主要]</em> ${categorizedKws[cat]["主要"].join('， ')}</div>` : ''}
@@ -468,7 +470,6 @@ function displayResults(results, isSelected, mode) {
 
         let coreStr = "未設定";
         if (lab.core_time === "あり") {
-            // ★変更箇所：コアタイム「あり」の直後に改行(<br>)を追加
             coreStr = `あり<br>（${lab.core_start || ''} 〜 ${lab.core_end || ''}）`;
         } else if (lab.core_time === "なし") {
             coreStr = "なし";
