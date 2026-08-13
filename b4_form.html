@@ -94,7 +94,7 @@
             </div>
 
             <div class="section-header">2. 研究キーワードの登録</div>
-            <p>研究室に当てはまるキーワードにチェックを入れてください．</p>
+            <p>所属研究室の研究内容に該当するキーワードを選択してください．</p>
             <div id="keywordsArea"></div>
 
             <hr>
@@ -106,8 +106,8 @@
             </div>
             <button type="button" class="add-btn" id="addKwBtn">＋ 欄を追加</button>
 
-            <div class="section-header">3. 研究室のカルチャー・雰囲気 (5段階評価)</div>
-            <p>研究室の実際のスタイルに最も近いものを 1〜5 の中で選んでください．</p>
+            <div class="section-header">3. 研究室のスタイル・雰囲気 (5段階評価)</div>
+            <p>研究室の実際の様子に最も近いものを 1〜5 の中で選んでください．</p>
             <div id="evalArea"></div>
 
             <div class="section-header">4. コアタイムについて</div>
@@ -224,12 +224,12 @@
         };
 
         const EVAL_QUESTIONS = [
-            { id: "eval_1", left: "実験中心", right: "解析・計算中心" },
+            { id: "eval_1", left: "実験", right: "解析・計算" },
             { id: "eval_2", left: "自主性重視", right: "進捗管理あり" },
             { id: "eval_3", left: "教授指導", right: "学生間サポート" },
             { id: "eval_4", left: "理学(原理解明)", right: "工学(社会実装)" },
             { id: "eval_5", left: "にぎやか", right: "落ち着いた" },
-            { id: "eval_6", left: "個人作業中心", right: "チーム作業中心" }
+            { id: "eval_6", left: "個人作業", right: "チーム作業" }
         ];
 
         // キーワードエリアの生成（展開表示＆ピル型）
