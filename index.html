@@ -17,23 +17,24 @@
             本サイトの情報はあくまで参考目安です．情報を鵜呑みにせず，最終的な詳細は必ず各研究室の公式ホームページや見学等で確認してください．
         </p>
 
-        <!-- 診断モードの選択エリア（最初はここだけ表示されます） -->
+        <!-- 診断モードの選択エリア -->
         <div style="background-color: #e6f7ff; padding: 15px; border-radius: 5px; margin: 25px 0; border: 1px solid #b3d7ff;">
             <p style="margin-top: 0; font-weight: bold; color: #0056b3;">💡 どのように診断しますか？</p>
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <label style="cursor: pointer; font-size: 1.05em;">
-                    <!-- 初期選択(checked)を削除しました -->
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <label style="cursor: pointer; font-size: 1.05em; display: block; line-height: 1.5;">
                     <input type="radio" name="diag-mode" value="keyword" style="transform: scale(1.2); margin-right: 8px;"> 
-                    🔍 <strong>研究キーワードから探す</strong>（やりたい分野や研究が決まっている方向け）
+                    🔍 <strong>研究キーワードから探す</strong><br>
+                    <span style="font-size: 0.85em; color: #555; margin-left: 32px; display: inline-block;">（やりたい分野や研究が決まっている方向け）</span>
                 </label>
-                <label style="cursor: pointer; font-size: 1.05em;">
+                <label style="cursor: pointer; font-size: 1.05em; display: block; line-height: 1.5;">
                     <input type="radio" name="diag-mode" value="style" style="transform: scale(1.2); margin-right: 8px;"> 
-                    💬 <strong>雰囲気・スタイルから探す</strong>（自分に合った環境を重視する方向け）
+                    💬 <strong>雰囲気・スタイルから探す</strong><br>
+                    <span style="font-size: 0.85em; color: #555; margin-left: 32px; display: inline-block;">（自分に合った環境を重視する方向け）</span>
                 </label>
             </div>
         </div>
         
-        <!-- ▼ どちらかを選択した後に表示されるエリア（初期は display: none;） ▼ -->
+        <!-- ▼ どちらかを選択した後に表示されるエリア ▼ -->
         <div id="form-area" style="display: none;">
             <hr style="margin-bottom: 25px;">
             
@@ -57,7 +58,6 @@
 
             <button id="diagnose-btn" style="margin-top: 20px;">診断する</button>
         </div>
-        <!-- ▲ ここまで ▲ -->
         
         <div id="results-container">
             <!-- ここに診断結果が表示されます -->

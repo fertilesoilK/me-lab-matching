@@ -74,7 +74,7 @@ const stylesContainer = document.getElementById('styles-container');
 
 modeRadios.forEach(radio => {
     radio.addEventListener('change', (e) => {
-        formArea.style.display = 'block'; // 選択されたらフォームエリアを表示
+        formArea.style.display = 'block'; 
         if (e.target.value === 'keyword') {
             keywordsContainer.style.display = 'block';
             stylesContainer.style.display = 'none';
@@ -106,7 +106,7 @@ fetch('data.json')
             const mode = params.get('m');
             const targetRadio = document.querySelector(`input[name="diag-mode"][value="${mode}"]`);
             if (targetRadio) {
-                targetRadio.click(); // URLパラメータがある場合は自動で選択
+                targetRadio.click(); 
             }
             
             if (mode === 'keyword' && params.has('k')) {
@@ -185,7 +185,7 @@ function createCheckbox(keyword) {
     return label;
 }
 
-// スマホでも見やすいスタイルUIの生成（2段レイアウト）
+// スタイルUIの生成
 function renderStylesUI() {
     const container = document.getElementById('styles-container');
     
@@ -218,7 +218,7 @@ function renderStylesUI() {
 // 診断ボタン処理
 document.getElementById('diagnose-btn').addEventListener('click', () => {
     const checkedRadio = document.querySelector('input[name="diag-mode"]:checked');
-    if (!checkedRadio) return; // 何も選ばれていない場合は処理しない
+    if (!checkedRadio) return; 
     
     const mode = checkedRadio.value;
     const url = new URL(window.location);
@@ -305,7 +305,6 @@ function resetApp() {
     document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
     document.querySelectorAll('input[type="radio"][value="0"]').forEach(r => r.checked = true); 
     
-    // ラジオボタンの選択を解除し、入力エリアを隠す
     document.querySelectorAll('input[name="diag-mode"]').forEach(r => r.checked = false);
     document.getElementById('form-area').style.display = 'none';
     
@@ -322,7 +321,7 @@ function displayResults(results, isSelected, mode) {
     const container = document.getElementById('results-container');
     container.innerHTML = '<h2>診断結果</h2>';
 
-    // ▼▼▼ 追加: 1. 学科公式HPへの参考リンク（一番上） ▼▼▼
+    // 1. 学科公式HPへの参考リンク
     const topRefDiv = document.createElement('div');
     topRefDiv.style.cssText = "background-color: #f8f9fa; padding: 20px 15px; border-radius: 5px; margin-bottom: 20px; border: 1px dashed #ccc; text-align: center;";
     topRefDiv.innerHTML = `
@@ -331,7 +330,7 @@ function displayResults(results, isSelected, mode) {
     `;
     container.appendChild(topRefDiv);
 
-    // ▼▼▼ 2. アクションボタン群（LINEシェア、リセット） ▼▼▼
+    // 2. アクションボタン群（LINEシェア、リセット）
     const topActionsDiv = document.createElement('div');
     topActionsDiv.style.display = "flex";
     topActionsDiv.style.flexWrap = "wrap";
@@ -397,10 +396,24 @@ function displayResults(results, isSelected, mode) {
         groups["専門・詳細"].forEach(kw => keywordToCategoryMap[kw] = category);
     }
 
-    function createLabCard(lab) {
+    // ★追加・変更：研究室カードに順位（rank）を渡せるようにしました
+    function createLabCard(lab, rank = null) {
         const card = document.createElement('div');
         card.className = 'result-card';
         card.style.marginBottom = "15px";
+
+        // 順位バッジの生成
+        let rankHtml = "";
+        if (rank !== null) {
+            let rankMedal = "";
+            let bgColor = "#f0f2f6";
+            let borderColor = "#ccc";
+            if (rank === 1) { rankMedal = "🥇"; bgColor = "#fff9e6"; borderColor = "#FFD700"; }
+            else if (rank === 2) { rankMedal = "🥈"; bgColor = "#f4f4f4"; borderColor = "#C0C0C0"; }
+            else if (rank === 3) { rankMedal = "🥉"; bgColor = "#faf0e6"; borderColor = "#CD7F32"; }
+            
+            rankHtml = `<span style="background-color: ${bgColor}; border: 1px solid ${borderColor}; padding: 2px 8px; border-radius: 12px; font-size: 0.85em; margin-right: 8px; white-space: nowrap; display: inline-block; vertical-align: middle;">${rankMedal} <strong>${rank}位</strong></span>`;
+        }
 
         const categorizedKws = {};
         lab.parsedKeywords.forEach(kw => {
@@ -440,10 +453,11 @@ function displayResults(results, isSelected, mode) {
 
         card.innerHTML = `
             <details style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; background: #fff;">
-                <summary style="cursor: pointer; font-weight: bold; padding: 5px; line-height: 1.5;">
-                    <span style="display: inline-block;">【${lab.研究室名}】</span> 
-                    <span style="display: inline-block; margin: 0 5px;">Score: ${lab.Match_Score}</span> 
-                    <span style="color: #007bff; font-size: 0.8em; white-space: nowrap;">[▼ 詳細を表示]</span>
+                <summary style="cursor: pointer; padding: 5px; line-height: 1.6;">
+                    ${rankHtml}
+                    <span style="display: inline-block; font-weight: bold; font-size: 1.05em; vertical-align: middle;">【${lab.研究室名}】</span> 
+                    <span style="display: inline-block; margin: 0 5px; color: #d63384; font-weight: bold; vertical-align: middle;">Score: ${lab.Match_Score}</span> 
+                    <span style="color: #007bff; font-size: 0.85em; white-space: nowrap; vertical-align: middle;">[▼ 詳細]</span>
                 </summary>
                 <div style="padding: 15px; border-top: 1px solid #eee; margin-top: 10px;">
                     <p style="margin: 5px 0;"><strong>分野：</strong> ${fieldDisplay || '未設定'}</p>
@@ -465,7 +479,7 @@ function displayResults(results, isSelected, mode) {
         return card;
     }
 
-    // ▼▼▼ 3. 診断結果の表示 ▼▼▼
+    // 3. 診断結果の表示
     if (!isSelected) {
         results.forEach(lab => container.appendChild(createLabCard(lab)));
     } else {
@@ -474,7 +488,18 @@ function displayResults(results, isSelected, mode) {
             recTitle.innerText = "おすすめの研究室";
             recTitle.style.marginTop = "0px";
             container.appendChild(recTitle);
-            recommendedLabs.forEach(lab => container.appendChild(createLabCard(lab)));
+            
+            let previousScore = -1;
+            let displayRank = 1;
+            
+            // ★変更：同点の場合は同じ順位を付与するロジック
+            recommendedLabs.forEach((lab, index) => {
+                if (lab.Match_Score !== previousScore) {
+                    displayRank = index + 1; // スコアが違うときだけ順位を更新
+                }
+                container.appendChild(createLabCard(lab, displayRank));
+                previousScore = lab.Match_Score;
+            });
         } else {
             const noRec = document.createElement('p');
             noRec.innerText = "条件に一致する研究室はありませんでした．";
@@ -491,11 +516,12 @@ function displayResults(results, isSelected, mode) {
             const otherTitle = document.createElement('h3');
             otherTitle.innerText = "その他の研究室";
             container.appendChild(otherTitle);
-            otherLabs.forEach(lab => container.appendChild(createLabCard(lab)));
+            // その他の研究室には順位（null）を渡さない
+            otherLabs.forEach(lab => container.appendChild(createLabCard(lab, null)));
         }
     }
 
-    // ▼▼▼ 変更: 4. 診断の仕組み（一番下に移動） ▼▼▼
+    // 4. 診断の仕組み（一番下）
     let descHtml = "";
     if (mode === 'keyword') {
         descHtml = `
@@ -514,7 +540,7 @@ function displayResults(results, isSelected, mode) {
                     <li>1メモリずれ：7点</li>
                     <li>2メモリずれ：4点</li>
                     <li>3メモリずれ：1点</li>
-                    <li>4メモリずれ：0点</li>
+                    <li>真逆（4メモリずれ）：0点</li>
                 </ul>
                 <p style="margin: 5px 0 0 0; font-size: 0.85em; color: #666;">※「指定しない」を選んだ項目は計算から除外されます．</p>
             </div>
@@ -525,7 +551,7 @@ function displayResults(results, isSelected, mode) {
     bottomDescDiv.innerHTML = descHtml;
     container.appendChild(bottomDescDiv);
 
-    // ▼▼▼ 5. 一番下の「もう一度診断する」ボタン ▼▼▼
+    // 5. 一番下の「もう一度診断する」ボタン
     const bottomResetDiv = document.createElement('div');
     bottomResetDiv.style.marginTop = "10px";
     bottomResetDiv.style.textAlign = "center";
