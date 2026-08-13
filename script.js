@@ -58,12 +58,12 @@ const PREDEFINED_KEYWORDS = {
 
 // スタイル診断用の評価項目定義
 const EVAL_QUESTIONS = [
-    { id: "eval_1", left: "実験中心", right: "解析・計算中心" },
+    { id: "eval_1", left: "実験", right: "解析・計算" },
     { id: "eval_2", left: "自主性重視", right: "進捗管理あり" },
     { id: "eval_3", left: "教授指導", right: "学生間サポート" },
     { id: "eval_4", left: "理学(原理解明)", right: "工学(社会実装)" },
     { id: "eval_5", left: "にぎやか", right: "落ち着いた" },
-    { id: "eval_6", left: "個人作業中心", right: "チーム作業中心" }
+    { id: "eval_6", left: "個人作業", right: "チーム作業" }
 ];
 
 // 診断モードの切り替え処理
