@@ -252,12 +252,26 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
                 labKeywords = lab.キーワードデータ.map(kwTuple => Array.isArray(kwTuple) ? kwTuple[0] : kwTuple);
             }
             
+            // 研究室が持っている最大のポテンシャル点数を計算
+            let maxLabScore = 0;
+            labKeywords.forEach(kw => {
+                maxLabScore += allMainKeywords.includes(kw) ? 50 : 10;
+            });
+
+            // ユーザーが選択したキーワードと一致した点数を計算
             selectedThemes.forEach(theme => {
                 if (labKeywords.includes(theme)) {
-                    score += allMainKeywords.includes(theme) ? 30 : 10;
+                    score += allMainKeywords.includes(theme) ? 50 : 10;
                 }
             });
-            return { ...lab, Match_Score: score, parsedKeywords: labKeywords };
+
+            // 100点満点のパーセンテージに変換
+            let finalScore = 0;
+            if (maxLabScore > 0) {
+                finalScore = Math.round((score / maxLabScore) * 100);
+            }
+
+            return { ...lab, Match_Score: finalScore, parsedKeywords: labKeywords };
         });
 
     } else if (mode === 'style') {
@@ -272,16 +286,25 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
 
         results = labData.map(lab => {
             let score = 0;
+            let validQuestionsCount = 0;
 
             EVAL_QUESTIONS.forEach((q, i) => {
                 const userVal = parseInt(selectedVals[i]);
                 const labVal = parseInt(lab[q.id]);
                 
                 if (userVal !== 0 && !isNaN(labVal)) {
+                    validQuestionsCount++;
                     const diff = Math.abs(userVal - labVal);
                     score += scoreTable[diff] || 0;
                 }
             });
+
+            // 回答した項目数に応じた最大点数から、100点満点に換算
+            let finalScore = 0;
+            if (validQuestionsCount > 0) {
+                let maxPossibleScore = validQuestionsCount * 10;
+                finalScore = Math.round((score / maxPossibleScore) * 100);
+            }
 
             let labKeywords = [];
             if (typeof lab.キーワードデータ === 'string') {
@@ -291,7 +314,7 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
                 labKeywords = lab.キーワードデータ.map(kwTuple => Array.isArray(kwTuple) ? kwTuple[0] : kwTuple);
             }
 
-            return { ...lab, Match_Score: score, parsedKeywords: labKeywords };
+            return { ...lab, Match_Score: finalScore, parsedKeywords: labKeywords };
         });
     }
 
@@ -347,7 +370,7 @@ function displayResults(results, isSelected, mode) {
         const medals = ["🥇 1位", "🥈 2位", "🥉 3位"];
         
         top3.forEach((lab, index) => {
-            shareText += `${medals[index]}：${lab.研究室名} (Score: ${lab.Match_Score})\n`;
+            shareText += `${medals[index]}：${lab.研究室名} (Score: ${lab.Match_Score}点)\n`;
         });
         shareText += "\nあなたも診断してみよう！\n" + window.location.href;
         
@@ -396,7 +419,6 @@ function displayResults(results, isSelected, mode) {
         groups["専門・詳細"].forEach(kw => keywordToCategoryMap[kw] = category);
     }
 
-    // ★追加・変更：研究室カードに順位（rank）を渡せるようにしました
     function createLabCard(lab, rank = null) {
         const card = document.createElement('div');
         card.className = 'result-card';
@@ -456,18 +478,18 @@ function displayResults(results, isSelected, mode) {
                 <summary style="cursor: pointer; padding: 5px; line-height: 1.6;">
                     ${rankHtml}
                     <span style="display: inline-block; font-weight: bold; font-size: 1.05em; vertical-align: middle;">【${lab.研究室名}】</span> 
-                    <span style="display: inline-block; margin: 0 5px; color: #d63384; font-weight: bold; vertical-align: middle;">Score: ${lab.Match_Score}</span> 
+                    <span style="display: inline-block; margin: 0 5px; color: #d63384; font-weight: bold; vertical-align: middle;">Score: ${lab.Match_Score}点</span> 
                     <span style="color: #007bff; font-size: 0.85em; white-space: nowrap; vertical-align: middle;">[▼ 詳細]</span>
                 </summary>
                 <div style="padding: 15px; border-top: 1px solid #eee; margin-top: 10px;">
                     <p style="margin: 5px 0;"><strong>分野：</strong> ${fieldDisplay || '未設定'}</p>
                     <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 15px 0;">
-                        ${createEvalBlock("実験中心", lab.eval_1, "解析・計算中心")}
+                        ${createEvalBlock("実験", lab.eval_1, "解析・計算")}
                         ${createEvalBlock("自主性重視", lab.eval_2, "進捗管理あり")}
                         ${createEvalBlock("教授指導", lab.eval_3, "学生間サポート")}
                         ${createEvalBlock("理学(原理解明)", lab.eval_4, "工学(社会実装)")}
                         ${createEvalBlock("にぎやか", lab.eval_5, "落ち着いた")}
-                        ${createEvalBlock("個人作業中心", lab.eval_6, "チーム作業中心")}
+                        ${createEvalBlock("個人作業", lab.eval_6, "チーム作業")}
                     </div>
                     <p style="margin: 5px 0 15px 0;"><strong>コアタイム：</strong> ${coreStr}</p>
                     <p><strong>関連キーワード:</strong></p>
@@ -492,10 +514,9 @@ function displayResults(results, isSelected, mode) {
             let previousScore = -1;
             let displayRank = 1;
             
-            // ★変更：同点の場合は同じ順位を付与するロジック
             recommendedLabs.forEach((lab, index) => {
                 if (lab.Match_Score !== previousScore) {
-                    displayRank = index + 1; // スコアが違うときだけ順位を更新
+                    displayRank = index + 1; 
                 }
                 container.appendChild(createLabCard(lab, displayRank));
                 previousScore = lab.Match_Score;
@@ -516,7 +537,6 @@ function displayResults(results, isSelected, mode) {
             const otherTitle = document.createElement('h3');
             otherTitle.innerText = "その他の研究室";
             container.appendChild(otherTitle);
-            // その他の研究室には順位（null）を渡さない
             otherLabs.forEach(lab => container.appendChild(createLabCard(lab, null)));
         }
     }
@@ -526,13 +546,12 @@ function displayResults(results, isSelected, mode) {
     if (mode === 'keyword') {
         descHtml = `
             <p style="margin: 0 0 5px 0;"><strong>💡 診断の仕組み（キーワード）</strong></p>
-            <p style="margin: 0 0 5px 0;">選択したキーワードと一致した場合に加点を行っています（主要:30点，専門:10点）．</p>
-            <p style="margin: 0; color: #555; font-size: 0.9em;">※登録キーワード数が多い研究室ほど点数が高くなる傾向があります．詳細は各HPをご確認ください．</p>
+            <p style="margin: 0 0 5px 0;">選択したキーワードが研究室のものと一致した場合に加点（主要:50点，専門:10点）し，その研究室が持つキーワードの最大点数に対する割合を100点満点で算出しています．</p>
         `;
     } else {
         descHtml = `
             <p style="margin: 0 0 5px 0;"><strong>💡 診断の仕組み（スタイル・雰囲気）</strong></p>
-            <p style="margin: 0 0 8px 0;">あなたが選んだ理想のスタイルと，先輩が登録した実際の雰囲気の「近さ」を項目ごとに比較し，相性スコア（最大60点）として算出しています．</p>
+            <p style="margin: 0 0 8px 0;">あなたが選んだ理想のスタイルと，先輩が登録した実際の雰囲気の「近さ」を項目ごとに比較し，相性を100点満点で算出しています．</p>
             <div style="background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 8px;">
                 <p style="margin: 0 0 5px 0;"><strong>【項目ごとの加点ルール】</strong></p>
                 <ul style="margin: 0; padding-left: 20px; font-size: 0.95em;">
@@ -540,7 +559,7 @@ function displayResults(results, isSelected, mode) {
                     <li>1メモリずれ：7点</li>
                     <li>2メモリずれ：4点</li>
                     <li>3メモリずれ：1点</li>
-                    <li>真逆（4メモリずれ）：0点</li>
+                    <li>4メモリずれ：0点</li>
                 </ul>
                 <p style="margin: 5px 0 0 0; font-size: 0.85em; color: #666;">※「指定しない」を選んだ項目は計算から除外されます．</p>
             </div>
