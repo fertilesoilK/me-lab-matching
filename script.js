@@ -322,32 +322,16 @@ function displayResults(results, isSelected, mode) {
     const container = document.getElementById('results-container');
     container.innerHTML = '<h2>診断結果</h2>';
 
-    let descHtml = "";
-    if (mode === 'keyword') {
-        descHtml = `
-            <p style="margin: 0 0 5px 0;"><strong>💡 診断の仕組み（キーワード）</strong></p>
-            <p style="margin: 0 0 5px 0;">選択したキーワードと一致した場合に加点を行っています（主要:30点，専門:10点）．</p>
-            <p style="margin: 0; color: #555; font-size: 0.9em;">※登録キーワード数が多い研究室ほど点数が高くなる傾向があります．詳細は各HPをご確認ください．</p>
-        `;
-    } else {
-        descHtml = `
-            <p style="margin: 0 0 5px 0;"><strong>💡 診断の仕組み（スタイル・雰囲気）</strong></p>
-            <p style="margin: 0 0 8px 0;">あなたが選んだ理想のスタイルと，先輩が登録した実際の雰囲気の「近さ」を項目ごとに比較し，相性スコア（最大60点）として算出しています．</p>
-            <div style="background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 8px;">
-                <p style="margin: 0 0 5px 0;"><strong>【項目ごとの加点ルール】</strong></p>
-                <ul style="margin: 0; padding-left: 20px; font-size: 0.95em;">
-                    <li>ピッタリ一致：10点</li>
-                    <li>1メモリずれ：7点</li>
-                    <li>2メモリずれ：4点</li>
-                    <li>3メモリずれ：1点</li>
-                    <li>真逆（4メモリずれ）：0点</li>
-                </ul>
-                <p style="margin: 5px 0 0 0; font-size: 0.85em; color: #666;">※「指定しない」を選んだ項目は計算から除外されます．</p>
-            </div>
-        `;
-    }
-    container.innerHTML += `<div style="background-color: #e7f3ff; padding: 12px 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #b3d7ff; font-size: 0.9em;">${descHtml}</div>`;
+    // ▼▼▼ 追加: 1. 学科公式HPへの参考リンク（一番上） ▼▼▼
+    const topRefDiv = document.createElement('div');
+    topRefDiv.style.cssText = "background-color: #f8f9fa; padding: 20px 15px; border-radius: 5px; margin-bottom: 20px; border: 1px dashed #ccc; text-align: center;";
+    topRefDiv.innerHTML = `
+        <p style="margin: 0 0 8px 0; font-weight: bold; color: #333;">💡 【参考】機械工学科の公式ページも確認してみましょう</p>
+        <a href="https://www.rs.tus.ac.jp/me/laboratory.html" target="_blank" style="color: #007bff; text-decoration: underline; font-size: 1.05em;">学科公式HP 研究室一覧はこちら</a>
+    `;
+    container.appendChild(topRefDiv);
 
+    // ▼▼▼ 2. アクションボタン群（LINEシェア、リセット） ▼▼▼
     const topActionsDiv = document.createElement('div');
     topActionsDiv.style.display = "flex";
     topActionsDiv.style.flexWrap = "wrap";
@@ -385,7 +369,7 @@ function displayResults(results, isSelected, mode) {
 
     container.appendChild(topActionsDiv);
 
-    // スマホでも見やすい評価ブロックの生成（テキストとドットを2段に分ける）
+    // スマホでも見やすい評価ブロックの生成
     function createEvalBlock(left, val, right) {
         if (!val || val === "") return "";
         let dots = "";
@@ -481,19 +465,9 @@ function displayResults(results, isSelected, mode) {
         return card;
     }
 
-    function appendReferenceBlock(parentNode) {
-        const refDiv = document.createElement('div');
-        refDiv.style.cssText = "background-color: #f8f9fa; padding: 20px 15px; border-radius: 5px; margin: 30px 0; border: 1px dashed #ccc; text-align: center;";
-        refDiv.innerHTML = `
-            <p style="margin: 0 0 8px 0; font-weight: bold; color: #333;">💡 【参考】機械工学科の公式ページも確認してみましょう</p>
-            <a href="https://www.rs.tus.ac.jp/me/laboratory.html" target="_blank" style="color: #007bff; text-decoration: underline; font-size: 1.05em;">学科公式HP 研究室一覧はこちら</a>
-        `;
-        parentNode.appendChild(refDiv);
-    }
-
+    // ▼▼▼ 3. 診断結果の表示 ▼▼▼
     if (!isSelected) {
         results.forEach(lab => container.appendChild(createLabCard(lab)));
-        appendReferenceBlock(container);
     } else {
         if (recommendedLabs.length > 0) {
             const recTitle = document.createElement('h3');
@@ -508,8 +482,6 @@ function displayResults(results, isSelected, mode) {
             container.appendChild(noRec);
         }
 
-        appendReferenceBlock(container);
-
         if (otherLabs.length > 0) {
             const hr = document.createElement('hr');
             hr.style.margin = "30px 0 20px 0";
@@ -523,8 +495,39 @@ function displayResults(results, isSelected, mode) {
         }
     }
 
+    // ▼▼▼ 変更: 4. 診断の仕組み（一番下に移動） ▼▼▼
+    let descHtml = "";
+    if (mode === 'keyword') {
+        descHtml = `
+            <p style="margin: 0 0 5px 0;"><strong>💡 診断の仕組み（キーワード）</strong></p>
+            <p style="margin: 0 0 5px 0;">選択したキーワードと一致した場合に加点を行っています（主要:30点，専門:10点）．</p>
+            <p style="margin: 0; color: #555; font-size: 0.9em;">※登録キーワード数が多い研究室ほど点数が高くなる傾向があります．詳細は各HPをご確認ください．</p>
+        `;
+    } else {
+        descHtml = `
+            <p style="margin: 0 0 5px 0;"><strong>💡 診断の仕組み（スタイル・雰囲気）</strong></p>
+            <p style="margin: 0 0 8px 0;">あなたが選んだ理想のスタイルと，先輩が登録した実際の雰囲気の「近さ」を項目ごとに比較し，相性スコア（最大60点）として算出しています．</p>
+            <div style="background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 8px;">
+                <p style="margin: 0 0 5px 0;"><strong>【項目ごとの加点ルール】</strong></p>
+                <ul style="margin: 0; padding-left: 20px; font-size: 0.95em;">
+                    <li>ピッタリ一致：10点</li>
+                    <li>1メモリずれ：7点</li>
+                    <li>2メモリずれ：4点</li>
+                    <li>3メモリずれ：1点</li>
+                    <li>4メモリずれ：0点</li>
+                </ul>
+                <p style="margin: 5px 0 0 0; font-size: 0.85em; color: #666;">※「指定しない」を選んだ項目は計算から除外されます．</p>
+            </div>
+        `;
+    }
+    const bottomDescDiv = document.createElement('div');
+    bottomDescDiv.style.cssText = "background-color: #e7f3ff; padding: 12px 15px; border-radius: 5px; margin: 30px 0 20px 0; border: 1px solid #b3d7ff; font-size: 0.9em;";
+    bottomDescDiv.innerHTML = descHtml;
+    container.appendChild(bottomDescDiv);
+
+    // ▼▼▼ 5. 一番下の「もう一度診断する」ボタン ▼▼▼
     const bottomResetDiv = document.createElement('div');
-    bottomResetDiv.style.marginTop = "30px";
+    bottomResetDiv.style.marginTop = "10px";
     bottomResetDiv.style.textAlign = "center";
     bottomResetDiv.innerHTML = `
         <button style="background-color: #6c757d; color: #fff; padding: 12px 24px; border: none; border-radius: 5px; font-size: 1.1em; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
@@ -534,5 +537,6 @@ function displayResults(results, isSelected, mode) {
     bottomResetDiv.querySelector('button').addEventListener('click', resetApp);
     container.appendChild(bottomResetDiv);
 
+    // 診断結果へスクロール
     setTimeout(() => { container.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
 }
