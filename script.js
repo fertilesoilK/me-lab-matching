@@ -548,7 +548,11 @@ function displayResults(results, isSelected, mode) {
     if (mode === 'keyword') {
         descHtml = `
             <p style="margin: 0 0 5px 0;"><strong>💡 診断の仕組み（キーワード）</strong></p>
-            <p style="margin: 0 0 5px 0;">あなたが選択したキーワードの合計点数を「満点」とし，その研究室がどれくらいカバーしているかを割合（100点満点）で算出しています（主要一致:50点，専門一致:10点）．</p>
+            <p style="margin: 0 0 8px 0;">あなたが希望する研究テーマを，その研究室がどの程度カバーしているか（網羅率）を算出しています．選択したキーワードの種類に応じて重み付け（<strong>主要キーワード：1つ50点，専門・詳細キーワード：1つ10点</strong>）を行い，以下の方法で100点満点に正規化しています．</p>
+            <ul style="margin: 0; padding-left: 20px; font-size: 0.95em; color: #444;">
+                <li><strong>分母：</strong>あなたが選択した全キーワードの合計点数</li>
+                <li><strong>分子：</strong>選択したキーワードのうち，その研究室が実際に扱っている（一致した）分の合計点数</li>
+            </ul>
         `;
     } else {
         descHtml = `
