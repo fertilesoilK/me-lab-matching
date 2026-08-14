@@ -252,13 +252,13 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
                 labKeywords = lab.キーワードデータ.map(kwTuple => Array.isArray(kwTuple) ? kwTuple[0] : kwTuple);
             }
             
-            // 研究室が持っている最大のポテンシャル点数を計算
-            let maxLabScore = 0;
-            labKeywords.forEach(kw => {
-                maxLabScore += allMainKeywords.includes(kw) ? 50 : 10;
+            // 【案1】ユーザーが選択したキーワードの合計点数を満点（分母）として計算する
+            let maxUserScore = 0;
+            selectedThemes.forEach(theme => {
+                maxUserScore += allMainKeywords.includes(theme) ? 50 : 10;
             });
 
-            // ユーザーが選択したキーワードと一致した点数を計算
+            // ユーザーが選択したキーワードのうち、研究室が持っている点数を計算（分子）
             selectedThemes.forEach(theme => {
                 if (labKeywords.includes(theme)) {
                     score += allMainKeywords.includes(theme) ? 50 : 10;
@@ -267,8 +267,8 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
 
             // 100点満点のパーセンテージに変換
             let finalScore = 0;
-            if (maxLabScore > 0) {
-                finalScore = Math.round((score / maxLabScore) * 100);
+            if (maxUserScore > 0) {
+                finalScore = Math.round((score / maxUserScore) * 100);
             }
 
             return { ...lab, Match_Score: finalScore, parsedKeywords: labKeywords };
@@ -445,7 +445,7 @@ function displayResults(results, isSelected, mode) {
             categorizedKws[cat][type].push(kw);
         });
 
-        // 修正箇所：PREDEFINED_KEYWORDS の定義順に基づいて並び替えてから表示する
+        // PREDEFINED_KEYWORDS の定義順に基づいて並び替えてから表示する
         const sortedCats = Object.keys(PREDEFINED_KEYWORDS).filter(cat => categorizedKws[cat]);
         const kwHtml = sortedCats.map(cat => `
             <div style="margin-bottom: 10px;">
@@ -548,7 +548,7 @@ function displayResults(results, isSelected, mode) {
     if (mode === 'keyword') {
         descHtml = `
             <p style="margin: 0 0 5px 0;"><strong>💡 診断の仕組み（キーワード）</strong></p>
-            <p style="margin: 0 0 5px 0;">選択したキーワードが研究室のものと一致した場合に加点（主要:50点，専門:10点）し，その研究室が持つキーワードの最大点数に対する割合を100点満点で算出しています．</p>
+            <p style="margin: 0 0 5px 0;">あなたが選択したキーワードの合計点数を「満点」とし，その研究室がどれくらいカバーしているかを割合（100点満点）で算出しています（主要一致:50点，専門一致:10点）．</p>
         `;
     } else {
         descHtml = `
