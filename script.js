@@ -252,7 +252,7 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
                 labKeywords = lab.キーワードデータ.map(kwTuple => Array.isArray(kwTuple) ? kwTuple[0] : kwTuple);
             }
             
-            // 【案1】ユーザーが選択したキーワードの合計点数を満点（分母）として計算する
+            // ユーザーが選択したキーワードの合計点数を満点（分母）として計算する
             let maxUserScore = 0;
             selectedThemes.forEach(theme => {
                 maxUserScore += allMainKeywords.includes(theme) ? 50 : 10;
@@ -548,10 +548,13 @@ function displayResults(results, isSelected, mode) {
     if (mode === 'keyword') {
         descHtml = `
             <p style="margin: 0 0 5px 0;"><strong>💡 診断の仕組み（キーワード）</strong></p>
-            <p style="margin: 0 0 8px 0;">あなたが希望する研究テーマを，その研究室がどの程度カバーしているか（網羅率）を算出しています．選択したキーワードの種類に応じて重み付け（<strong>主要キーワード：1つ50点，専門・詳細キーワード：1つ10点</strong>）を行い，以下の方法で100点満点に正規化しています．</p>
-            <ul style="margin: 0; padding-left: 20px; font-size: 0.95em; color: #444;">
-                <li><strong>分母：</strong>あなたが選択した全キーワードの合計点数</li>
-                <li><strong>分子：</strong>選択したキーワードのうち，その研究室が実際に扱っている（一致した）分の合計点数</li>
+            <p style="margin: 0 0 8px 0;">あなたが希望する研究テーマを，その研究室がどの程度カバーしているか（網羅率）を算出しています．キーワードに重み（主要:50点，専門:10点）を持たせ，以下の式で100点満点に換算します．</p>
+            <div style="background-color: #f8f9fa; padding: 12px; border-radius: 5px; margin-bottom: 8px; text-align: center; color: #333; font-size: 1.05em; font-weight: bold;">
+                スコア ＝ （ &alpha; ÷ &beta; ） × 100
+            </div>
+            <ul style="margin: 0; padding-left: 20px; font-size: 0.95em; color: #444; line-height: 1.6;">
+                <li><strong>&alpha;（分子）：</strong>選択したキーワードのうち，その研究室が実際に扱っているキーワードの合計点数</li>
+                <li><strong>&beta;（分母）：</strong>あなたが選択した全キーワードの合計点数</li>
             </ul>
         `;
     } else {
