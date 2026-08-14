@@ -370,7 +370,7 @@ function displayResults(results, isSelected, mode) {
         const medals = ["🥇 1位", "🥈 2位", "🥉 3位"];
         
         top3.forEach((lab, index) => {
-            shareText += `${medals[index]}：${lab.研究室名} (Score: ${lab.Match_Score}点)\n`;
+            shareText += `${medals[index]}：${lab.研究室名} (スコア: ${lab.Match_Score}点)\n`;
         });
         shareText += "\nあなたも診断してみよう！\n" + window.location.href;
         
@@ -480,7 +480,7 @@ function displayResults(results, isSelected, mode) {
                 <summary style="cursor: pointer; padding: 5px; line-height: 1.6;">
                     ${rankHtml}
                     <span style="display: inline-block; font-weight: bold; font-size: 1.05em; vertical-align: middle;">【${lab.研究室名}】</span> 
-                    <span style="display: inline-block; margin: 0 5px; color: #d63384; font-weight: bold; vertical-align: middle;">Score: ${lab.Match_Score}点</span> 
+                    <span style="display: inline-block; margin: 0 5px; color: #d63384; font-weight: bold; vertical-align: middle;">スコア: ${lab.Match_Score}点</span> 
                     <span style="color: #007bff; font-size: 0.85em; white-space: nowrap; vertical-align: middle;">[▼ 詳細]</span>
                 </summary>
                 <div style="padding: 15px; border-top: 1px solid #eee; margin-top: 10px;">
@@ -549,8 +549,13 @@ function displayResults(results, isSelected, mode) {
         descHtml = `
             <p style="margin: 0 0 5px 0;"><strong>💡 診断の仕組み（キーワード）</strong></p>
             <p style="margin: 0 0 8px 0;">あなたが希望する研究テーマを，その研究室がどの程度カバーしているか（網羅率）を算出しています．キーワードに重み（主要:50点，専門:10点）を持たせ，以下の式で100点満点に換算します．</p>
-            <div style="background-color: #f8f9fa; padding: 12px; border-radius: 5px; margin-bottom: 8px; text-align: center; color: #333; font-size: 1.05em; font-weight: bold;">
-                スコア ＝ （ &alpha; ÷ &beta; ） × 100
+            <div style="background-color: #f8f9fa; padding: 12px; border-radius: 5px; margin-bottom: 8px; display: flex; justify-content: center; align-items: center; color: #333; font-size: 1.05em; font-weight: bold;">
+                <span>スコア ＝ </span>
+                <span style="display: inline-flex; flex-direction: column; text-align: center; margin: 0 8px;">
+                    <span style="border-bottom: 1px solid #333; padding: 0 4px; line-height: 1.2;">&alpha;</span>
+                    <span style="padding: 0 4px; line-height: 1.2;">&beta;</span>
+                </span>
+                <span> × 100</span>
             </div>
             <ul style="margin: 0; padding-left: 20px; font-size: 0.95em; color: #444; line-height: 1.6;">
                 <li><strong>&alpha;（分子）：</strong>選択したキーワードのうち，その研究室が実際に扱っているキーワードの合計点数</li>
