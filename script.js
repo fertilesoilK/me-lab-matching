@@ -348,8 +348,8 @@ function displayResults(results, isSelected, mode) {
     const topRefDiv = document.createElement('div');
     topRefDiv.style.cssText = "background-color: #f8f9fa; padding: 20px 15px; border-radius: 5px; margin-bottom: 20px; border: 1px dashed #ccc; text-align: center;";
     topRefDiv.innerHTML = `
-        <p style="margin: 0 0 8px 0; font-weight: bold; color: #333;">💡 【参考】機械工学科の公式ページも確認してみましょう</p>
-        <a href="https://www.rs.tus.ac.jp/me/laboratory.html" target="_blank" style="color: #007bff; text-decoration: underline; font-size: 1.05em;">学科公式HP 研究室一覧はこちら</a>
+        <p style="margin: 0 0 8px 0; font-weight: bold; color: #333;">💡 【参考】学科の公式ページも確認してみましょう</p>
+        <a href="https://www.rs.tus.ac.jp/me/laboratory.html" target="_blank" style="color: #007bff; text-decoration: underline; font-size: 1.05em;">学科公式HP 研究室紹介はこちら</a>
     `;
     container.appendChild(topRefDiv);
 
