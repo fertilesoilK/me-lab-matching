@@ -33,6 +33,10 @@
             width: 100%;
             box-sizing: border-box;
             
+            /* ブラウザのデフォルトスタイルを強制リセットして基準を揃える */
+            font-size: 16px; 
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            
             /* 下方向への厚み（影）をつけて立体感を出す */
             box-shadow: 0 5px 0 #cce5ff, 0 6px 10px rgba(0,0,0,0.05);
         }
@@ -59,25 +63,26 @@
             top: 50%;
             transform: translateY(-50%);
             color: #0056b3;
-            font-size: 1.5em;
+            font-size: 1.5rem; /* remに変更 */
             font-weight: bold;
             opacity: 0.4;
         }
 
-        /* buttonタグとaタグで文字サイズがずれるのを防ぐために明示的に指定 */
+        /* buttonタグとaタグで文字サイズがずれるのを完全に防ぐために絶対指定(rem)に変更 */
         .menu-button h2 {
             color: #0056b3;
             margin-top: 0;
             margin-bottom: 10px;
-            font-size: 1.3em;
+            font-size: 1.3rem; /* emからremに変更 */
             font-family: 'Helvetica Neue', Arial, sans-serif;
             font-weight: bold;
+            line-height: 1.3;
         }
         
         .menu-button p {
             margin: 0;
             color: #555;
-            font-size: 0.95em;
+            font-size: 0.95rem; /* emからremに変更 */
             line-height: 1.5;
             font-family: 'Helvetica Neue', Arial, sans-serif;
         }
@@ -96,11 +101,11 @@
     <div class="container">
         <h1 style="line-height: 1.4;"><span style="display: inline-block;">ME研究室</span><span style="display: inline-block;">マッチングシステム</span></h1>
         
-        <p>Ｂ４の先輩たちのデータをもとに，あなたの研究室選びをサポートします．</p>
+        <p>あなたの研究室選びをサポートします．</p>
         
         <p style="background-color: #fff3cd; padding: 10px; border-radius: 5px; font-size: 0.9em;">
-            ⚠️ <strong>注意事項（非公式ツールです）</strong><br>
-            本サイトの情報はあくまで参考目安です．情報を鵜呑みにせず，最終的な詳細は必ず各研究室の公式ホームページや見学等で確認してください．
+            ⚠️ <strong>注意事項</strong><br>
+            本サイトは非公式サイトであり，情報はあくまでB4が収集したものです．鵜呑みにせず，正確な情報は必ず各研究室の公式ホームページや見学等で確認してください．
         </p>
 
         <!-- メインメニュー -->
