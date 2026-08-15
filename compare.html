@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>研究室 比較ツール</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* 比較ツール専用の追加スタイル */
+        .compare-container {
+            max-width: 1200px; /* 比較表を広く見せるために少し幅を広げる */
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .lab-selector {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border: 1px solid #e9ecef;
+        }
+
+        .checkbox-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .lab-check-label {
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .lab-check-label:hover {
+            background: #e2e6ea;
+        }
+
+        .lab-check-label input {
+            margin-right: 8px;
+            transform: scale(1.2);
+        }
+
+        /* チェックされた時のデザイン変更 */
+        .lab-check-label.selected {
+            background: #e6f7ff;
+            border-color: #007bff;
+            color: #0056b3;
+            font-weight: bold;
+        }
+
+        /* 比較テーブルのスタイル */
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px; /* テーブルが縮みすぎないように */
+        }
+
+        .compare-table th, .compare-table td {
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            vertical-align: top;
+            line-height: 1.6;
+        }
+
+        .compare-table th {
+            background-color: #f8f9fa;
+            color: #495057;
+            font-weight: bold;
+        }
+
+        /* 左端の項目名カラムを固定幅に */
+        .compare-table th.row-header {
+            width: 150px;
+            min-width: 150px;
+            text-align: center;
+            vertical-align: middle;
+            background-color: #e9ecef;
+        }
+
+        /* 研究室ごとの列の幅を均等に */
+        .compare-table td.data-cell, .compare-table th.col-header {
+            width: 300px;
+            min-width: 250px;
+        }
+
+        .col-header {
+            text-align: center;
+            font-size: 1.1em;
+            background-color: #0056b3 !important;
+            color: white !important;
+        }
+
+        .kw-tag {
+            display: inline-block;
+            background-color: #f1f3f5;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            margin: 2px;
+            border: 1px solid #ddd;
+        }
+        
+        .kw-tag.main {
+            background-color: #e6f2ff;
+            border-color: #b3d7ff;
+            color: #004085;
+            font-weight: bold;
+        }
+
+        /* リンクボタンを右上に配置 */
+        .nav-links {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+        .nav-links a {
+            display: inline-block;
+            background-color: #6c757d;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="compare-container">
+        <div class="nav-links">
+            <a href="index.html">← 診断ツールに戻る</a>
+        </div>
+        
+        <h1 style="line-height: 1.4; margin-top: 0;">研究室 比較ツール</h1>
+        <p>気になる研究室を選択すると，横並びの表で詳細を比較できます．（※横にスクロールできます）</p>
+
+        <div class="lab-selector">
+            <div style="font-weight: bold; color: #333;">■ 比較する研究室を選んでください</div>
+            <div id="checkbox-container" class="checkbox-grid">
+                <!-- JSでチェックボックスが自動生成されます -->
+            </div>
+        </div>
+
+        <div class="table-wrapper" id="table-container" style="display: none;">
+            <table class="compare-table" id="compare-table">
+                <!-- JSでテーブルが自動生成されます -->
+            </table>
+        </div>
+        
+        <div id="no-selection-msg" style="text-align: center; padding: 40px; color: #666; background: #f8f9fa; border-radius: 5px;">
+            研究室が選択されていません．上のリストから選んでください．
+        </div>
+    </div>
+    
+    <script src="compare.js"></script>
+</body>
+</html>

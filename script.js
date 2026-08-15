@@ -351,6 +351,7 @@ function displayResults(results, isSelected, mode) {
 
     // 1. 学科公式HPへの参考リンク
     const topRefDiv = document.createElement('div');
+    topRefDiv.className = 'no-print';
     topRefDiv.style.cssText = "background-color: #f8f9fa; padding: 20px 15px; border-radius: 5px; margin-bottom: 20px; border: 1px dashed #ccc; text-align: center;";
     topRefDiv.innerHTML = `
         <p style="margin: 0 0 8px 0; font-weight: bold; color: #333;">💡 【参考】学科の公式ページも確認してみましょう</p>
@@ -358,8 +359,9 @@ function displayResults(results, isSelected, mode) {
     `;
     container.appendChild(topRefDiv);
 
-    // 2. アクションボタン群（LINEシェア、リセット）
+    // 2. アクションボタン群
     const topActionsDiv = document.createElement('div');
+    topActionsDiv.className = 'no-print';
     topActionsDiv.style.display = "flex";
     topActionsDiv.style.flexWrap = "wrap";
     topActionsDiv.style.gap = "10px";
@@ -388,6 +390,14 @@ function displayResults(results, isSelected, mode) {
         topActionsDiv.appendChild(lineBtn);
     }
 
+    // 【追加】比較ツールへのリンクボタン
+    const compareBtn = document.createElement('a');
+    compareBtn.href = "compare.html";
+    compareBtn.target = "_blank";
+    compareBtn.style.cssText = "display: inline-block; background-color: #17a2b8; color: #fff; padding: 10px 15px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 0.95em; box-shadow: 0 2px 4px rgba(0,0,0,0.2);";
+    compareBtn.innerHTML = "📊 研究室を比較する";
+    topActionsDiv.appendChild(compareBtn);
+
     const topResetBtn = document.createElement('button');
     topResetBtn.style.cssText = "background-color: #6c757d; color: #fff; padding: 10px 15px; border: none; border-radius: 5px; font-size: 0.95em; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2);";
     topResetBtn.innerHTML = "🔄 もう一度診断する";
@@ -401,6 +411,7 @@ function displayResults(results, isSelected, mode) {
         if (!val || val === "") return "";
         let dots = "";
         for (let i = 1; i <= 5; i++) {
+            // 文字列の強調として太字タグを使用
             dots += (i == val) ? '<span style="color:#ffcc00; font-size:1.4em; line-height:1;">●</span>' : '<span style="color:#ddd; font-size:1.2em; line-height:1;">●</span>';
         }
         return `
@@ -477,7 +488,7 @@ function displayResults(results, isSelected, mode) {
                     ${rankHtml}
                     <span style="display: inline-block; font-weight: bold; font-size: 1.05em; vertical-align: middle;">【${lab.研究室名}】</span> 
                     <span style="display: inline-block; margin: 0 5px; color: #d63384; font-weight: bold; vertical-align: middle;">スコア: ${lab.Match_Score}点</span> 
-                    <span style="color: #007bff; font-size: 0.85em; white-space: nowrap; vertical-align: middle;">[▼ 詳細]</span>
+                    <span class="no-print" style="color: #007bff; font-size: 0.85em; white-space: nowrap; vertical-align: middle;">[▼ 詳細]</span>
                 </summary>
                 <div style="padding: 15px; border-top: 1px solid #eee; margin-top: 10px;">
                     <p style="margin: 5px 0;"><strong>分野：</strong> ${fieldDisplay || '未設定'}</p>
@@ -576,12 +587,14 @@ function displayResults(results, isSelected, mode) {
         `;
     }
     const bottomDescDiv = document.createElement('div');
+    bottomDescDiv.className = 'no-print';
     bottomDescDiv.style.cssText = "background-color: #e7f3ff; padding: 12px 15px; border-radius: 5px; margin: 30px 0 20px 0; border: 1px solid #b3d7ff; font-size: 0.9em;";
     bottomDescDiv.innerHTML = descHtml;
     container.appendChild(bottomDescDiv);
 
     // 5. 一番下の「もう一度診断する」ボタン
     const bottomResetDiv = document.createElement('div');
+    bottomResetDiv.className = 'no-print';
     bottomResetDiv.style.marginTop = "10px";
     bottomResetDiv.style.textAlign = "center";
     bottomResetDiv.innerHTML = `
