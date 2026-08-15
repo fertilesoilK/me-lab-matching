@@ -5,6 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ME研究室マッチング</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* トップページのメインメニュー用スタイル */
+        .main-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        .menu-button {
+            display: block;
+            background-color: #fff;
+            border: 2px solid #0056b3;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: left;
+            cursor: pointer;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .menu-button:hover {
+            background-color: #f0f8ff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        .menu-button h2 {
+            color: #0056b3;
+            margin-top: 0;
+            margin-bottom: 8px;
+            font-size: 1.25em;
+        }
+        .menu-button p {
+            margin: 0;
+            color: #555;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+        @media (min-width: 600px) {
+            .main-menu {
+                flex-direction: row;
+            }
+            .menu-button {
+                flex: 1;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -17,27 +66,40 @@
             本サイトの情報はあくまで参考目安です．情報を鵜呑みにせず，最終的な詳細は必ず各研究室の公式ホームページや見学等で確認してください．
         </p>
 
-        <!-- 診断モードの選択エリア -->
-        <div style="background-color: #e6f7ff; padding: 15px; border-radius: 5px; margin: 25px 0; border: 1px solid #b3d7ff;">
-            <p style="margin-top: 0; font-weight: bold; color: #0056b3;">💡 どのように診断しますか？</p>
-            <div style="display: flex; flex-direction: column; gap: 15px;">
-                <label style="cursor: pointer; font-size: 1.05em; display: block; line-height: 1.5;">
-                    <input type="radio" name="diag-mode" value="keyword" style="transform: scale(1.2); margin-right: 8px;"> 
-                    🔍 <strong>研究キーワードから探す</strong><br>
-                    <span style="font-size: 0.85em; color: #555; margin-left: 32px; display: inline-block;">（やりたい分野や研究が決まっている方向け）</span>
-                </label>
-                <label style="cursor: pointer; font-size: 1.05em; display: block; line-height: 1.5;">
-                    <input type="radio" name="diag-mode" value="style" style="transform: scale(1.2); margin-right: 8px;"> 
-                    💬 <strong>雰囲気・スタイルから探す</strong><br>
-                    <span style="font-size: 0.85em; color: #555; margin-left: 32px; display: inline-block;">（自分に合った環境を重視する方向け）</span>
-                </label>
+        <!-- 新設：メインメニュー -->
+        <div class="main-menu" id="main-menu">
+            <button class="menu-button" id="btn-diagnose">
+                <h2>🧭 自分に合う研究室を診断する</h2>
+                <p>キーワードや雰囲気から，あなたにぴったりの研究室をスコア化して探します．</p>
+            </button>
+            <a href="compare.html" class="menu-button">
+                <h2>📊 任意の研究室を比較する</h2>
+                <p>気になる研究室を複数選んで，詳細なデータを横並びの表で比較します．</p>
+            </a>
+        </div>
+
+        <!-- 診断モードの選択エリア（初期状態は非表示） -->
+        <div id="diag-selection-area" style="display: none;">
+            <hr style="margin-bottom: 25px;">
+            <div style="background-color: #e6f7ff; padding: 15px; border-radius: 5px; margin: 0 0 25px 0; border: 1px solid #b3d7ff;">
+                <p style="margin-top: 0; font-weight: bold; color: #0056b3;">💡 どのように診断しますか？</p>
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <label style="cursor: pointer; font-size: 1.05em; display: block; line-height: 1.5;">
+                        <input type="radio" name="diag-mode" value="keyword" style="transform: scale(1.2); margin-right: 8px;"> 
+                        🔍 <strong>研究キーワードから探す</strong><br>
+                        <span style="font-size: 0.85em; color: #555; margin-left: 32px; display: inline-block;">（やりたい分野や研究が決まっている方向け）</span>
+                    </label>
+                    <label style="cursor: pointer; font-size: 1.05em; display: block; line-height: 1.5;">
+                        <input type="radio" name="diag-mode" value="style" style="transform: scale(1.2); margin-right: 8px;"> 
+                        💬 <strong>雰囲気・スタイルから探す</strong><br>
+                        <span style="font-size: 0.85em; color: #555; margin-left: 32px; display: inline-block;">（自分に合った環境を重視する方向け）</span>
+                    </label>
+                </div>
             </div>
         </div>
         
         <!-- ▼ どちらかを選択した後に表示されるエリア ▼ -->
         <div id="form-area" style="display: none;">
-            <hr style="margin-bottom: 25px;">
-            
             <!-- キーワード診断用のコンテナ -->
             <div id="keywords-container" style="display: none;">
                 <p style="background-color: #e2e3e5; padding: 10px; border-radius: 5px; font-size: 0.9em; margin-bottom: 20px;">

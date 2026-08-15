@@ -24,6 +24,17 @@ const EVAL_QUESTIONS = [
     { id: "eval_6", left: "個人作業中心", right: "チーム作業中心" }
 ];
 
+// トップメニューの切り替え処理
+const btnDiagnose = document.getElementById('btn-diagnose');
+const diagSelectionArea = document.getElementById('diag-selection-area');
+
+if (btnDiagnose && diagSelectionArea) {
+    btnDiagnose.addEventListener('click', () => {
+        diagSelectionArea.style.display = 'block';
+        btnDiagnose.style.backgroundColor = '#e6f7ff';
+    });
+}
+
 // 診断モードの切り替え処理
 const modeRadios = document.querySelectorAll('input[name="diag-mode"]');
 const formArea = document.getElementById('form-area');
@@ -336,6 +347,10 @@ function resetApp() {
     document.querySelectorAll('input[name="diag-mode"]').forEach(r => r.checked = false);
     document.getElementById('form-area').style.display = 'none';
     
+    // トップメニューのリセット
+    if(diagSelectionArea) diagSelectionArea.style.display = 'none';
+    if(btnDiagnose) btnDiagnose.style.backgroundColor = '#fff';
+
     const url = new URL(window.location);
     url.search = '';
     window.history.replaceState({}, '', url);
@@ -389,14 +404,6 @@ function displayResults(results, isSelected, mode) {
         lineBtn.innerHTML = "💬 LINEで結果をシェアする";
         topActionsDiv.appendChild(lineBtn);
     }
-
-    // 【追加】比較ツールへのリンクボタン
-    const compareBtn = document.createElement('a');
-    compareBtn.href = "compare.html";
-    compareBtn.target = "_blank";
-    compareBtn.style.cssText = "display: inline-block; background-color: #17a2b8; color: #fff; padding: 10px 15px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 0.95em; box-shadow: 0 2px 4px rgba(0,0,0,0.2);";
-    compareBtn.innerHTML = "📊 研究室を比較する";
-    topActionsDiv.appendChild(compareBtn);
 
     const topResetBtn = document.createElement('button');
     topResetBtn.style.cssText = "background-color: #6c757d; color: #fff; padding: 10px 15px; border: none; border-radius: 5px; font-size: 0.95em; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2);";
