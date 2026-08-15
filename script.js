@@ -1,60 +1,10 @@
 let labData = [];
 
-// カテゴリとキーワードの定義
-const PREDEFINED_KEYWORDS = {
-    "流体力学": {
-        "主要": ["流体力学"],
-        "専門・詳細": ["ナビエ・ストークス方程式", "無次元化", "層流", "乱流", "低Re数", "高レイノルズ数流れ", "流れの遷移", "複雑な流れ現象", "亜音速", "粘弾性流体", "境界層", "気液混相流", "マイクロ流路"]
-    },
-    "熱力学": {
-        "主要": ["熱流体", "伝熱", "エネルギー効率化"],
-        "専門・詳細": ["沸騰現象", "表面張力", "濡れ現象", "マランゴニ対流", "プラントのガス漏洩検知", "有害物質拡散源推定", "熱交換器"]
-    },
-    "航空工学・飛行システム": {
-        "主要": ["航空機", "羽ばたき飛行"],
-        "専門・詳細": ["航空機翼", "航空機設計", "翼の最適化設計", "翼の空力設計", "風洞実験", "離陸飛行実験"]
-    },
-    "宇宙工学・推進エンジン": {
-        "主要": ["宇宙環境", "エンジン"],
-        "専門・詳細": ["エンジン設計", "火星飛行探索機", "JAXA", "ターボジェットエンジン", "極超音速エンジン", "複合サイクルエンジン", "スペースプレーン", "エンジン制御", "流路切替機構設計", "火星利用", "生命維持", "水電解"]
-    },
-    "材料": {
-        "主要": ["複合材料", "CFRP", "炭素繊維・連続繊維", "微細加工"],
-        "専門・詳細": ["セラミックス", "ダイヤモンド", "知的材料・構造", "リサイクルCFRP", "GFRP", "VARTM(樹脂注入成形)", "フラン樹脂", "成膜", "銅メッキ", "白金触媒", "プラズマ照射"]
-    },
-    "固体力学・構造・強度": {
-        "主要": ["材料力学", "破壊力学", "材料強度学"],
-        "専門・詳細": ["連続体力学", "疲労", "弾塑性力学", "強度評価", "損傷力学", "非線形破壊力学", "計算固体力学", "計算破壊力学", "繰り返し荷重", "溶接", "亀裂進展解析", "J積分", "引張試験", "曲げ試験", "衝撃強度試験", "DCB試験(層間破壊靭性試験)", "破面観察", "走査電子顕微鏡", "固体力学解析手法構築", "分子動力学", "転位動力学"]
-    },
-    "ロボット工学・メカトロニクス": {
-        "主要": ["ロボット工学", "産業用ロボット", "ドローン", "自動化"],
-        "専門・詳細": ["ロボット視覚機能付与", "協働ロボット(UR等)", "ロボットアーム", "ロボットマニピュレーション", "人工筋肉", "小型ロボットヘリコプター", "マイクロ航空機", "自立飛行", "機械機構・ロボット設計", "ロボットビジョン"]
-    },
-    "制御工学・振動・機械要素": {
-        "主要": ["振動工学", "音響シミュレーション", "自動車への応用"],
-        "専門・詳細": ["ロボット制御", "モーションキャプチャ", "飛行制御", "ロバスト制御", "ビジュアルサーボ", "電子工作", "MEMS", "レーザー加工", "流量計開発・評価", "警告音設計(自転車等)", "センサ", "ギア"]
-    },
-    "数値解析・シミュレーション": {
-        "主要": ["数値解析", "有限要素法"],
-        "専門・詳細": ["CFD解析", "CAE", "分子シミュレーション", "IGA(アイソジオメトリック解析)", "FPM(粒子法)", "重合メッシュ法", "領域積分法", "サンプリングモアレ法", "marc(非線形構造解析ソフト)", "独自解析手法の構築", "フーリエ解析", "テンソル解析"]
-    },
-    "AI・情報・プログラミング": {
-        "主要": ["プログラミング", "人工知能", "機械学習", "画像解析"],
-        "専門・詳細": ["python", "c言語", "統計解析", "情報理論・データサイエンス", "最適化", "フィジカルAI", "深層学習・CNN", "強化学習", "画像処理・物体認識", "点群処理", "fortran", "MATLAB", "Simulink", "サウンドスケープ評価"]
-    },
-    "バイオメカニクス・生体工学": {
-        "主要": ["バイオメカニクス", "生体工学", "生物模倣"],
-        "専門・詳細": ["生体機械", "聴覚・音声メカニズム", "アクティブマター・自己駆動粒子", "血流・血管の解析", "人工心臓・人工弁", "内視鏡", "がん細胞", "嚥下(えんげ)音解析"]
-    },
-    "医療福祉・人間工学": {
-        "主要": ["医療工学", "医療・福祉支援技術", "介護支援", "感性工学"],
-        "専門・詳細": ["脳波解析(睡眠・音楽)", "聴力評価(DINテスト)", "病院の音環境"]
-    },
-    "実験設備・ツール・その他": {
-        "主要": ["3Dプリンタ", "VR音響評価"],
-        "専門・詳細": ["実験装置設計", "ハイスピードカメラ", "電子顕微鏡", "マイクロスコープ", "真空装置", "着磁", "三次元計測", "フォトリソグラフィー", "電気化学", "小型燃料電池", "ROS", "Fusion", "Mac", "Claude", "Notion", "快適性評価(well-being)", "プラント安全設計"]
-    }
-};
+// data.jsonから自動生成されるグローバル変数
+let dynamicKeywords = {};
+let allKeywordsList = [];
+let allMainSet = new Set();
+let keywordToCategoryMap = {};
 
 // スタイル診断用の評価項目定義
 const EVAL_QUESTIONS = [
@@ -85,18 +35,82 @@ modeRadios.forEach(radio => {
     });
 });
 
-// URL短縮用の全キーワード配列を作成
-const allKeywordsList = [];
-for (const cat in PREDEFINED_KEYWORDS) {
-    allKeywordsList.push(...PREDEFINED_KEYWORDS[cat]["主要"]);
-    allKeywordsList.push(...PREDEFINED_KEYWORDS[cat]["専門・詳細"]);
-}
-
-// JSONデータを読み込む
+// JSONデータを読み込み、キーワードリストを完全自動生成する
 fetch('data.json')
     .then(response => response.json())
     .then(data => {
         labData = data;
+        
+        // カテゴリの表示順を整えるためのリスト
+        const CATEGORY_ORDER = [
+            "流体力学", "熱力学", "航空工学・飛行システム", "宇宙工学・推進エンジン",
+            "材料", "固体力学・構造・強度", "ロボット工学・メカトロニクス",
+            "制御工学・振動・機械要素", "数値解析・シミュレーション", "AI・情報・プログラミング",
+            "バイオメカニクス・生体工学", "医療福祉・人間工学", "実験設備・ツール・その他"
+        ];
+
+        // 順番通りに空のカテゴリを初期化
+        CATEGORY_ORDER.forEach(cat => {
+            dynamicKeywords[cat] = { "主要": [], "専門・詳細": [] };
+        });
+
+        // データからのキーワード抽出と動的リストの構築
+        labData.forEach(lab => {
+            let kws = [];
+            if (typeof lab.キーワードデータ === 'string') {
+                try { kws = JSON.parse(lab.キーワードデータ.replace(/'/g, '"')); } catch(e) {}
+            } else if (Array.isArray(lab.キーワードデータ)) {
+                kws = lab.キーワードデータ;
+            }
+
+            lab.parsedKeywords = []; // スコア計算用に「名前だけ」の配列を持たせる
+
+            kws.forEach(kwTuple => {
+                if (Array.isArray(kwTuple) && kwTuple.length > 0) {
+                    const name = kwTuple[0];
+                    const cat = kwTuple[1] || "実験設備・ツール・その他";
+                    const level = kwTuple[2] || "専門・詳細"; // 万が一情報が欠けていれば「専門」とする
+
+                    if (!dynamicKeywords[cat]) {
+                        dynamicKeywords[cat] = { "主要": [], "専門・詳細": [] };
+                    }
+                    if (!dynamicKeywords[cat][level]) {
+                        dynamicKeywords[cat][level] = [];
+                    }
+                    if (!dynamicKeywords[cat][level].includes(name)) {
+                        dynamicKeywords[cat][level].push(name);
+                    }
+                    lab.parsedKeywords.push(name);
+                } else if (typeof kwTuple === 'string') {
+                    // 過去の一次元配列（文字だけ）への対応
+                    const name = kwTuple;
+                    const cat = "実験設備・ツール・その他";
+                    const level = "専門・詳細";
+                    if (!dynamicKeywords[cat][level].includes(name)) {
+                        dynamicKeywords[cat][level].push(name);
+                    }
+                    lab.parsedKeywords.push(name);
+                }
+            });
+        });
+
+        // 誰も登録していない空のカテゴリを削除し、グローバル変数を構築
+        Object.keys(dynamicKeywords).forEach(cat => {
+            if (dynamicKeywords[cat]["主要"].length === 0 && dynamicKeywords[cat]["専門・詳細"].length === 0) {
+                delete dynamicKeywords[cat];
+            } else {
+                dynamicKeywords[cat]["主要"].forEach(kw => {
+                    allKeywordsList.push(kw);
+                    allMainSet.add(kw);
+                    keywordToCategoryMap[kw] = cat;
+                });
+                dynamicKeywords[cat]["専門・詳細"].forEach(kw => {
+                    allKeywordsList.push(kw);
+                    keywordToCategoryMap[kw] = cat;
+                });
+            }
+        });
+
         renderKeywordsUI();
         renderStylesUI();
 
@@ -129,11 +143,11 @@ fetch('data.json')
     })
     .catch(error => console.error('データの読み込みに失敗しました:', error));
 
-// キーワードUIの生成
+// キーワードUIの生成（完全に動的）
 function renderKeywordsUI() {
     const container = document.getElementById('keywords-container');
     
-    for (const [category, groups] of Object.entries(PREDEFINED_KEYWORDS)) {
+    for (const [category, groups] of Object.entries(dynamicKeywords)) {
         const section = document.createElement('div');
         section.className = 'category-section';
         
@@ -237,31 +251,20 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
         else url.searchParams.delete('k');
         url.searchParams.delete('s'); 
 
-        const allMainKeywords = [];
-        for (const cat in PREDEFINED_KEYWORDS) {
-            allMainKeywords.push(...PREDEFINED_KEYWORDS[cat]["主要"]);
-        }
-
         results = labData.map(lab => {
             let score = 0;
-            let labKeywords = [];
-            if (typeof lab.キーワードデータ === 'string') {
-                const matches = lab.キーワードデータ.match(/'([^']+)'/g);
-                if (matches) labKeywords = matches.map(s => s.replace(/'/g, ''));
-            } else if (Array.isArray(lab.キーワードデータ)) {
-                labKeywords = lab.キーワードデータ.map(kwTuple => Array.isArray(kwTuple) ? kwTuple[0] : kwTuple);
-            }
+            const labKeywords = lab.parsedKeywords || [];
             
             // ユーザーが選択したキーワードの合計点数を満点（分母）として計算する
             let maxUserScore = 0;
             selectedThemes.forEach(theme => {
-                maxUserScore += allMainKeywords.includes(theme) ? 50 : 10;
+                maxUserScore += allMainSet.has(theme) ? 50 : 10;
             });
 
             // ユーザーが選択したキーワードのうち、研究室が持っている点数を計算（分子）
             selectedThemes.forEach(theme => {
                 if (labKeywords.includes(theme)) {
-                    score += allMainKeywords.includes(theme) ? 50 : 10;
+                    score += allMainSet.has(theme) ? 50 : 10;
                 }
             });
 
@@ -306,15 +309,7 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
                 finalScore = Math.round((score / maxPossibleScore) * 100);
             }
 
-            let labKeywords = [];
-            if (typeof lab.キーワードデータ === 'string') {
-                const matches = lab.キーワードデータ.match(/'([^']+)'/g);
-                if (matches) labKeywords = matches.map(s => s.replace(/'/g, ''));
-            } else if (Array.isArray(lab.キーワードデータ)) {
-                labKeywords = lab.キーワードデータ.map(kwTuple => Array.isArray(kwTuple) ? kwTuple[0] : kwTuple);
-            }
-
-            return { ...lab, Match_Score: finalScore, parsedKeywords: labKeywords };
+            return { ...lab, Match_Score: finalScore, parsedKeywords: lab.parsedKeywords || [] };
         });
     }
 
@@ -410,15 +405,6 @@ function displayResults(results, isSelected, mode) {
             </div>`;
     }
 
-    const allMainSet = new Set();
-    Object.values(PREDEFINED_KEYWORDS).forEach(cat => { cat["主要"].forEach(kw => allMainSet.add(kw)); });
-
-    const keywordToCategoryMap = {};
-    for (const [category, groups] of Object.entries(PREDEFINED_KEYWORDS)) {
-        groups["主要"].forEach(kw => keywordToCategoryMap[kw] = category);
-        groups["専門・詳細"].forEach(kw => keywordToCategoryMap[kw] = category);
-    }
-
     function createLabCard(lab, rank = null) {
         const card = document.createElement('div');
         card.className = 'result-card';
@@ -445,8 +431,8 @@ function displayResults(results, isSelected, mode) {
             categorizedKws[cat][type].push(kw);
         });
 
-        // PREDEFINED_KEYWORDS の定義順に基づいて並び替えてから表示する
-        const sortedCats = Object.keys(PREDEFINED_KEYWORDS).filter(cat => categorizedKws[cat]);
+        // 定義されたカテゴリの順番で表示する
+        const sortedCats = Object.keys(dynamicKeywords).filter(cat => categorizedKws[cat]);
         const kwHtml = sortedCats.map(cat => `
             <div style="margin-bottom: 10px;">
                 <strong style="color: #444;">・${cat}</strong>

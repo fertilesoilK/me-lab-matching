@@ -65,7 +65,6 @@
             <div class="section-header">1. 基本情報</div>
             <div class="form-group">
                 <label class="block-label">■ 研究室名</label>
-                <!-- requiredを外してJavaScript側で独自にエラーチェックします -->
                 <select id="labName">
                     <option value="">選択してください</option>
                     <option value="上野研究室">上野研究室</option>
@@ -121,7 +120,6 @@
             <div id="coreTimeInputs" style="display: none; gap: 15px;">
                 <div style="flex: 1;">
                     <label class="block-label">開始時刻</label>
-                    <!-- 初期値(value)を削除し、空欄になるようにしました -->
                     <input type="time" id="coreStart">
                 </div>
                 <div style="flex: 1;">
@@ -198,7 +196,7 @@
                 "専門・詳細": ["協働ロボット(UR等)", "ロボットアーム", "小型ロボットヘリコプター", "マイクロ航空機", "機械機構・ロボット設計", "人工筋肉", "ロボットマニピュレーション", "自立飛行", "ロボットビジョン", "ロボット視覚機能付与"]
             },
             "制御工学・振動・機械要素": {
-                "主要": ["振動工学", "音響シミュレーション", "自動車"],
+                "主要": ["振動工学", "音響シミュレーション", "自動車システム"],
                 "専門・詳細": ["ロバスト制御", "ロボット制御", "飛行制御", "ビジュアルサーボ", "モーションキャプチャ", "センサ", "ギア", "MEMS", "電子工作", "レーザー加工", "流量計開発・評価", "警告音設計(自転車等)"]
             },
             "数値解析・シミュレーション": {
@@ -243,7 +241,7 @@
                 const grid = document.createElement('div');
                 grid.className = 'pill-grid';
                 groups["主要"].forEach(kw => {
-                    grid.innerHTML += `<label class="pill-label"><input type="checkbox" name="keywords" value="${kw}"> ${kw}</label>`;
+                    grid.innerHTML += `<label class="pill-label"><input type="checkbox" name="keywords" value="${kw}" data-category="${category}" data-level="主要"> ${kw}</label>`;
                 });
                 catDiv.appendChild(grid);
             }
@@ -252,7 +250,7 @@
                 const grid = document.createElement('div');
                 grid.className = 'pill-grid';
                 groups["専門・詳細"].forEach(kw => {
-                    grid.innerHTML += `<label class="pill-label"><input type="checkbox" name="keywords" value="${kw}"> ${kw}</label>`;
+                    grid.innerHTML += `<label class="pill-label"><input type="checkbox" name="keywords" value="${kw}" data-category="${category}" data-level="専門・詳細"> ${kw}</label>`;
                 });
                 catDiv.appendChild(grid);
             }
@@ -270,6 +268,10 @@
             row.innerHTML = `
                 <input type="text" class="custom-kw-input" placeholder="追加キーワード">
                 <select class="custom-cat-select">${catOptions}</select>
+                <select class="custom-level-select" style="max-width: 150px;">
+                    <option value="専門・詳細">専門・詳細</option>
+                    <option value="主要">主要</option>
+                </select>
                 <button type="button" class="remove-btn" onclick="this.parentElement.remove()">－</button>
             `;
             customKwArea.appendChild(row);
@@ -326,14 +328,18 @@
                 errorList.push("・「研究室全体の分野」を少なくとも1つ選択してください．");
             }
 
-            // チェックされた既存のキーワードを取得
-            const keywords = Array.from(document.querySelectorAll('input[name="keywords"]:checked')).map(cb => cb.value);
+            // チェックされた既存のキーワードを取得 (名前, 分野, レベル)
+            const keywords = Array.from(document.querySelectorAll('input[name="keywords"]:checked')).map(cb => {
+                return [cb.value, cb.getAttribute('data-category'), cb.getAttribute('data-level')];
+            });
             
-            // 入力された独自の追加キーワードを取得
-            const customInputs = document.querySelectorAll('.custom-kw-input');
-            customInputs.forEach(input => {
-                const kw = input.value.trim();
-                if(kw) keywords.push(kw);
+            // 入力された独自の追加キーワードを取得 (名前, 分野, レベル)
+            const customRows = document.querySelectorAll('.custom-kw-row');
+            customRows.forEach(row => {
+                const kw = row.querySelector('.custom-kw-input').value.trim();
+                const cat = row.querySelector('.custom-cat-select').value;
+                const lvl = row.querySelector('.custom-level-select').value;
+                if(kw) keywords.push([kw, cat, lvl]);
             });
 
             if (keywords.length === 0) {
