@@ -10,41 +10,78 @@
         .main-menu {
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            margin-bottom: 10px;
+            gap: 20px; /* ボタン同士の間隔を少し広げる */
+            margin-bottom: 30px;
+            margin-top: 20px;
         }
+
+        /* -------------------------------------
+           ボタンっぽさを強調するデザイン設定
+           ------------------------------------- */
         .menu-button {
+            position: relative;
             display: block;
-            background-color: #fff;
-            border: 2px solid #0056b3;
-            border-radius: 8px;
-            padding: 20px;
+            background: linear-gradient(to bottom, #ffffff, #f9fcff);
+            border: 1px solid #b3d7ff;
+            border-radius: 10px;
+            padding: 25px 45px 25px 25px; /* 右側に矢印用の余白を確保 */
             text-align: left;
             cursor: pointer;
             text-decoration: none;
-            color: #333;
-            transition: all 0.2s ease;
-            font-family: inherit;
+            color: #31333F;
+            transition: all 0.15s ease; /* アニメーションの速度 */
             width: 100%;
             box-sizing: border-box;
+            
+            /* 下方向への厚み（影）をつけて立体感を出す */
+            box-shadow: 0 5px 0 #cce5ff, 0 6px 10px rgba(0,0,0,0.05);
         }
+        
+        /* マウスを乗せた時の動き（少し押し込まれる感じ） */
         .menu-button:hover {
-            background-color: #f0f8ff;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            transform: translateY(-2px);
+            transform: translateY(2px);
+            box-shadow: 0 3px 0 #b3d7ff, 0 4px 6px rgba(0,0,0,0.05);
+            background: linear-gradient(to bottom, #f0f8ff, #e6f2ff);
+            border-color: #99caff;
         }
+
+        /* クリックした瞬間の動き（完全に押し込まれる） */
+        .menu-button:active {
+            transform: translateY(5px);
+            box-shadow: 0 0 0 #b3d7ff;
+        }
+
+        /* 画面遷移を示す矢印アイコンを追加 */
+        .menu-button::after {
+            content: "〉";
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #0056b3;
+            font-size: 1.5em;
+            font-weight: bold;
+            opacity: 0.4;
+        }
+
+        /* buttonタグとaタグで文字サイズがずれるのを防ぐために明示的に指定 */
         .menu-button h2 {
             color: #0056b3;
             margin-top: 0;
-            margin-bottom: 8px;
-            font-size: 1.25em;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-weight: bold;
         }
+        
         .menu-button p {
             margin: 0;
             color: #555;
             font-size: 0.95em;
             line-height: 1.5;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
         }
+
         @media (min-width: 600px) {
             .main-menu {
                 flex-direction: row;
@@ -66,16 +103,16 @@
             本サイトの情報はあくまで参考目安です．情報を鵜呑みにせず，最終的な詳細は必ず各研究室の公式ホームページや見学等で確認してください．
         </p>
 
-        <!-- 新設：メインメニュー -->
+        <!-- メインメニュー -->
         <div class="main-menu" id="main-menu">
-            <button class="menu-button" id="btn-diagnose">
-                <h2>🧭 自分に合う研究室を診断する</h2>
-                <p>キーワードや雰囲気から，あなたにぴったりの研究室をスコア化して探します．</p>
-            </button>
             <a href="compare.html" class="menu-button">
                 <h2>📊 任意の研究室を比較する</h2>
                 <p>気になる研究室を複数選んで，詳細なデータを横並びの表で比較します．</p>
             </a>
+            <button class="menu-button" id="btn-diagnose">
+                <h2>🧭 自分に合う研究室を診断する</h2>
+                <p>キーワードや雰囲気から，あなたにぴったりの研究室をスコア化して探します．</p>
+            </button>
         </div>
 
         <!-- 診断モードの選択エリア（初期状態は非表示） -->
