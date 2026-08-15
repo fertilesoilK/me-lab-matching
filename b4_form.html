@@ -65,6 +65,7 @@
             <div class="section-header">1. 基本情報</div>
             <div class="form-group">
                 <label class="block-label">■ 研究室名</label>
+                <!-- requiredを外してJavaScript側で独自にエラーチェックします -->
                 <select id="labName">
                     <option value="">選択してください</option>
                     <option value="上野研究室">上野研究室</option>
@@ -99,7 +100,7 @@
             <hr>
             <label class="block-label">■ 選択肢にないキーワードを追加</label>
             <p style="font-size: 0.9em; color: #666;">※ 上記の中に適当なキーワードがない場合，適宜追加してください<br>
-            <span style="color: #ff4b4b; font-weight: bold;">B3が興味をひかれるような単語を追加することをお勧めします．</span></p>
+            <span style="color: #ff4b4b; font-weight: bold;">B3が興味をひかれるような単語を追加することをお勧めします．追加した単語は自動的に「専門・詳細キーワード」として登録されます．</span></p>
             <div id="customKwArea">
                 <!-- JSで動的に行を生成 -->
             </div>
@@ -166,6 +167,7 @@
             "バイオメカニクス・生体工学", "医療福祉・人間工学", "実験設備・ツール・その他"
         ];
 
+        // 初期表示用のキーワード（追加キーワードは「専門」になるのでここには追加不要）
         const categorized_keywords = {
             "流体力学": {
                 "主要": ["流体力学"],
@@ -268,10 +270,6 @@
             row.innerHTML = `
                 <input type="text" class="custom-kw-input" placeholder="追加キーワード">
                 <select class="custom-cat-select">${catOptions}</select>
-                <select class="custom-level-select" style="max-width: 150px;">
-                    <option value="専門・詳細">専門・詳細</option>
-                    <option value="主要">主要</option>
-                </select>
                 <button type="button" class="remove-btn" onclick="this.parentElement.remove()">－</button>
             `;
             customKwArea.appendChild(row);
@@ -333,12 +331,12 @@
                 return [cb.value, cb.getAttribute('data-category'), cb.getAttribute('data-level')];
             });
             
-            // 入力された独自の追加キーワードを取得 (名前, 分野, レベル)
+            // 入力された独自の追加キーワードを取得 (問答無用で「専門・詳細」にする)
             const customRows = document.querySelectorAll('.custom-kw-row');
             customRows.forEach(row => {
                 const kw = row.querySelector('.custom-kw-input').value.trim();
                 const cat = row.querySelector('.custom-cat-select').value;
-                const lvl = row.querySelector('.custom-level-select').value;
+                const lvl = "専門・詳細"; // 常に専門・詳細として送信
                 if(kw) keywords.push([kw, cat, lvl]);
             });
 

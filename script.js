@@ -6,6 +6,14 @@ let allKeywordsList = [];
 let allMainSet = new Set();
 let keywordToCategoryMap = {};
 
+// カテゴリの表示順を整えるための固定リスト
+const CATEGORY_ORDER = [
+    "流体力学", "熱力学", "航空工学・飛行システム", "宇宙工学・推進エンジン",
+    "材料", "固体力学・構造・強度", "ロボット工学・メカトロニクス",
+    "制御工学・振動・機械要素", "数値解析・シミュレーション", "AI・情報・プログラミング",
+    "バイオメカニクス・生体工学", "医療福祉・人間工学", "実験設備・ツール・その他"
+];
+
 // スタイル診断用の評価項目定義
 const EVAL_QUESTIONS = [
     { id: "eval_1", left: "実験中心", right: "解析・計算中心" },
@@ -40,14 +48,6 @@ fetch('data.json')
     .then(response => response.json())
     .then(data => {
         labData = data;
-        
-        // カテゴリの表示順を整えるためのリスト
-        const CATEGORY_ORDER = [
-            "流体力学", "熱力学", "航空工学・飛行システム", "宇宙工学・推進エンジン",
-            "材料", "固体力学・構造・強度", "ロボット工学・メカトロニクス",
-            "制御工学・振動・機械要素", "数値解析・シミュレーション", "AI・情報・プログラミング",
-            "バイオメカニクス・生体工学", "医療福祉・人間工学", "実験設備・ツール・その他"
-        ];
 
         // 順番通りに空のカテゴリを初期化
         CATEGORY_ORDER.forEach(cat => {
@@ -69,7 +69,7 @@ fetch('data.json')
                 if (Array.isArray(kwTuple) && kwTuple.length > 0) {
                     const name = kwTuple[0];
                     const cat = kwTuple[1] || "実験設備・ツール・その他";
-                    const level = kwTuple[2] || "専門・詳細"; // 万が一情報が欠けていれば「専門」とする
+                    const level = kwTuple[2] || "専門・詳細"; // 情報が欠けていれば「専門」とする
 
                     if (!dynamicKeywords[cat]) {
                         dynamicKeywords[cat] = { "主要": [], "専門・詳細": [] };
@@ -86,6 +86,12 @@ fetch('data.json')
                     const name = kwTuple;
                     const cat = "実験設備・ツール・その他";
                     const level = "専門・詳細";
+                    if (!dynamicKeywords[cat]) {
+                        dynamicKeywords[cat] = { "主要": [], "専門・詳細": [] };
+                    }
+                    if (!dynamicKeywords[cat][level]) {
+                        dynamicKeywords[cat][level] = [];
+                    }
                     if (!dynamicKeywords[cat][level].includes(name)) {
                         dynamicKeywords[cat][level].push(name);
                     }
@@ -148,6 +154,9 @@ function renderKeywordsUI() {
     const container = document.getElementById('keywords-container');
     
     for (const [category, groups] of Object.entries(dynamicKeywords)) {
+        // 全くキーワードが登録されていないカテゴリはスキップ
+        if (groups["主要"].length === 0 && groups["専門・詳細"].length === 0) continue;
+
         const section = document.createElement('div');
         section.className = 'category-section';
         
@@ -258,6 +267,7 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
             // ユーザーが選択したキーワードの合計点数を満点（分母）として計算する
             let maxUserScore = 0;
             selectedThemes.forEach(theme => {
+                // allMainSetに登録されている（主要）なら50点、そうでなければ10点
                 maxUserScore += allMainSet.has(theme) ? 50 : 10;
             });
 
@@ -432,7 +442,7 @@ function displayResults(results, isSelected, mode) {
         });
 
         // 定義されたカテゴリの順番で表示する
-        const sortedCats = Object.keys(dynamicKeywords).filter(cat => categorizedKws[cat]);
+        const sortedCats = CATEGORY_ORDER.filter(cat => categorizedKws[cat]);
         const kwHtml = sortedCats.map(cat => `
             <div style="margin-bottom: 10px;">
                 <strong style="color: #444;">・${cat}</strong>
