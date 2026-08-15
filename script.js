@@ -24,7 +24,7 @@ const EVAL_QUESTIONS = [
     { id: "eval_6", left: "個人作業中心", right: "チーム作業中心" }
 ];
 
-// トップメニューの切り替え処理
+// トップメニューの切り替え処理と自動スクロール
 const btnDiagnose = document.getElementById('btn-diagnose');
 const diagSelectionArea = document.getElementById('diag-selection-area');
 
@@ -32,6 +32,13 @@ if (btnDiagnose && diagSelectionArea) {
     btnDiagnose.addEventListener('click', () => {
         diagSelectionArea.style.display = 'block';
         btnDiagnose.style.backgroundColor = '#e6f7ff';
+
+        // 【追加】「どのように診断しますか？」が見えるように少し下に自動スクロール
+        setTimeout(() => {
+            const yOffset = -20; // 画面上端からの余白
+            const y = diagSelectionArea.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+        }, 50);
     });
 }
 
@@ -350,7 +357,7 @@ function resetApp() {
     // トップメニューのリセット
     if(diagSelectionArea) diagSelectionArea.style.display = 'none';
     if(btnDiagnose) btnDiagnose.style.backgroundColor = '#fff';
-
+    
     const url = new URL(window.location);
     url.search = '';
     window.history.replaceState({}, '', url);
