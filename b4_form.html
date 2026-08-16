@@ -40,6 +40,22 @@
         .scale-radios { display: flex; justify-content: center; gap: 20px; background: #f8f9fa; padding: 12px; border-radius: 8px; }
         .scale-radios label { display: flex; flex-direction: column; align-items: center; cursor: pointer; font-weight: bold; }
         .scale-radios input { transform: scale(1.3); margin-bottom: 5px; }
+
+        /* --- プレビューエリアのデザイン --- */
+        .preview-section {
+            background-color: #f8f9fa;
+            border: 2px dashed #17a2b8;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            margin-top: 40px;
+        }
+        .preview-header {
+            font-weight: bold;
+            color: #17a2b8;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
         
         /* エラーメッセージ領域 */
         #errorMessage { color: #ff4b4b; background-color: #ffe6e6; border: 1px solid #ff4b4b; padding: 15px; border-radius: 5px; margin-bottom: 20px; display: none; line-height: 1.8; }
@@ -143,6 +159,15 @@
                 <input type="text" id="relatedUrl2" placeholder="その他の関連URL">
             </div>
 
+            <!-- プレビュー表示エリア -->
+            <div class="preview-section">
+                <div class="preview-header">👀 Ｂ３向け表示プレビュー</div>
+                <p style="font-size: 0.9em; color: #666; margin-top: 0;">入力した内容が，Ｂ３の診断画面でどのように表示されるかを確認できます．</p>
+                <div id="preview-container">
+                    <!-- JSでプレビューが生成されます -->
+                </div>
+            </div>
+
             <!-- エラーメッセージを表示する領域 -->
             <div id="errorMessage"></div>
 
@@ -167,7 +192,7 @@
             "バイオメカニクス・生体工学", "医療福祉・人間工学", "実験設備・ツール・その他"
         ];
 
-        // 初期表示用のキーワード（追加キーワードは「専門」になるのでここには追加不要）
+        // 初期表示用のキーワード
         const categorized_keywords = {
             "流体力学": {
                 "主要": ["流体力学"],
@@ -270,9 +295,14 @@
             row.innerHTML = `
                 <input type="text" class="custom-kw-input" placeholder="追加キーワード">
                 <select class="custom-cat-select">${catOptions}</select>
-                <button type="button" class="remove-btn" onclick="this.parentElement.remove()">－</button>
+                <button type="button" class="remove-btn">－</button>
             `;
+            row.querySelector('.remove-btn').addEventListener('click', function() {
+                this.parentElement.remove();
+                updatePreview(); // 行削除時にもプレビュー更新
+            });
             customKwArea.appendChild(row);
+            updatePreview();
         }
         
         // 初期状態として1行用意しておく
@@ -303,7 +333,144 @@
             } else {
                 timeInputs.style.display = 'none';
             }
+            updatePreview();
         }
+
+        // --- プレビューを生成・更新する処理 ---
+        function updatePreview() {
+            const labName = document.getElementById('labName').value || '（未選択の研究室）';
+            const fields = Array.from(document.querySelectorAll('input[name="fields"]:checked')).map(cb => cb.value);
+            
+            const parsedKeywords = [];
+            document.querySelectorAll('input[name="keywords"]:checked').forEach(cb => {
+                parsedKeywords.push({
+                    name: cb.value,
+                    category: cb.getAttribute('data-category'),
+                    level: cb.getAttribute('data-level')
+                });
+            });
+            
+            document.querySelectorAll('.custom-kw-row').forEach(row => {
+                const kw = row.querySelector('.custom-kw-input').value.trim();
+                const cat = row.querySelector('.custom-cat-select').value;
+                if(kw) parsedKeywords.push({name: kw, category: cat, level: "専門・詳細"});
+            });
+
+            let coreTime = document.querySelector('input[name="core_time"]:checked').value;
+            let coreStart = document.getElementById('coreStart').value;
+            let coreEnd = document.getElementById('coreEnd').value;
+
+            const getRadioVal = (name) => {
+                const el = document.querySelector(`input[name="${name}"]:checked`);
+                return el ? el.value : "";
+            };
+
+            const lab = {
+                研究室名: labName,
+                分野: fields,
+                parsedKeywords: parsedKeywords,
+                公式HP: document.getElementById('officialUrl').value,
+                関連URL1: document.getElementById('relatedUrl1').value,
+                関連URL2: document.getElementById('relatedUrl2').value,
+                eval_1: getRadioVal('eval_1'),
+                eval_2: getRadioVal('eval_2'),
+                eval_3: getRadioVal('eval_3'),
+                eval_4: getRadioVal('eval_4'),
+                eval_5: getRadioVal('eval_5'),
+                eval_6: getRadioVal('eval_6'),
+                core_time: coreTime,
+                core_start: coreStart,
+                core_end: coreEnd
+            };
+
+            const previewContainer = document.getElementById('preview-container');
+            previewContainer.innerHTML = '';
+            previewContainer.appendChild(createPreviewCard(lab));
+        }
+
+        // プレビューカードのHTML組み立て（B3向け画面と同じロジック）
+        function createPreviewCard(lab) {
+            const card = document.createElement('div');
+            
+            const categorizedKws = {};
+            lab.parsedKeywords.forEach(kw => {
+                let cat = kw.category || "実験設備・ツール・その他";
+                const type = kw.level;
+                if (!categorizedKws[cat]) categorizedKws[cat] = { "主要": [], "専門・詳細": [] };
+                categorizedKws[cat][type].push(kw.name);
+            });
+
+            const sortedCats = CATEGORY_LIST.filter(cat => categorizedKws[cat]);
+            const kwHtml = sortedCats.map(cat => `
+                <div style="margin-bottom: 10px;">
+                    <strong style="color: #444;">・${cat}</strong>
+                    ${categorizedKws[cat]["主要"].length > 0 ? `<div style="margin-left:15px; font-size:0.85em;"><em>[主要]</em> ${categorizedKws[cat]["主要"].join('， ')}</div>` : ''}
+                    ${categorizedKws[cat]["専門・詳細"].length > 0 ? `<div style="margin-left:15px; font-size:0.85em;"><em>[専門]</em> ${categorizedKws[cat]["専門・詳細"].join('， ')}</div>` : ''}
+                </div>
+            `).join('');
+
+            const links = [
+                lab.公式HP ? `<a href="${lab.公式HP}" target="_blank">公式HP</a>` : null,
+                lab.関連URL1 ? `<a href="${lab.関連URL1}" target="_blank">関連URL1</a>` : null,
+                lab.関連URL2 ? `<a href="${lab.関連URL2}" target="_blank">関連URL2</a>` : null
+            ].filter(Boolean).join(' / ');
+            
+            let fieldDisplay = lab.分野.length > 0 ? lab.分野.join('，') : '未設定';
+
+            let coreStr = "なし";
+            if (lab.core_time === "あり") {
+                let start = lab.core_start ? lab.core_start : '未入力';
+                let end = lab.core_end ? lab.core_end : '未入力';
+                coreStr = `あり<br>（${start} 〜 ${end}）`;
+            }
+            
+            function createEvalBlock(left, val, right) {
+                if (!val || val === "") return "";
+                let dots = "";
+                for (let i = 1; i <= 5; i++) {
+                    dots += (i == val) ? '<span style="color:#ffcc00; font-size:1.4em; line-height:1;">●</span>' : '<span style="color:#ddd; font-size:1.2em; line-height:1;">●</span>';
+                }
+                return `
+                    <div style="margin: 12px 0;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.85em; font-weight: bold; color: #555; margin-bottom: 4px;">
+                            <span style="flex: 1; text-align: left;">${left}</span>
+                            <span style="flex: 1; text-align: right;">${right}</span>
+                        </div>
+                        <div style="display: flex; justify-content: center; gap: 8px; align-items: center;">
+                            ${dots}
+                        </div>
+                    </div>`;
+            }
+
+            card.innerHTML = `
+                <div style="border: 1px solid #ddd; border-radius: 5px; padding: 15px; background: #fff;">
+                    <div style="font-weight: bold; font-size: 1.1em; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 10px; color: #333;">
+                        【${lab.研究室名}】 の詳細
+                    </div>
+                    <p style="margin: 5px 0;"><strong>分野：</strong> ${fieldDisplay}</p>
+                    <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 15px 0;">
+                        ${createEvalBlock("実験", lab.eval_1, "解析・計算")}
+                        ${createEvalBlock("自主性重視", lab.eval_2, "進捗管理あり")}
+                        ${createEvalBlock("教授指導", lab.eval_3, "学生間サポート")}
+                        ${createEvalBlock("理学(原理解明)", lab.eval_4, "工学(社会実装)")}
+                        ${createEvalBlock("にぎやか", lab.eval_5, "落ち着いた")}
+                        ${createEvalBlock("個人作業", lab.eval_6, "チーム作業")}
+                    </div>
+                    <p style="margin: 5px 0 15px 0;"><strong>コアタイム：</strong> ${coreStr}</p>
+                    <p><strong>関連キーワード:</strong></p>
+                    ${kwHtml || '<span style="color:#999;">キーワードが選択されていません</span>'}
+                    <p style="margin-top: 15px;"><strong>関連リンク:</strong> ${links || 'なし'}</p>
+                </div>
+            `;
+            return card;
+        }
+
+        // フォーム内のどこかが変更されたらプレビューを更新する
+        document.getElementById('labForm').addEventListener('change', updatePreview);
+        document.getElementById('labForm').addEventListener('input', updatePreview);
+
+        // ページ読み込み時に一度プレビューを描画
+        updatePreview();
 
         // フォーム送信処理
         document.getElementById('labForm').addEventListener('submit', function(e) {
@@ -408,6 +575,7 @@
                     addCustomRow();
                     
                     toggleCoreTime();
+                    updatePreview(); // 送信成功後にプレビューもリセット
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 } else {
                     alert("エラーが発生しました: " + result.message);
