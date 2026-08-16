@@ -1,62 +1,19 @@
 let labData = [];
-let mainKeywordsSet = new Set(); // 主要キーワードをまとめるためのセット
 
 // JSONデータを読み込む
 fetch('data.json')
     .then(response => response.json())
     .then(data => {
         labData = data;
-        
-        // 各研究室の「主要キーワード」を抽出して準備する
-        labData.forEach(lab => {
-            let kws = parseKeywords(lab.キーワードデータ);
-            lab.mainKeywords = []; // フィルタリング検索用に配列を持たせる
-            kws.filter(k => k.level === '主要').forEach(k => {
-                mainKeywordsSet.add(k.name);
-                lab.mainKeywords.push(k.name);
-            });
-        });
-
-        renderFilter();     // 絞り込みプルダウンを生成
-        renderCheckboxes(); // チェックボックスを生成
+        renderCheckboxes();
     })
     .catch(error => console.error('データの読み込みに失敗しました:', error));
-
-// 絞り込み用のプルダウンメニューを生成・制御する関数
-function renderFilter() {
-    const filterSelect = document.getElementById('keyword-filter');
-    
-    // 抽出した主要キーワードを五十音順に並べてプルダウンに追加
-    Array.from(mainKeywordsSet).sort().forEach(kw => {
-        const option = document.createElement('option');
-        option.value = kw;
-        option.innerText = kw;
-        filterSelect.appendChild(option);
-    });
-
-    // プルダウンが変更されたときの処理（研究室の表示/非表示を切り替える）
-    filterSelect.addEventListener('change', (e) => {
-        const selectedKw = e.target.value;
-        const labels = document.querySelectorAll('.lab-check-label');
-        
-        labels.forEach(label => {
-            const labId = label.querySelector('input').value;
-            const lab = labData.find(l => l.Lab_ID === labId);
-            
-            // 「すべて表示」が選ばれたか、その研究室が選択された主要キーワードを持っている場合
-            if (selectedKw === 'all' || (lab && lab.mainKeywords.includes(selectedKw))) {
-                label.style.display = ''; // 表示する
-            } else {
-                label.style.display = 'none'; // 隠す
-            }
-        });
-    });
-}
 
 // 研究室選択用のチェックボックスを生成する関数
 function renderCheckboxes() {
     const container = document.getElementById('checkbox-container');
     
+    // 研究室名で五十音順（または登録順）に並べて表示
     labData.forEach(lab => {
         const label = document.createElement('label');
         label.className = 'lab-check-label';

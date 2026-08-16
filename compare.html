@@ -24,29 +24,6 @@
             border: 1px solid #e9ecef;
         }
 
-        /* --- 絞り込み機能のデザイン --- */
-        .filter-container {
-            background-color: #eef2f5;
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            border: 1px solid #ced4da;
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        
-        .filter-container select {
-            padding: 8px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            font-size: 1em;
-            outline: none;
-            min-width: 200px;
-            font-family: inherit;
-        }
-
         .checkbox-grid {
             display: flex;
             flex-wrap: wrap;
@@ -181,16 +158,6 @@
         <div class="lab-selector">
             <div style="font-weight: bold; color: #333; margin-bottom: 10px;">■ 比較する研究室を選んでください</div>
             
-            <!-- 追加：主要キーワードでの絞り込みUI -->
-            <div class="filter-container">
-                <label for="keyword-filter" style="font-weight: bold; color: #495057;">🔍 主要キーワードで探す：</label>
-                <select id="keyword-filter">
-                    <option value="all">すべての研究室を表示</option>
-                    <!-- JSで主要キーワードが自動追加されます -->
-                </select>
-                <span style="font-size: 0.85em; color: #666;">※隠れた研究室のチェック状態は保持されます</span>
-            </div>
-
             <div id="checkbox-container" class="checkbox-grid">
                 <!-- JSでチェックボックスが自動生成されます -->
             </div>
