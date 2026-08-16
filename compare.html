@@ -8,7 +8,7 @@
     <style>
         /* 比較ツール専用の追加スタイル */
         .compare-container {
-            max-width: 1200px; /* 比較表を広く見せるために少し幅を広げる */
+            max-width: 1200px;
             margin: 0 auto;
             background: white;
             padding: 30px;
@@ -22,6 +22,29 @@
             border-radius: 8px;
             margin-bottom: 25px;
             border: 1px solid #e9ecef;
+        }
+
+        /* --- 絞り込み機能のデザイン --- */
+        .filter-container {
+            background-color: #eef2f5;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ced4da;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .filter-container select {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            outline: none;
+            min-width: 200px;
+            font-family: inherit;
         }
 
         .checkbox-grid {
@@ -70,7 +93,7 @@
         .compare-table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 800px; /* テーブルが縮みすぎないように */
+            min-width: 800px;
         }
 
         .compare-table th, .compare-table td {
@@ -86,7 +109,6 @@
             font-weight: bold;
         }
 
-        /* 左端の項目名カラムを固定幅に */
         .compare-table th.row-header {
             width: 150px;
             min-width: 150px;
@@ -95,7 +117,6 @@
             background-color: #e9ecef;
         }
 
-        /* 研究室ごとの列の幅を均等に */
         .compare-table td.data-cell, .compare-table th.col-header {
             width: 300px;
             min-width: 250px;
@@ -125,7 +146,6 @@
             font-weight: bold;
         }
 
-        /* リンクボタンを右上に配置 */
         .nav-links {
             text-align: right;
             margin-bottom: 20px;
@@ -159,7 +179,18 @@
         <p>気になる研究室を選択すると，横並びの表で詳細を比較できます．</p>
 
         <div class="lab-selector">
-            <div style="font-weight: bold; color: #333;">■ 比較する研究室を選んでください</div>
+            <div style="font-weight: bold; color: #333; margin-bottom: 10px;">■ 比較する研究室を選んでください</div>
+            
+            <!-- 追加：主要キーワードでの絞り込みUI -->
+            <div class="filter-container">
+                <label for="keyword-filter" style="font-weight: bold; color: #495057;">🔍 主要キーワードで探す：</label>
+                <select id="keyword-filter">
+                    <option value="all">すべての研究室を表示</option>
+                    <!-- JSで主要キーワードが自動追加されます -->
+                </select>
+                <span style="font-size: 0.85em; color: #666;">※隠れた研究室のチェック状態は保持されます</span>
+            </div>
+
             <div id="checkbox-container" class="checkbox-grid">
                 <!-- JSでチェックボックスが自動生成されます -->
             </div>
