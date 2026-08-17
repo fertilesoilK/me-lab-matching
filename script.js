@@ -33,7 +33,7 @@ if (btnDiagnose && diagSelectionArea) {
         diagSelectionArea.style.display = 'block';
         btnDiagnose.style.backgroundColor = '#e6f7ff';
 
-        // 【追加】「どのように診断しますか？」が見えるように少し下に自動スクロール
+        // 「どのように診断しますか？」が見えるように少し下に自動スクロール
         setTimeout(() => {
             const yOffset = -20; // 画面上端からの余白
             const y = diagSelectionArea.getBoundingClientRect().top + window.pageYOffset + yOffset;
@@ -341,6 +341,15 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
         });
     }
 
+    // 【ここから追加】「診断する」ボタンを押したという行動（イベント）を記録する
+    const GAS_LOG_URL = "https://script.google.com/macros/s/AKfycbxginhhG8gfgGLXbGql12dUzO_6xBLqdDoG70s-soMJyft8aqKus5kiGW_XhJyaFEd6uw/exec";
+    let userId = localStorage.getItem('me_user_id');
+    fetch(GAS_LOG_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: "log", type: "Event", page: "診断実行", userId: userId })
+    }).catch(e => {});
+    // 【ここまで追加】
+
     window.history.replaceState({}, '', url);
     results.sort((a, b) => b.Match_Score - a.Match_Score);
     displayResults(results, isSelected, mode);
@@ -637,9 +646,9 @@ window.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('me_user_id', userId);
     }
 
-    // ログ送信（非同期通信なのでサイトの表示速度には一切影響しません）
+    // サイトを開いた時は "PV" として記録
     fetch(GAS_LOG_URL, {
         method: 'POST',
-        body: JSON.stringify({ action: "log", page: "診断ツール(index)", userId: userId })
+        body: JSON.stringify({ action: "log", type: "PV", page: "診断ツール(index)", userId: userId })
     }).catch(e => {}); 
 });

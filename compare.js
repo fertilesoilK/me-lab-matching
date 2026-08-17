@@ -203,8 +203,9 @@ window.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('me_user_id', userId);
     }
 
+    // 比較ツールを開いた時は "PV" として記録
     fetch(GAS_LOG_URL, {
         method: 'POST',
-        body: JSON.stringify({ action: "log", page: "比較ツール(compare)", userId: userId })
+        body: JSON.stringify({ action: "log", type: "PV", page: "比較ツール(compare)", userId: userId })
     }).catch(e => {}); 
 });
