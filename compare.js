@@ -195,7 +195,7 @@ function parseKeywords(kwDataString) {
 // アクセスログの送信（裏側でこっそり実行）
 // ==========================================
 window.addEventListener('DOMContentLoaded', () => {
-    const GAS_LOG_URL = "https://script.google.com/macros/s/AKfycbxginhhG8gfgGLXbGql12dUzO_6xBLqdDoG70s-soMJyft8aqKus5kiGW_XhJyaFEd6uw/exec";
+    const GAS_LOG_URL = "https://script.google.com/macros/s/AKfycbxpc4VrxQXak5nvJWXWUL8M56YO5fZK5Zgy6DEIEdikhdjar4wqya5KijWdV1-KXiOtdA/exec";
     
     let userId = localStorage.getItem('me_user_id');
     if (!userId) {

@@ -341,14 +341,13 @@ document.getElementById('diagnose-btn').addEventListener('click', () => {
         });
     }
 
-    // 【ここから追加】「診断する」ボタンを押したという行動（イベント）を記録する
-    const GAS_LOG_URL = "https://script.google.com/macros/s/AKfycbxginhhG8gfgGLXbGql12dUzO_6xBLqdDoG70s-soMJyft8aqKus5kiGW_XhJyaFEd6uw/exec";
+    // 「診断する」ボタンを押したという行動（イベント）を記録する
+    const GAS_LOG_URL = "https://script.google.com/macros/s/AKfycbxpc4VrxQXak5nvJWXWUL8M56YO5fZK5Zgy6DEIEdikhdjar4wqya5KijWdV1-KXiOtdA/exec";
     let userId = localStorage.getItem('me_user_id');
     fetch(GAS_LOG_URL, {
         method: 'POST',
         body: JSON.stringify({ action: "log", type: "Event", page: "診断実行", userId: userId })
     }).catch(e => {});
-    // 【ここまで追加】
 
     window.history.replaceState({}, '', url);
     results.sort((a, b) => b.Match_Score - a.Match_Score);
@@ -434,7 +433,6 @@ function displayResults(results, isSelected, mode) {
         if (!val || val === "") return "";
         let dots = "";
         for (let i = 1; i <= 5; i++) {
-            // 文字列の強調として太字タグを使用
             dots += (i == val) ? '<span style="color:#ffcc00; font-size:1.4em; line-height:1;">●</span>' : '<span style="color:#ddd; font-size:1.2em; line-height:1;">●</span>';
         }
         return `
@@ -637,7 +635,7 @@ function displayResults(results, isSelected, mode) {
 // ==========================================
 window.addEventListener('DOMContentLoaded', () => {
     // b4_form.htmlで使っているものと同じGASのURL
-    const GAS_LOG_URL = "https://script.google.com/macros/s/AKfycbxginhhG8gfgGLXbGql12dUzO_6xBLqdDoG70s-soMJyft8aqKus5kiGW_XhJyaFEd6uw/exec";
+    const GAS_LOG_URL = "https://script.google.com/macros/s/AKfycbxpc4VrxQXak5nvJWXWUL8M56YO5fZK5Zgy6DEIEdikhdjar4wqya5KijWdV1-KXiOtdA/exec";
     
     // ブラウザに一時的なIDを持たせる（同一人物の複数回アクセスを区別するため）
     let userId = localStorage.getItem('me_user_id');
