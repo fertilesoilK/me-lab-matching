@@ -622,3 +622,24 @@ function displayResults(results, isSelected, mode) {
     // 診断結果へスクロール
     setTimeout(() => { container.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
 }
+
+// ==========================================
+// アクセスログの送信（裏側でこっそり実行）
+// ==========================================
+window.addEventListener('DOMContentLoaded', () => {
+    // b4_form.htmlで使っているものと同じGASのURL
+    const GAS_LOG_URL = "https://script.google.com/macros/s/AKfycbxginhhG8gfgGLXbGql12dUzO_6xBLqdDoG70s-soMJyft8aqKus5kiGW_XhJyaFEd6uw/exec";
+    
+    // ブラウザに一時的なIDを持たせる（同一人物の複数回アクセスを区別するため）
+    let userId = localStorage.getItem('me_user_id');
+    if (!userId) {
+        userId = 'user_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('me_user_id', userId);
+    }
+
+    // ログ送信（非同期通信なのでサイトの表示速度には一切影響しません）
+    fetch(GAS_LOG_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: "log", page: "診断ツール(index)", userId: userId })
+    }).catch(e => {}); 
+});

@@ -190,3 +190,21 @@ function parseKeywords(kwDataString) {
     });
     return result;
 }
+
+// ==========================================
+// アクセスログの送信（裏側でこっそり実行）
+// ==========================================
+window.addEventListener('DOMContentLoaded', () => {
+    const GAS_LOG_URL = "https://script.google.com/macros/s/AKfycbxginhhG8gfgGLXbGql12dUzO_6xBLqdDoG70s-soMJyft8aqKus5kiGW_XhJyaFEd6uw/exec";
+    
+    let userId = localStorage.getItem('me_user_id');
+    if (!userId) {
+        userId = 'user_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('me_user_id', userId);
+    }
+
+    fetch(GAS_LOG_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: "log", page: "比較ツール(compare)", userId: userId })
+    }).catch(e => {}); 
+});
