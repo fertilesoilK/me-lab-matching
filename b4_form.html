@@ -562,9 +562,11 @@
             btn.disabled = true;
 
             // データの送信（裏側で実行）
+            // データの送信（裏側で実行）
             fetch(GAS_URL, {
                 method: 'POST',
                 mode: 'no-cors',
+                keepalive: true, // ← 【追加】ページを閉じられても通信を継続するおまじない
                 headers: {
                     'Content-Type': 'text/plain'
                 },
