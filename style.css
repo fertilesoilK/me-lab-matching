@@ -5,34 +5,29 @@ body {
     font-family: 'Helvetica Neue', Arial, sans-serif;
     background-color: #f4f6f8; /* クールグレー */
     color: #4a5568; /* チタン・グレー */
-    padding: 20px;
+    padding: 10px; /* ★スマホでも画面幅をフル活用できるように余白を削減 */
     margin: 0;
     overscroll-behavior-y: none; /* スクロール端のバウンスを排除 */
-    -webkit-font-smoothing: antialiased; /* フォントを滑らかに */
-    -webkit-tap-highlight-color: transparent; /* タップ時の青いハイライトを消去 */
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* =========================================
    コンテナとレイアウト
    ========================================= */
 .container, .compare-container {
-    max-width: 900px;
+    max-width: 1000px; /* ★幅を広く（旧900px） */
     margin: 0 auto;
-    background: #ffffff; /* 純白 */
-    padding: 30px;
-    border-radius: 24px; /* ネイティブアプリらしい丸み */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02); /* 極薄のシャドウで浮遊感 */
+    background: transparent; /* ★一番外側の白枠を完全に撤廃 */
+    padding: 10px 0 40px 0; /* ★内側の余白を消して画面幅を広く使う */
+    border-radius: 0; 
+    box-shadow: none; 
     border: none;
-}
-
-h1, h2, h3 {
-    color: #0f284a; /* ディープ・ネイビーブルー */
-    font-weight: 700;
 }
 
 /* スクロール領域の滑らかさ設定 */
 .table-wrapper, .scroll-area {
-    -webkit-overflow-scrolling: touch; /* 慣性スクロール */
+    -webkit-overflow-scrolling: touch;
     overflow-y: auto;
 }
 
@@ -41,9 +36,9 @@ h1, h2, h3 {
    ========================================= */
 button, .menu-button, .kw-label, .add-btn, .remove-btn {
     position: relative;
-    overflow: hidden; /* リップルエフェクト用 */
+    overflow: hidden;
     transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s ease;
-    will-change: transform; /* GPU最適化 */
+    will-change: transform;
 }
 
 /* マイクロインタラクション：沈み込み */
@@ -56,7 +51,7 @@ button:active, .menu-button:active, .kw-label:active, .add-btn:active {
     display: block;
     width: 100%;
     padding: 16px;
-    background-color: #dd6b20; /* クリア・オレンジ */
+    background-color: #dd6b20;
     color: #ffffff;
     border: none;
     border-radius: 12px;
@@ -74,7 +69,7 @@ button:active, .menu-button:active, .kw-label:active, .add-btn:active {
 /* キーワードラベル（チタン・グレー＆シアン） */
 .kw-label {
     background: #f4f6f8;
-    border: 1px solid transparent; /* 枠線排除 */
+    border: 1px solid transparent;
     padding: 10px 18px;
     border-radius: 30px;
     cursor: pointer;
@@ -85,15 +80,14 @@ button:active, .menu-button:active, .kw-label:active, .add-btn:active {
     box-shadow: 0 2px 6px rgba(0,0,0,0.03);
 }
 
-/* チェック時の楽観的UIフィードバック */
 .kw-label:has(input:checked) {
-    background-color: #e0f7fa; /* 極薄いシアン */
+    background-color: #e0f7fa;
     color: #00838f;
     box-shadow: 0 2px 8px rgba(0, 181, 216, 0.15);
 }
 
 .kw-label input {
-    display: none; /* ネイティブアプリ感を出すためデフォルトのチェックボックスを隠す */
+    display: none;
 }
 
 /* =========================================
@@ -101,7 +95,7 @@ button:active, .menu-button:active, .kw-label:active, .add-btn:active {
    ========================================= */
 .result-card, details {
     background: #ffffff;
-    border: none !important; /* 既存の直書きボーダーを強制排除 */
+    border: none !important;
     border-radius: 16px !important;
     padding: 20px;
     margin-top: 20px;
@@ -109,7 +103,6 @@ button:active, .menu-button:active, .kw-label:active, .add-btn:active {
     transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-/* 展開時のアニメーション最適化 */
 details[open] summary ~ * {
     animation: fade-in-down 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
@@ -128,10 +121,9 @@ details[open] summary ~ * {
     transform: scale(0);
     animation: ripple-animation 0.5s linear;
     background-color: rgba(255, 255, 255, 0.4);
-    pointer-events: none; /* クリックを阻害しない */
+    pointer-events: none;
 }
 
-/* 暗い背景やグレーのボタン用 */
 .kw-label .ripple { background-color: rgba(0, 0, 0, 0.05); }
 
 @keyframes ripple-animation {
