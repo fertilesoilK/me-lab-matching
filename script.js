@@ -211,7 +211,6 @@ function renderStylesUI() {
         const wrapper = document.createElement('div');
         wrapper.style.cssText = "background-color: #ffffff; padding: 20px; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);";
         
-        // スマホ画面でもボタンが綺麗に並ぶように width: 100% と flex-wrap を調整
         let html = `
             <div style="text-align: center; margin-bottom: 16px; font-weight: bold; color: #0f284a; font-size: 1.05em;">
                 ${q.left} ⇔ ${q.right}
@@ -223,7 +222,6 @@ function renderStylesUI() {
                 <div style="display: flex; justify-content: center; gap: 10px; width: 100%; flex-wrap: wrap;" class="radio-group">
         `;
         
-        // min-width を追加し、幅が狭くてもボタンが縮みすぎないように設定
         for (let i = 1; i <= 5; i++) {
             html += `<label class="kw-label" style="font-size: 1.1em; width: 45px; min-width: 45px; height: 45px; justify-content: center; align-items: center; background-color: #f4f6f8; color: #4a5568; border-radius: 50%; cursor: pointer; display: inline-flex; padding: 0; transition: all 0.2s;"><input type="radio" name="${q.id}" value="${i}" style="display: none;"> ${i}</label>`;
         }
@@ -399,7 +397,9 @@ function displayResults(results, isSelected, mode) {
         let shareText = `【ME研究室 相性診断結果 (${modeText})】\n`;
         const medals = ["🥇 1位", "🥈 2位", "🥉 3位"];
         top3.forEach((lab, index) => { shareText += `${medals[index]}：${lab.研究室名} (${lab.Match_Score}点)\n`; });
-        shareText += "\n" + window.location.href;
+        
+        // ★固定のURLとスタイリッシュなテキストを追加
+        shareText += "\nあなたにぴったりの研究室は？今すぐ診断してみよう👇\nhttps://fertilesoilk.github.io/me-lab-matching/index.html";
         
         const lineBtn = document.createElement('a');
         lineBtn.href = `https://line.me/R/msg/text/?${encodeURIComponent(shareText)}`;
@@ -614,7 +614,10 @@ window.addEventListener('DOMContentLoaded', () => {
         userId = 'user_' + Math.random().toString(36).substr(2, 9);
         localStorage.setItem('me_user_id', userId);
     }
-    fetch(GAS_LOG_URL, { method: 'POST', body: JSON.stringify({ action: "log", type: "PV", page: "診断ツール(index)", userId: userId }) }).catch(e => {}); 
+    fetch(GAS_LOG_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: "log", type: "PV", page: "診断ツール(index)", userId: userId })
+    }).catch(e => {});
 });
 
 document.addEventListener('mousedown', function(e) {
