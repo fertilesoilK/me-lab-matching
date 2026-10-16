@@ -10,6 +10,11 @@
         h1 { display: flex; align-items: center; gap: 8px; font-size: 1.6rem; margin-bottom: 24px; color: #0f284a; }
         .main-menu { display: flex; flex-direction: column; gap: 16px; margin: 0 0 32px 0; }
         
+        /* リンクの下線を強制的に排除 */
+        a.menu-button, a.menu-button:hover, a.menu-button:active, a.menu-button:visited {
+            text-decoration: none !important;
+        }
+
         .menu-button {
             display: flex; align-items: center; justify-content: space-between;
             background: #ffffff; border: none; border-radius: 12px; padding: 20px 24px;
@@ -19,13 +24,12 @@
         }
         .menu-button:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.06); }
         .menu-button:active { transform: scale(0.98); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-        .menu-text h2 { color: #0f284a; margin: 0 0 6px 0; font-size: 1.15rem; display: flex; align-items: center; gap: 8px; }
-        .menu-text p { margin: 0; font-size: 0.9rem; color: #718096; line-height: 1.4; }
-        .menu-button .arrow { color: #a0aec0; font-size: 1.8rem; }
+        .menu-text h2 { color: #0f284a; margin: 0 0 6px 0; font-size: 1.15rem; display: flex; align-items: center; gap: 8px; text-decoration: none !important; }
+        .menu-text p { margin: 0; font-size: 0.9rem; color: #718096; line-height: 1.4; text-decoration: none !important; }
+        .menu-button .arrow { color: #a0aec0; font-size: 1.8rem; text-decoration: none !important; }
 
         @media (min-width: 600px) { .main-menu { flex-direction: row; } .menu-button { flex: 1; } }
 
-        /* フラットでシンプルな通知枠に変更 */
         .info-box {
             background-color: #f8fafc; border: 1px solid #e2e8f0;
             padding: 16px; border-radius: 8px; color: #4a5568; font-size: 0.9rem;
@@ -133,10 +137,8 @@
                 </div>
             </div>
 
-            <button id="diagnose-btn" style="margin-top: 20px;">
-                <span style="display: flex; justify-content: center; align-items: center; gap: 8px;">
-                    <span class="material-symbols-outlined">check_circle</span> 診断を実行
-                </span>
+            <button id="diagnose-btn" style="margin-top: 20px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 16px; background-color: #dd6b20; color: #ffffff; border: none; border-radius: 12px; font-size: 1.15rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(221, 107, 32, 0.2);">
+                <span class="material-symbols-outlined">check_circle</span> 診断を実行
             </button>
         </div>
         

@@ -24,6 +24,13 @@ function renderCheckboxes() {
     });
 }
 
+// 確実な時刻抽出ロジック（文字列から "HH:MM" を探し出す）
+const formatTime = (timeStr) => {
+    if (!timeStr) return '';
+    const match = timeStr.match(/(\d{2}:\d{2})/);
+    return match ? match[1] : timeStr;
+};
+
 function updateTable() {
     const selectedIds = Array.from(document.querySelectorAll('#checkbox-container input:checked')).map(cb => cb.value);
     const selectedLabs = labData.filter(lab => selectedIds.includes(lab.Lab_ID));
@@ -62,12 +69,9 @@ function updateTable() {
             const matches = lab.分野.match(/'([^']+)'/g);
             if (matches) fieldDisplay = matches.map(s => s.replace(/'/g, '')).join('，');
         } else if (Array.isArray(lab.分野)) { fieldDisplay = lab.分野.join('，'); }
-        thead += `<td class="data-cell" style="font-weight:bold; color:#0056b3;">${fieldDisplay}</td>`;
+        thead += `<td class="data-cell" style="font-weight:bold; color:#0f284a;">${fieldDisplay}</td>`;
     });
     thead += '</tr>';
-
-    // 時刻抽出ロジックの修正
-    const formatTime = (timeStr) => timeStr && timeStr.includes('T') ? timeStr.substring(11, 16) : (timeStr || '');
     
     thead += '<tr><th class="row-header">コアタイム</th>';
     selectedLabs.forEach(lab => {
@@ -93,7 +97,7 @@ function updateTable() {
                     </div>`;
             }
         });
-        thead += `<td class="data-cell" style="background-color: #fafafa;">${evalHtml}</td>`;
+        thead += `<td class="data-cell" style="background-color: #f8fafc;">${evalHtml}</td>`;
     });
     thead += '</tr>';
 
