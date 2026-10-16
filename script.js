@@ -1,4 +1,3 @@
-// ローディングアニメーション用のCSSを動的に追加
 if (!document.getElementById('spin-style')) {
     const style = document.createElement('style');
     style.id = 'spin-style';
@@ -7,14 +6,11 @@ if (!document.getElementById('spin-style')) {
 }
 
 let labData = [];
-
-// data.jsonから自動生成されるグローバル変数
 let dynamicKeywords = {};
 let allKeywordsList = [];
 let allMainSet = new Set();
 let keywordToCategoryMap = {};
 
-// カテゴリの表示順を整えるための固定リスト
 const CATEGORY_ORDER = [
     "流体力学", "熱力学", "航空工学・飛行システム", "宇宙工学・推進エンジン",
     "材料", "固体力学・構造・強度", "ロボット工学・メカトロニクス",
@@ -143,10 +139,8 @@ function renderKeywordsUI() {
     const container = document.getElementById('keywords-container');
     for (const [category, groups] of Object.entries(dynamicKeywords)) {
         if (groups["主要"].length === 0 && groups["専門・詳細"].length === 0) continue;
-
         const section = document.createElement('div');
         section.className = 'category-section';
-        
         const title = document.createElement('div');
         title.className = 'category-title';
         title.innerText = `▼ 【${category}】`;
@@ -157,7 +151,6 @@ function renderKeywordsUI() {
             basicTitle.className = 'kw-group-title';
             basicTitle.innerText = '■ 主要キーワード';
             section.appendChild(basicTitle);
-
             const basicGroup = document.createElement('div');
             basicGroup.className = 'kw-group';
             groups["主要"].forEach(kw => { basicGroup.appendChild(createCheckbox(kw)); });
@@ -169,7 +162,6 @@ function renderKeywordsUI() {
             advTitle.className = 'kw-group-title';
             advTitle.innerText = '■ 専門・詳細キーワード';
             section.appendChild(advTitle);
-
             const advGroup = document.createElement('div');
             advGroup.className = 'kw-group';
             groups["専門・詳細"].forEach(kw => { advGroup.appendChild(createCheckbox(kw)); });
@@ -272,7 +264,6 @@ document.getElementById('diagnose-btn').addEventListener('click', function() {
                 EVAL_QUESTIONS.forEach((q, i) => {
                     const userVal = parseInt(selectedVals[i]);
                     const labVal = parseInt(lab[q.id]);
-                    
                     if (userVal !== 0 && !isNaN(labVal)) {
                         validQuestionsCount++;
                         const diff = Math.abs(userVal - labVal);
@@ -321,15 +312,25 @@ function resetApp() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// ---------------------------------------------------------
+// 日付文字列（1899-12-30T...）から時刻のみを抽出する関数
+// ---------------------------------------------------------
+const formatTime = (timeStr) => {
+    if (!timeStr) return '';
+    return timeStr.includes('T') ? timeStr.substring(11, 16) : timeStr;
+};
+
 function displayResults(results, isSelected, mode) {
     const container = document.getElementById('results-container');
-    container.innerHTML = '<h2 style="display: flex; align-items: center; gap: 8px;"><span class="material-symbols-outlined" style="color: #dd6b20;">workspace_premium</span> 診断結果</h2>';
+    container.innerHTML = '<h2 style="display: flex; align-items: center; gap: 8px; font-size: 1.4rem; color: #0f284a;"><span class="material-symbols-outlined" style="color: #dd6b20;">workspace_premium</span> 診断結果</h2>';
 
+    // 余白を詰めたコンパクトな公式リンク表示
     const topRefDiv = document.createElement('div');
     topRefDiv.className = 'no-print';
-    topRefDiv.style.cssText = "background-color: #f4f6f8; padding: 20px; border-radius: 12px; margin-bottom: 24px; text-align: center;";
+    topRefDiv.style.cssText = "background-color: #f8fafc; padding: 16px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 12px;";
     topRefDiv.innerHTML = `
-        <a href="https://www.rs.tus.ac.jp/me/laboratory.html" target="_blank" style="display: inline-flex; align-items: center; gap: 4px; color: #00b5d8; text-decoration: none; font-weight: bold;"><span class="material-symbols-outlined" style="font-size: 1.1em;">open_in_new</span> 機械航空宇宙工学科 公式サイト（研究室紹介）</a>
+        <span class="material-symbols-outlined" style="color: #a0aec0;">info</span>
+        <div>最新かつ正確な情報は、必ず<a href="https://www.rs.tus.ac.jp/me/laboratory.html" target="_blank" style="color: #00b5d8; text-decoration: underline; font-weight: bold;">公式ホームページ等</a>と併せてご確認ください。</div>
     `;
     container.appendChild(topRefDiv);
 
@@ -338,7 +339,7 @@ function displayResults(results, isSelected, mode) {
     topActionsDiv.style.display = "flex";
     topActionsDiv.style.flexWrap = "wrap";
     topActionsDiv.style.gap = "12px";
-    topActionsDiv.style.marginBottom = "24px";
+    topActionsDiv.style.marginBottom = "20px";
 
     const recommendedLabs = results.filter(lab => lab.Match_Score > 0);
     const otherLabs = results.filter(lab => lab.Match_Score === 0);
@@ -348,21 +349,19 @@ function displayResults(results, isSelected, mode) {
         let modeText = mode === 'keyword' ? "キーワード" : "スタイル";
         let shareText = `【ME研究室 相性診断結果 (${modeText})】\n`;
         const medals = ["🥇 1位", "🥈 2位", "🥉 3位"];
-        top3.forEach((lab, index) => {
-            shareText += `${medals[index]}：${lab.研究室名} (${lab.Match_Score}点)\n`;
-        });
+        top3.forEach((lab, index) => { shareText += `${medals[index]}：${lab.研究室名} (${lab.Match_Score}点)\n`; });
         shareText += "\n" + window.location.href;
         
         const lineBtn = document.createElement('a');
         lineBtn.href = `https://line.me/R/msg/text/?${encodeURIComponent(shareText)}`;
         lineBtn.target = "_blank";
-        lineBtn.style.cssText = "display: inline-flex; align-items: center; gap: 8px; background-color: #06C755; color: #fff; padding: 12px 20px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 0.95em; box-shadow: 0 4px 12px rgba(6, 199, 85, 0.2);";
+        lineBtn.style.cssText = "display: inline-flex; align-items: center; gap: 8px; background-color: #06C755; color: #fff; padding: 10px 16px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 0.9em; box-shadow: 0 2px 6px rgba(6, 199, 85, 0.2);";
         lineBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 1.2em;">chat</span> 結果をLINEでシェア';
         topActionsDiv.appendChild(lineBtn);
     }
 
     const topResetBtn = document.createElement('button');
-    topResetBtn.style.cssText = "display: inline-flex; align-items: center; gap: 8px; background-color: #4a5568; color: #fff; padding: 12px 20px; border: none; border-radius: 8px; font-size: 0.95em; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(74, 85, 104, 0.2);";
+    topResetBtn.style.cssText = "display: inline-flex; align-items: center; gap: 8px; background-color: #4a5568; color: #fff; padding: 10px 16px; border: none; border-radius: 8px; font-size: 0.9em; font-weight: bold; cursor: pointer; box-shadow: 0 2px 6px rgba(74, 85, 104, 0.2);";
     topResetBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 1.2em;">refresh</span> 再診断';
     topResetBtn.addEventListener('click', resetApp);
     topActionsDiv.appendChild(topResetBtn);
@@ -375,8 +374,8 @@ function displayResults(results, isSelected, mode) {
             dots += (i == val) ? '<span style="color:#00b5d8; font-size:1.4em; line-height:1;">●</span>' : '<span style="color:#e2e8f0; font-size:1.2em; line-height:1;">●</span>';
         }
         return `
-            <div style="margin: 12px 0;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.85em; font-weight: bold; color: #4a5568; margin-bottom: 4px;">
+            <div style="margin: 8px 0;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.85em; font-weight: bold; color: #4a5568; margin-bottom: 2px;">
                     <span style="flex: 1; text-align: left;">${left}</span>
                     <span style="flex: 1; text-align: right;">${right}</span>
                 </div>
@@ -389,15 +388,16 @@ function displayResults(results, isSelected, mode) {
     function createLabCard(lab, rank = null) {
         const card = document.createElement('div');
         card.className = 'result-card';
-        card.style.marginBottom = "16px";
+        // 各研究室の隙間を狭く修正
+        card.style.marginBottom = "8px";
 
         let rankHtml = "";
         if (rank !== null) {
-            let rankMedal = ""; let bgColor = "#f4f6f8"; let borderColor = "#cbd5e0";
+            let rankMedal = ""; let bgColor = "#f8fafc"; let borderColor = "#e2e8f0";
             if (rank === 1) { rankMedal = "🥇"; bgColor = "#fffaf0"; borderColor = "#ecc94b"; }
             else if (rank === 2) { rankMedal = "🥈"; bgColor = "#f7fafc"; borderColor = "#a0aec0"; }
             else if (rank === 3) { rankMedal = "🥉"; bgColor = "#fff5f5"; borderColor = "#ed8936"; }
-            rankHtml = `<span style="background-color: ${bgColor}; border: 1px solid ${borderColor}; padding: 4px 10px; border-radius: 16px; font-size: 0.85em; margin-right: 12px; white-space: nowrap; display: inline-block; vertical-align: middle;">${rankMedal} <strong>${rank}位</strong></span>`;
+            rankHtml = `<span style="background-color: ${bgColor}; border: 1px solid ${borderColor}; padding: 2px 8px; border-radius: 12px; font-size: 0.85em; margin-right: 8px; white-space: nowrap; display: inline-block; vertical-align: middle;">${rankMedal} <strong>${rank}位</strong></span>`;
         }
 
         const categorizedKws = {};
@@ -410,16 +410,16 @@ function displayResults(results, isSelected, mode) {
 
         const sortedCats = CATEGORY_ORDER.filter(cat => categorizedKws[cat]);
         const kwHtml = sortedCats.map(cat => `
-            <div style="margin-bottom: 12px;">
-                <strong style="color: #0f284a;">・${cat}</strong>
+            <div style="margin-bottom: 8px;">
+                <strong style="color: #0f284a; font-size: 0.95em;">・${cat}</strong>
                 ${categorizedKws[cat]["主要"].length > 0 ? `<div style="margin-left:15px; font-size:0.85em; color:#4a5568;"><em style="color:#dd6b20;">[主要]</em> ${categorizedKws[cat]["主要"].join('， ')}</div>` : ''}
                 ${categorizedKws[cat]["専門・詳細"].length > 0 ? `<div style="margin-left:15px; font-size:0.85em; color:#718096;"><em>[専門]</em> ${categorizedKws[cat]["専門・詳細"].join('， ')}</div>` : ''}
             </div>
         `).join('');
 
         const links = [
-            lab.公式HP ? `<a href="${lab.公式HP}" target="_blank" style="color:#00b5d8; text-decoration:none;"><span class="material-symbols-outlined" style="font-size:1em; vertical-align:middle;">link</span> 公式HP</a>` : null,
-            lab.関連URL1 ? `<a href="${lab.関連URL1}" target="_blank" style="color:#00b5d8; text-decoration:none;"><span class="material-symbols-outlined" style="font-size:1em; vertical-align:middle;">link</span> 関連URL</a>` : null
+            lab.公式HP ? `<a href="${lab.公式HP}" target="_blank" style="color:#00b5d8; text-decoration:none;"><span class="material-symbols-outlined" style="font-size:1.1em; vertical-align:middle;">link</span> 公式HP</a>` : null,
+            lab.関連URL1 ? `<a href="${lab.関連URL1}" target="_blank" style="color:#00b5d8; text-decoration:none;"><span class="material-symbols-outlined" style="font-size:1.1em; vertical-align:middle;">link</span> 関連URL</a>` : null
         ].filter(Boolean).join(' &nbsp;&nbsp; ');
         
         let fieldDisplay = lab.分野;
@@ -428,19 +428,19 @@ function displayResults(results, isSelected, mode) {
             if (fieldMatches) fieldDisplay = fieldMatches.map(s => s.replace(/'/g, '')).join('，');
         } else if (Array.isArray(lab.分野)) { fieldDisplay = lab.分野.join('，'); }
 
-        let coreStr = (lab.core_time === "あり") ? `あり（${lab.core_start || ''} 〜 ${lab.core_end || ''}）` : "なし";
+        let coreStr = (lab.core_time === "あり") ? `あり（${formatTime(lab.core_start)} 〜 ${formatTime(lab.core_end)}）` : "なし";
 
         card.innerHTML = `
             <details>
-                <summary style="cursor: pointer; padding: 12px 8px; line-height: 1.6; outline: none;">
+                <summary style="cursor: pointer; padding: 12px 8px; line-height: 1.4; outline: none;">
                     ${rankHtml}
-                    <span style="display: inline-block; font-weight: bold; font-size: 1.1rem; color: #0f284a; vertical-align: middle;">${lab.研究室名}</span> 
-                    <span style="display: inline-block; margin: 0 8px; color: #dd6b20; font-weight: bold; vertical-align: middle; background: #fffaf0; padding: 2px 8px; border-radius: 8px;">スコア: ${lab.Match_Score}点</span> 
-                    <span class="no-print" style="color: #a0aec0; font-size: 0.9em; float: right; margin-top: 4px;"><span class="material-symbols-outlined">expand_more</span></span>
+                    <span style="display: inline-block; font-weight: bold; font-size: 1.05rem; color: #0f284a; vertical-align: middle;">${lab.研究室名}</span> 
+                    <span style="display: inline-block; margin: 0 8px; color: #dd6b20; font-weight: bold; font-size: 0.9em; vertical-align: middle; background: #fffaf0; padding: 2px 8px; border-radius: 6px;">スコア: ${lab.Match_Score}点</span> 
+                    <span class="no-print" style="color: #a0aec0; font-size: 0.9em; float: right; margin-top: 2px;"><span class="material-symbols-outlined">expand_more</span></span>
                 </summary>
-                <div style="padding: 16px; border-top: 1px solid #edf2f7; margin-top: 8px;">
-                    <p style="margin: 5px 0; color:#4a5568;"><strong style="color:#0f284a;">分野：</strong> ${fieldDisplay || '未設定'}</p>
-                    <div style="background: #f8fafc; padding: 20px; border-radius: 12px; margin: 20px 0;">
+                <div style="padding: 12px; border-top: 1px solid #edf2f7; margin-top: 4px;">
+                    <p style="margin: 4px 0; color:#4a5568;"><strong style="color:#0f284a;">分野：</strong> ${fieldDisplay || '未設定'}</p>
+                    <div style="background: #f8fafc; padding: 16px; border-radius: 8px; margin: 12px 0;">
                         ${createEvalBlock("実験中心", lab.eval_1, "解析・計算中心")}
                         ${createEvalBlock("自主性重視", lab.eval_2, "進捗管理あり")}
                         ${createEvalBlock("教授指導", lab.eval_3, "学生間サポート")}
@@ -448,12 +448,12 @@ function displayResults(results, isSelected, mode) {
                         ${createEvalBlock("にぎやか", lab.eval_5, "落ち着いた")}
                         ${createEvalBlock("個人作業中心", lab.eval_6, "チーム作業中心")}
                     </div>
-                    <p style="margin: 5px 0 20px 0; color:#4a5568;"><strong style="color:#0f284a;">コアタイム：</strong> ${coreStr}</p>
-                    <div style="background: #ffffff; border: 1px solid #e2e8f0; padding: 16px; border-radius: 12px;">
+                    <p style="margin: 4px 0 12px 0; color:#4a5568;"><strong style="color:#0f284a;">コアタイム：</strong> ${coreStr}</p>
+                    <div style="background: #ffffff; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px;">
                         <p style="margin-top: 0;"><strong style="color:#0f284a;"><span class="material-symbols-outlined" style="font-size: 1.1em; vertical-align: middle;">vpn_key</span> 登録キーワード</strong></p>
                         ${kwHtml}
                     </div>
-                    <p style="margin-top: 20px;"><strong style="color:#0f284a;">関連リンク：</strong> ${links || '<span style="color:#a0aec0;">なし</span>'}</p>
+                    <p style="margin-top: 16px;"><strong style="color:#0f284a;">関連リンク：</strong> ${links || '<span style="color:#a0aec0;">なし</span>'}</p>
                 </div>
             </details>
         `;
@@ -469,6 +469,7 @@ function displayResults(results, isSelected, mode) {
             recTitle.style.marginTop = "0px";
             recTitle.style.borderBottom = "2px solid #edf2f7";
             recTitle.style.paddingBottom = "8px";
+            recTitle.style.marginBottom = "12px";
             container.appendChild(recTitle);
             
             let previousScore = -1; let displayRank = 1;
@@ -489,29 +490,49 @@ function displayResults(results, isSelected, mode) {
         if (otherLabs.length > 0) {
             const otherTitle = document.createElement('h3');
             otherTitle.innerHTML = '<span class="material-symbols-outlined" style="vertical-align: middle; color:#a0aec0;">more_horiz</span> その他の研究室';
-            otherTitle.style.marginTop = "40px";
+            otherTitle.style.marginTop = "32px";
             otherTitle.style.borderBottom = "2px solid #edf2f7";
             otherTitle.style.paddingBottom = "8px";
+            otherTitle.style.marginBottom = "12px";
             container.appendChild(otherTitle);
             otherLabs.forEach(lab => container.appendChild(createLabCard(lab, null)));
         }
     }
 
+    // 算出基準の簡潔な箇条書き化
     let descHtml = "";
     if (mode === 'keyword') {
         descHtml = `
-            <p style="margin: 0 0 8px 0; color: #0f284a;"><strong><span class="material-symbols-outlined" style="vertical-align: middle;">info</span> スコア算出基準（キーワード）</strong></p>
-            <p style="margin: 0 0 12px 0;">選択したキーワードと各研究室の登録データの合致度から算出（主要: 50点, 専門: 10点）。</p>
+            <div style="color: #0f284a; font-weight: bold; margin-bottom: 8px; display: flex; align-items: center; gap: 4px;">
+                <span class="material-symbols-outlined" style="font-size: 1.2em;">info</span> スコア算出基準（キーワード）
+            </div>
+            <div style="color: #4a5568; line-height: 1.6;">
+                選択したキーワードと各研究室の登録データの合致度から、100点満点で算出しています。<br>
+                ・主要キーワードの一致： <strong>+50点</strong><br>
+                ・専門キーワードの一致： <strong>+10点</strong><br>
+                <span style="font-size: 0.9em; color: #718096;">※選択した全キーワードが合致した場合を100点として相対評価します。</span>
+            </div>
         `;
     } else {
         descHtml = `
-            <p style="margin: 0 0 8px 0; color: #0f284a;"><strong><span class="material-symbols-outlined" style="vertical-align: middle;">info</span> スコア算出基準（スタイル）</strong></p>
-            <p style="margin: 0 0 12px 0;">選択した項目と各研究室の登録データの差分から減点方式で算出（完全一致: 10点, 1段階差: 7点, 2段階差: 4点, 3段階差: 1点, 4段階差: 0点）。※「指定しない」項目は除外。</p>
+            <div style="color: #0f284a; font-weight: bold; margin-bottom: 8px; display: flex; align-items: center; gap: 4px;">
+                <span class="material-symbols-outlined" style="font-size: 1.2em;">info</span> スコア算出基準（スタイル）
+            </div>
+            <div style="color: #4a5568; line-height: 1.6;">
+                選択した項目と各研究室の登録データの差異から、減点方式にて100点満点で算出しています。<br>
+                ・完全一致： <strong>10点</strong><br>
+                ・1段階差 ： <strong>7点</strong><br>
+                ・2段階差 ： <strong>4点</strong><br>
+                ・3段階差 ： <strong>1点</strong><br>
+                ・4段階差 ： <strong>0点</strong><br>
+                <span style="font-size: 0.9em; color: #718096;">※「指定しない」を選択した項目は計算から除外されます。</span>
+            </div>
         `;
     }
+    
     const bottomDescDiv = document.createElement('div');
     bottomDescDiv.className = 'no-print';
-    bottomDescDiv.style.cssText = "background-color: #f4f6f8; padding: 16px 24px; border-radius: 12px; margin: 40px 0 24px 0; font-size: 0.95em;";
+    bottomDescDiv.style.cssText = "background-color: #f8fafc; padding: 16px 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin: 32px 0 24px 0; font-size: 0.95em;";
     bottomDescDiv.innerHTML = descHtml;
     container.appendChild(bottomDescDiv);
 
@@ -519,7 +540,7 @@ function displayResults(results, isSelected, mode) {
     bottomResetDiv.className = 'no-print';
     bottomResetDiv.style.textAlign = "center";
     bottomResetDiv.innerHTML = `
-        <button style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; background-color: #4a5568; color: #fff; padding: 16px 32px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(74, 85, 104, 0.2); transition: transform 0.2s, box-shadow 0.2s;">
+        <button style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; background-color: #4a5568; color: #fff; padding: 12px 24px; border: none; border-radius: 8px; font-size: 1.05em; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(74, 85, 104, 0.2); transition: transform 0.2s, box-shadow 0.2s;">
             <span class="material-symbols-outlined">refresh</span> 再診断
         </button>
     `;

@@ -7,53 +7,53 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0" />
     <style>
-        h1 { display: flex; align-items: center; gap: 8px; font-size: 1.6rem; }
-        .main-menu { display: flex; flex-direction: column; gap: 16px; margin: 24px 0 32px 0; }
+        h1 { display: flex; align-items: center; gap: 8px; font-size: 1.6rem; margin-bottom: 24px; color: #0f284a; }
+        .main-menu { display: flex; flex-direction: column; gap: 16px; margin: 0 0 32px 0; }
         
         .menu-button {
             display: flex; align-items: center; justify-content: space-between;
-            background: #ffffff; border: none; border-radius: 16px; padding: 24px;
-            color: #4a5568; box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+            background: #ffffff; border: none; border-radius: 12px; padding: 20px 24px;
+            color: #4a5568; box-shadow: 0 4px 12px rgba(0,0,0,0.04);
             position: relative; overflow: hidden; text-align: left; width: 100%; box-sizing: border-box;
             transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
         }
-        .menu-button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
+        .menu-button:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.06); }
         .menu-button:active { transform: scale(0.98); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-        .menu-text h2 { color: #0f284a; margin: 0 0 8px 0; font-size: 1.25rem; display: flex; align-items: center; gap: 8px; }
-        .menu-text p { margin: 0; font-size: 0.9rem; color: #718096; line-height: 1.5; }
-        .menu-button .arrow { color: #a0aec0; font-size: 2rem; }
+        .menu-text h2 { color: #0f284a; margin: 0 0 6px 0; font-size: 1.15rem; display: flex; align-items: center; gap: 8px; }
+        .menu-text p { margin: 0; font-size: 0.9rem; color: #718096; line-height: 1.4; }
+        .menu-button .arrow { color: #a0aec0; font-size: 1.8rem; }
 
         @media (min-width: 600px) { .main-menu { flex-direction: row; } .menu-button { flex: 1; } }
 
-        /* 左端のオレンジ線を廃止し、シンプルでフラットな通知枠に変更 */
-        .warning-box {
-            background-color: #fff5f5; border: 1px solid #fed7d7;
-            padding: 16px; border-radius: 12px; color: #4a5568; font-size: 0.9rem;
-            display: flex; gap: 12px; margin-bottom: 24px;
+        /* フラットでシンプルな通知枠に変更 */
+        .info-box {
+            background-color: #f8fafc; border: 1px solid #e2e8f0;
+            padding: 16px; border-radius: 8px; color: #4a5568; font-size: 0.9rem;
+            display: flex; gap: 12px; margin-bottom: 24px; line-height: 1.5;
         }
-        .warning-box .material-symbols-outlined { color: #e53e3e; }
+        .info-box .material-symbols-outlined { color: #718096; }
 
-        .selection-box { background-color: #f4f6f8; padding: 24px; border-radius: 16px; margin-bottom: 24px; }
-        .box-title { margin-top: 0; font-weight: bold; color: #0f284a; display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+        .selection-box { background-color: #f4f6f8; padding: 20px; border-radius: 12px; margin-bottom: 24px; }
+        .box-title { margin-top: 0; font-weight: bold; color: #0f284a; display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
         .box-title .material-symbols-outlined { color: #00b5d8; }
 
         .custom-radio {
-            cursor: pointer; display: block; background: #ffffff; padding: 16px; border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease, background-color 0.2s ease;
+            cursor: pointer; display: block; background: #ffffff; padding: 16px; border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease, background-color 0.2s ease;
             position: relative; overflow: hidden;
         }
-        .custom-radio:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+        .custom-radio:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.04); }
         .custom-radio:active { transform: scale(0.98); }
         .custom-radio input[type="radio"] { display: none; }
         .radio-content { display: flex; align-items: flex-start; gap: 12px; color: #4a5568; }
         .radio-content .icon { color: #a0aec0; transition: color 0.2s ease; }
         
-        .custom-radio:has(input:checked) { background-color: #e0f7fa; box-shadow: 0 4px 12px rgba(0, 181, 216, 0.15); }
+        .custom-radio:has(input:checked) { background-color: #e0f7fa; box-shadow: 0 4px 10px rgba(0, 181, 216, 0.15); }
         .custom-radio:has(input:checked) .icon { color: #00b5d8; }
-        .custom-radio strong { color: #0f284a; font-size: 1.05rem; display: block; margin-bottom: 4px; }
+        .custom-radio strong { color: #0f284a; font-size: 1.05rem; display: block; margin-bottom: 2px; }
         .custom-radio span.desc { font-size: 0.85rem; color: #718096; }
 
-        .tips-box { background-color: #f4f6f8; padding: 16px; border-radius: 12px; font-size: 0.9rem; margin-bottom: 20px; display: flex; gap: 12px; align-items: flex-start; }
+        .tips-box { background-color: #f4f6f8; padding: 16px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 20px; display: flex; gap: 12px; align-items: center; color: #4a5568;}
         .tips-box .material-symbols-outlined { color: #00b5d8; }
     </style>
 </head>
@@ -61,14 +61,14 @@
     <div class="container">
         <h1>
             <span class="material-symbols-outlined" style="font-size: 2rem; color: #00b5d8;">rocket_launch</span>
-            <span>ME研究室マッチング・比較ツール</span>
+            <span>ME研究室マッチング・比較</span>
         </h1>
         
-        <div class="warning-box">
-            <span class="material-symbols-outlined">warning</span>
+        <div class="info-box">
+            <span class="material-symbols-outlined">info</span>
             <div>
                 <strong>【非公式情報】</strong><br>
-                本サイトはB4学生が独自に収集した参考情報です。最新かつ正確な情報は各研究室の公式HP等で必ず確認してください。
+                本サイトのデータはB4学生が独自に収集した参考情報です。最新かつ正確な情報は、必ず各研究室の公式ホームページ等と併せてご確認ください。
             </div>
         </div>
 
@@ -84,7 +84,7 @@
             <button class="menu-button" id="btn-diagnose">
                 <div class="menu-text">
                     <h2><span class="material-symbols-outlined">explore</span> 相性診断</h2>
-                    <p>希望するキーワードやスタイルから、条件に合う研究室をスコア化します。</p>
+                    <p>キーワードやスタイルから、条件に合う研究室をスコア化します。</p>
                 </div>
                 <span class="material-symbols-outlined arrow">chevron_right</span>
             </button>
@@ -92,7 +92,7 @@
 
         <div id="diag-selection-area" style="display: none;">
             <div class="selection-box">
-                <p class="box-title"><span class="material-symbols-outlined">tune</span> 診断方法の選択</p>
+                <p class="box-title"><span class="material-symbols-outlined">tune</span> 診断方法</p>
                 <div style="display: flex; flex-direction: column; gap: 12px;">
                     <label class="custom-radio">
                         <input type="radio" name="diag-mode" value="keyword">
@@ -121,15 +121,15 @@
         <div id="form-area" style="display: none;">
             <div id="keywords-container" style="display: none;">
                 <div class="tips-box">
-                    <span class="material-symbols-outlined">info</span>
+                    <span class="material-symbols-outlined">check_box</span>
                     <div>関心のあるキーワードをすべて選択してください。</div>
                 </div>
             </div>
 
             <div id="styles-container" style="display: none;">
                 <div class="tips-box">
-                    <span class="material-symbols-outlined">info</span>
-                    <div>希望する研究室のスタイルを選択してください。こだわりのない項目は「指定しない」のままで構いません。</div>
+                    <span class="material-symbols-outlined">check_box</span>
+                    <div>希望する環境を選択してください。こだわりのない項目は「指定しない」で構いません。</div>
                 </div>
             </div>
 
