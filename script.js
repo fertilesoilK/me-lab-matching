@@ -209,38 +209,59 @@ function renderStylesUI() {
     const container = document.getElementById('styles-container');
     EVAL_QUESTIONS.forEach(q => {
         const wrapper = document.createElement('div');
-        wrapper.style.cssText = "background-color: #ffffff; padding: 20px; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);";
+        wrapper.style.cssText = "background-color: #ffffff; padding: 16px 12px; border-radius: 12px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);";
         
+        // ★テキストとスライダーを横一列に並べる洗練されたUIに変更
         let html = `
-            <div style="text-align: center; margin-bottom: 16px; font-weight: bold; color: #0f284a; font-size: 1.05em;">
-                ${q.left} ⇔ ${q.right}
-            </div>
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%;">
-                <label class="kw-label" style="background-color: #f4f6f8; color: #718096; padding: 8px 20px; font-size: 0.9em; border-radius: 20px; cursor: pointer; display: inline-flex; transition: all 0.2s;">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 8px;">
+                <label class="kw-label-unspec" style="background-color: #e2e8f0; color: #4a5568; padding: 4px 12px; font-size: 0.8em; border-radius: 12px; cursor: pointer; display: inline-flex; align-items: center; transition: all 0.2s; margin: 0; font-weight: bold; position: relative; overflow: hidden;">
                     <input type="radio" name="${q.id}" value="0" checked style="display: none;"> 指定しない
                 </label>
-                <div style="display: flex; justify-content: center; gap: 10px; width: 100%; flex-wrap: wrap;" class="radio-group">
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 6px;">
+                <span style="flex: 1; text-align: right; font-size: 0.8rem; font-weight: bold; color: #0f284a; line-height: 1.3; word-break: keep-all;">${q.left}</span>
+                
+                <div style="position: relative; display: flex; justify-content: space-between; align-items: center; width: 160px; flex-shrink: 0;">
+                    <!-- スライダーの軸（横線） -->
+                    <div style="position: absolute; top: 50%; left: 10px; right: 10px; height: 3px; background-color: #edf2f7; z-index: 1; transform: translateY(-50%); border-radius: 2px;"></div>
         `;
         
         for (let i = 1; i <= 5; i++) {
-            html += `<label class="kw-label" style="font-size: 1.1em; width: 45px; min-width: 45px; height: 45px; justify-content: center; align-items: center; background-color: #f4f6f8; color: #4a5568; border-radius: 50%; cursor: pointer; display: inline-flex; padding: 0; transition: all 0.2s;"><input type="radio" name="${q.id}" value="${i}" style="display: none;"> ${i}</label>`;
+            html += `<label class="kw-label-num" style="position: relative; z-index: 2; font-size: 0.9em; width: 28px; min-width: 28px; height: 28px; justify-content: center; align-items: center; background-color: #ffffff; color: #4a5568; border-radius: 50%; cursor: pointer; display: inline-flex; padding: 0; transition: all 0.2s; margin: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: 2px solid #edf2f7; font-weight: bold; overflow: hidden;"><input type="radio" name="${q.id}" value="${i}" style="display: none;"> ${i}</label>`;
         }
         
-        html += `</div></div>`;
+        html += `
+                </div>
+                <span style="flex: 1; text-align: left; font-size: 0.8rem; font-weight: bold; color: #0f284a; line-height: 1.3; word-break: keep-all;">${q.right}</span>
+            </div>
+        `;
         wrapper.innerHTML = html;
 
         wrapper.querySelectorAll('input[type="radio"]').forEach(radio => {
             radio.addEventListener('change', function() {
-                const group = wrapper.querySelectorAll('.kw-label');
-                group.forEach(lbl => {
-                    lbl.style.backgroundColor = '#f4f6f8';
-                    lbl.style.color = lbl.innerText.includes('指定しない') ? '#718096' : '#4a5568';
-                    lbl.style.borderColor = 'transparent';
+                const unspecLbl = wrapper.querySelector('.kw-label-unspec');
+                const numLbls = wrapper.querySelectorAll('.kw-label-num');
+                
+                // リセット（全てのボタンをデフォルト状態に戻す）
+                unspecLbl.style.backgroundColor = '#f4f6f8';
+                unspecLbl.style.color = '#a0aec0';
+                
+                numLbls.forEach(lbl => {
+                    lbl.style.backgroundColor = '#ffffff';
+                    lbl.style.color = '#4a5568';
+                    lbl.style.borderColor = '#edf2f7';
+                    lbl.style.transform = 'scale(1)';
                 });
-                if(this.checked) {
-                    this.parentElement.style.backgroundColor = '#e0f7fa';
-                    this.parentElement.style.color = '#00838f';
+
+                // 選択されたボタンをハイライト
+                if (this.value === "0") {
+                    unspecLbl.style.backgroundColor = '#e2e8f0';
+                    unspecLbl.style.color = '#4a5568';
+                } else {
+                    this.parentElement.style.backgroundColor = '#00b5d8';
+                    this.parentElement.style.color = '#ffffff';
                     this.parentElement.style.borderColor = '#00b5d8';
+                    this.parentElement.style.transform = 'scale(1.15)'; // 選択されたら少し大きくする
                 }
             });
         });
@@ -360,6 +381,7 @@ function resetApp() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// 時刻のバグを修正（日本時間でパースする）
 const formatTime = (timeStr) => {
     if (!timeStr) return '';
     if (timeStr.includes('T') && timeStr.includes('Z')) {
@@ -425,7 +447,6 @@ function displayResults(results, isSelected, mode) {
     topActionsDiv.appendChild(topResetBtn);
     container.appendChild(topActionsDiv);
 
-    // ★ 診断結果カード側の1行スライダー（数直線風）
     function createEvalBlock(left, val, right) {
         if (!val || val === "") return "";
         let dots = "";
@@ -632,8 +653,9 @@ window.addEventListener('DOMContentLoaded', () => {
     }).catch(e => {});
 });
 
+// ★ 追加した新しいボタン（kw-label-unspec, kw-label-num）にも波紋エフェクトを適用
 document.addEventListener('mousedown', function(e) {
-    const target = e.target.closest('button, .menu-button, .kw-label, .lab-check-label, .custom-radio');
+    const target = e.target.closest('button, .menu-button, .kw-label, .kw-label-unspec, .kw-label-num, .lab-check-label, .custom-radio');
     if (!target) return;
 
     const circle = document.createElement('span');
