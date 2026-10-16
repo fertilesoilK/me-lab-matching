@@ -74,7 +74,8 @@ function updateTable() {
             const matches = lab.分野.match(/'([^']+)'/g);
             if (matches) fieldDisplay = matches.map(s => s.replace(/'/g, '')).join('，');
         } else if (Array.isArray(lab.分野)) { fieldDisplay = lab.分野.join('，'); }
-        thead += `<td class="data-cell" style="font-weight:bold; color:#0f284a;">${fieldDisplay}</td>`;
+        // ★分野のセルを中央揃えに修正
+        thead += `<td class="data-cell" style="font-weight:bold; color:#0f284a; text-align: center; vertical-align: middle;">${fieldDisplay}</td>`;
     });
     thead += '</tr>';
     
@@ -106,7 +107,8 @@ function updateTable() {
     });
     thead += '</tr>';
 
-    thead += '<tr><th class="row-header">主要キーワード</th>';
+    // ★項目名を「主要<br>キーワード」と改行
+    thead += '<tr><th class="row-header">主要<br>キーワード</th>';
     selectedLabs.forEach(lab => {
         let kwHtml = '';
         let kws = parseKeywords(lab.キーワードデータ);
@@ -115,7 +117,8 @@ function updateTable() {
     });
     thead += '</tr>';
 
-    thead += '<tr><th class="row-header">専門キーワード</th>';
+    // ★項目名を「専門<br>キーワード」と改行
+    thead += '<tr><th class="row-header">専門<br>キーワード</th>';
     selectedLabs.forEach(lab => {
         let kwHtml = '';
         let kws = parseKeywords(lab.キーワードデータ);
