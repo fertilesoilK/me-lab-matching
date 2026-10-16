@@ -360,7 +360,6 @@ function resetApp() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// 時刻のバグを修正（日本時間でパースする）
 const formatTime = (timeStr) => {
     if (!timeStr) return '';
     if (timeStr.includes('T') && timeStr.includes('Z')) {
@@ -383,7 +382,6 @@ function displayResults(results, isSelected, mode) {
     topRefDiv.className = 'no-print';
     topRefDiv.style.cssText = "background-color: #f8fafc; padding: 16px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0; display: flex; align-items: flex-start; gap: 12px;";
     
-    // ★注意書きを追加
     topRefDiv.innerHTML = `
         <span class="material-symbols-outlined" style="color: #a0aec0; margin-top: 2px;">info</span>
         <div style="font-size: 0.9em; color: #4a5568; line-height: 1.5;">
@@ -427,21 +425,24 @@ function displayResults(results, isSelected, mode) {
     topActionsDiv.appendChild(topResetBtn);
     container.appendChild(topActionsDiv);
 
+    // ★ 診断結果カード側の1行スライダー（数直線風）
     function createEvalBlock(left, val, right) {
         if (!val || val === "") return "";
         let dots = "";
         for (let i = 1; i <= 5; i++) {
-            dots += (i == val) ? '<span style="color:#00b5d8; font-size:1.4em; line-height:1;">●</span>' : '<span style="color:#e2e8f0; font-size:1.2em; line-height:1;">●</span>';
+            let isActive = (i == val);
+            let color = isActive ? "#00b5d8" : "#cbd5e0";
+            let size = isActive ? "10px" : "6px";
+            dots += `<div style="width: ${size}; height: ${size}; border-radius: 50%; background-color: ${color}; z-index: 2;"></div>`;
         }
         return `
-            <div style="margin: 8px 0;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.85em; font-weight: bold; color: #4a5568; margin-bottom: 2px;">
-                    <span style="flex: 1; text-align: left;">${left}</span>
-                    <span style="flex: 1; text-align: right;">${right}</span>
-                </div>
-                <div style="display: flex; justify-content: center; gap: 8px; align-items: center;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin: 8px 0; color: #4a5568; gap: 6px; width: 100%;">
+                <span style="flex: 1; text-align: right; font-size: 0.8rem; font-weight: bold; white-space: nowrap; letter-spacing: -0.5px;">${left}</span>
+                <div style="position: relative; display: flex; justify-content: space-between; align-items: center; width: 60px; flex-shrink: 0;">
+                    <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #cbd5e0; z-index: 1;"></div>
                     ${dots}
                 </div>
+                <span style="flex: 1; text-align: left; font-size: 0.8rem; font-weight: bold; white-space: nowrap; letter-spacing: -0.5px;">${right}</span>
             </div>`;
     }
 

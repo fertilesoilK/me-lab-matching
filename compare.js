@@ -27,7 +27,6 @@ function renderCheckboxes() {
     });
 }
 
-// 時刻のバグを修正（日本時間でパースする）
 const formatTime = (timeStr) => {
     if (!timeStr) return '';
     if (timeStr.includes('T') && timeStr.includes('Z')) {
@@ -101,17 +100,26 @@ function updateTable() {
             const val = lab[q.id];
             if (val && val !== "0" && val !== 0) {
                 let dots = "";
-                for (let i = 1; i <= 5; i++) dots += (i == val) ? '<span style="color:#00b5d8; font-size:1.2em;">●</span>' : '<span style="color:#e2e8f0; font-size:1em;">●</span>';
+                // ★数直線風のドットを生成
+                for (let i = 1; i <= 5; i++) {
+                    let isActive = (i == val);
+                    let color = isActive ? "#00b5d8" : "#cbd5e0";
+                    let size = isActive ? "8px" : "5px"; // 該当箇所のみ大きく
+                    dots += `<div style="width: ${size}; height: ${size}; border-radius: 50%; background-color: ${color}; z-index: 2;"></div>`;
+                }
+                // ★1行に収まるようにフレックスボックスで構成
                 evalHtml += `
-                    <div style="margin-bottom: 8px; font-size: 0.85em;">
-                        <div style="display: flex; justify-content: space-between; color: #4a5568; margin-bottom: 2px; white-space: nowrap; gap: 8px;">
-                            <span>${q.left}</span><span>${q.right}</span>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; color: #4a5568; gap: 4px; width: 100%;">
+                        <span style="flex: 1; text-align: right; white-space: nowrap; font-size: 10px; letter-spacing: -0.5px;">${q.left}</span>
+                        <div style="position: relative; display: flex; justify-content: space-between; align-items: center; width: 45px; flex-shrink: 0;">
+                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #cbd5e0; z-index: 1;"></div>
+                            ${dots}
                         </div>
-                        <div style="text-align: center; letter-spacing: 2px; white-space: nowrap;">${dots}</div>
+                        <span style="flex: 1; text-align: left; white-space: nowrap; font-size: 10px; letter-spacing: -0.5px;">${q.right}</span>
                     </div>`;
             }
         });
-        thead += `<td class="data-cell" style="background-color: #f8fafc;">${evalHtml}</td>`;
+        thead += `<td class="data-cell" style="background-color: #f8fafc; vertical-align: middle;">${evalHtml}</td>`;
     });
     thead += '</tr>';
 
