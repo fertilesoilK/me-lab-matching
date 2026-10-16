@@ -22,7 +22,6 @@ const CATEGORY_ORDER = [
     "バイオメカニクス・生体工学", "医療福祉・人間工学", "実験設備・ツール・その他"
 ];
 
-// スタイル診断用の評価項目定義
 const EVAL_QUESTIONS = [
     { id: "eval_1", left: "実験中心", right: "解析・計算中心" },
     { id: "eval_2", left: "自主性重視", right: "進捗管理あり" },
@@ -32,15 +31,12 @@ const EVAL_QUESTIONS = [
     { id: "eval_6", left: "個人作業中心", right: "チーム作業中心" }
 ];
 
-// トップメニューの切り替え処理と自動スクロール
 const btnDiagnose = document.getElementById('btn-diagnose');
 const diagSelectionArea = document.getElementById('diag-selection-area');
 
 if (btnDiagnose && diagSelectionArea) {
     btnDiagnose.addEventListener('click', () => {
         diagSelectionArea.style.display = 'block';
-
-        // 「どのように診断しますか？」が見えるように少し下に自動スクロール
         setTimeout(() => {
             const yOffset = -20;
             const y = diagSelectionArea.getBoundingClientRect().top + window.pageYOffset + yOffset;
@@ -49,7 +45,6 @@ if (btnDiagnose && diagSelectionArea) {
     });
 }
 
-// 診断モードの切り替え処理
 const modeRadios = document.querySelectorAll('input[name="diag-mode"]');
 const formArea = document.getElementById('form-area');
 const keywordsContainer = document.getElementById('keywords-container');
@@ -68,46 +63,35 @@ modeRadios.forEach(radio => {
     });
 });
 
-// JSONデータを読み込み、キーワードリストを完全自動生成する
 fetch('data.json')
     .then(response => response.json())
     .then(data => {
         labData = data;
-
-        CATEGORY_ORDER.forEach(cat => {
-            dynamicKeywords[cat] = { "主要": [], "専門・詳細": [] };
-        });
+        CATEGORY_ORDER.forEach(cat => { dynamicKeywords[cat] = { "主要": [], "専門・詳細": [] }; });
 
         labData.forEach(lab => {
             let kws = [];
             if (typeof lab.キーワードデータ === 'string') {
                 try { kws = JSON.parse(lab.キーワードデータ.replace(/'/g, '"')); } catch(e) {}
-            } else if (Array.isArray(lab.キーワードデータ)) {
-                kws = lab.キーワードデータ;
-            }
+            } else if (Array.isArray(lab.キーワードデータ)) { kws = lab.キーワードデータ; }
 
             lab.parsedKeywords = []; 
-
             kws.forEach(kwTuple => {
                 if (Array.isArray(kwTuple) && kwTuple.length > 0) {
                     const name = kwTuple[0];
                     const cat = kwTuple[1] || "実験設備・ツール・その他";
                     const level = kwTuple[2] || "専門・詳細";
-
                     if (!dynamicKeywords[cat]) dynamicKeywords[cat] = { "主要": [], "専門・詳細": [] };
                     if (!dynamicKeywords[cat][level]) dynamicKeywords[cat][level] = [];
                     if (!dynamicKeywords[cat][level].includes(name)) dynamicKeywords[cat][level].push(name);
-                    
                     lab.parsedKeywords.push(name);
                 } else if (typeof kwTuple === 'string') {
                     const name = kwTuple;
                     const cat = "実験設備・ツール・その他";
                     const level = "専門・詳細";
-                    
                     if (!dynamicKeywords[cat]) dynamicKeywords[cat] = { "主要": [], "専門・詳細": [] };
                     if (!dynamicKeywords[cat][level]) dynamicKeywords[cat][level] = [];
                     if (!dynamicKeywords[cat][level].includes(name)) dynamicKeywords[cat][level].push(name);
-                    
                     lab.parsedKeywords.push(name);
                 }
             });
@@ -118,13 +102,10 @@ fetch('data.json')
                 delete dynamicKeywords[cat];
             } else {
                 dynamicKeywords[cat]["主要"].forEach(kw => {
-                    allKeywordsList.push(kw);
-                    allMainSet.add(kw);
-                    keywordToCategoryMap[kw] = cat;
+                    allKeywordsList.push(kw); allMainSet.add(kw); keywordToCategoryMap[kw] = cat;
                 });
                 dynamicKeywords[cat]["専門・詳細"].forEach(kw => {
-                    allKeywordsList.push(kw);
-                    keywordToCategoryMap[kw] = cat;
+                    allKeywordsList.push(kw); keywordToCategoryMap[kw] = cat;
                 });
             }
         });
@@ -132,7 +113,6 @@ fetch('data.json')
         renderKeywordsUI();
         renderStylesUI();
 
-        // URLパラメータの処理
         const params = new URLSearchParams(window.location.search);
         if (params.has('m')) {
             const mode = params.get('m');
@@ -159,10 +139,8 @@ fetch('data.json')
     })
     .catch(error => console.error('データの読み込みに失敗しました:', error));
 
-// キーワードUIの生成
 function renderKeywordsUI() {
     const container = document.getElementById('keywords-container');
-    
     for (const [category, groups] of Object.entries(dynamicKeywords)) {
         if (groups["主要"].length === 0 && groups["専門・詳細"].length === 0) continue;
 
@@ -182,9 +160,7 @@ function renderKeywordsUI() {
 
             const basicGroup = document.createElement('div');
             basicGroup.className = 'kw-group';
-            groups["主要"].forEach(kw => {
-                basicGroup.appendChild(createCheckbox(kw));
-            });
+            groups["主要"].forEach(kw => { basicGroup.appendChild(createCheckbox(kw)); });
             section.appendChild(basicGroup);
         }
 
@@ -196,12 +172,9 @@ function renderKeywordsUI() {
 
             const advGroup = document.createElement('div');
             advGroup.className = 'kw-group';
-            groups["専門・詳細"].forEach(kw => {
-                advGroup.appendChild(createCheckbox(kw));
-            });
+            groups["専門・詳細"].forEach(kw => { advGroup.appendChild(createCheckbox(kw)); });
             section.appendChild(advGroup);
         }
-
         container.appendChild(section);
     }
 }
@@ -217,14 +190,11 @@ function createCheckbox(keyword) {
     return label;
 }
 
-// スタイルUIの生成
 function renderStylesUI() {
     const container = document.getElementById('styles-container');
-    
     EVAL_QUESTIONS.forEach(q => {
         const wrapper = document.createElement('div');
         wrapper.style.cssText = "background-color: #ffffff; padding: 20px; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);";
-        
         let html = `
             <div style="text-align: center; margin-bottom: 16px; font-weight: bold; color: #0f284a; font-size: 1.05em;">
                 ${q.left} ⇔ ${q.right}
@@ -238,27 +208,21 @@ function renderStylesUI() {
         for (let i = 1; i <= 5; i++) {
             html += `<label class="kw-label" style="font-size: 1.1em; width: 40px; justify-content: center;"><input type="radio" name="${q.id}" value="${i}"> ${i}</label>`;
         }
-        html += `
-                </div>
-            </div>
-        `;
+        html += `</div></div>`;
         wrapper.innerHTML = html;
         container.appendChild(wrapper);
     });
 }
 
-// 診断ボタン処理（楽観的UIによるアニメーション追加）
 document.getElementById('diagnose-btn').addEventListener('click', function() {
     const checkedRadio = document.querySelector('input[name="diag-mode"]:checked');
     if (!checkedRadio) return; 
     
-    // 楽観的UI：ボタンを瞬時に「解析中」状態にする
     const originalHtml = this.innerHTML;
-    this.innerHTML = '<span style="display: flex; justify-content: center; align-items: center; gap: 8px;"><span class="material-symbols-outlined" style="animation: spin 1s linear infinite;">sync</span> 解析中...</span>';
+    this.innerHTML = '<span style="display: flex; justify-content: center; align-items: center; gap: 8px;"><span class="material-symbols-outlined" style="animation: spin 1s linear infinite;">sync</span> 処理中...</span>';
     this.style.opacity = '0.8';
     this.style.pointerEvents = 'none';
 
-    // 0.4秒だけアニメーションを見せてから処理を実行する
     setTimeout(() => {
         const mode = checkedRadio.value;
         const url = new URL(window.location);
@@ -337,47 +301,38 @@ document.getElementById('diagnose-btn').addEventListener('click', function() {
         results.sort((a, b) => b.Match_Score - a.Match_Score);
         displayResults(results, isSelected, mode);
 
-        // ボタンの見た目を元に戻す
         this.innerHTML = originalHtml;
         this.style.opacity = '1';
         this.style.pointerEvents = 'auto';
     }, 400);
 });
 
-// リセット処理
 function resetApp() {
     document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
     document.querySelectorAll('input[type="radio"][value="0"]').forEach(r => r.checked = true); 
-    
     document.querySelectorAll('input[name="diag-mode"]').forEach(r => r.checked = false);
     document.getElementById('form-area').style.display = 'none';
-    
     if(diagSelectionArea) diagSelectionArea.style.display = 'none';
     
     const url = new URL(window.location);
     url.search = '';
     window.history.replaceState({}, '', url);
-    
     document.getElementById('results-container').innerHTML = '';
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// 結果を表示する関数
 function displayResults(results, isSelected, mode) {
     const container = document.getElementById('results-container');
     container.innerHTML = '<h2 style="display: flex; align-items: center; gap: 8px;"><span class="material-symbols-outlined" style="color: #dd6b20;">workspace_premium</span> 診断結果</h2>';
 
-    // 1. 学科公式HPへの参考リンク
     const topRefDiv = document.createElement('div');
     topRefDiv.className = 'no-print';
     topRefDiv.style.cssText = "background-color: #f4f6f8; padding: 20px; border-radius: 12px; margin-bottom: 24px; text-align: center;";
     topRefDiv.innerHTML = `
-        <p style="margin: 0 0 12px 0; font-weight: bold; color: #0f284a;">【参考】学科の公式ページも確認してみましょう</p>
-        <a href="https://www.rs.tus.ac.jp/me/laboratory.html" target="_blank" style="display: inline-flex; align-items: center; gap: 4px; color: #00b5d8; text-decoration: none; font-weight: bold;"><span class="material-symbols-outlined" style="font-size: 1.1em;">open_in_new</span> 学科公式HP 研究室紹介</a>
+        <a href="https://www.rs.tus.ac.jp/me/laboratory.html" target="_blank" style="display: inline-flex; align-items: center; gap: 4px; color: #00b5d8; text-decoration: none; font-weight: bold;"><span class="material-symbols-outlined" style="font-size: 1.1em;">open_in_new</span> 機械航空宇宙工学科 公式サイト（研究室紹介）</a>
     `;
     container.appendChild(topRefDiv);
 
-    // 2. アクションボタン群
     const topActionsDiv = document.createElement('div');
     topActionsDiv.className = 'no-print';
     topActionsDiv.style.display = "flex";
@@ -390,33 +345,29 @@ function displayResults(results, isSelected, mode) {
 
     if (isSelected && recommendedLabs.length > 0) {
         const top3 = recommendedLabs.slice(0, 3);
-        let modeText = mode === 'keyword' ? "キーワード" : "雰囲気・スタイル";
-        let shareText = `【ME研究室マッチング（${modeText}診断）】\n私の診断結果トップ3：\n`;
+        let modeText = mode === 'keyword' ? "キーワード" : "スタイル";
+        let shareText = `【ME研究室 相性診断結果 (${modeText})】\n`;
         const medals = ["🥇 1位", "🥈 2位", "🥉 3位"];
-        
         top3.forEach((lab, index) => {
-            shareText += `${medals[index]}：${lab.研究室名} (スコア: ${lab.Match_Score}点)\n`;
+            shareText += `${medals[index]}：${lab.研究室名} (${lab.Match_Score}点)\n`;
         });
-        shareText += "\nあなたも診断してみよう！\n" + window.location.href;
+        shareText += "\n" + window.location.href;
         
-        const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(shareText)}`;
         const lineBtn = document.createElement('a');
-        lineBtn.href = lineUrl;
+        lineBtn.href = `https://line.me/R/msg/text/?${encodeURIComponent(shareText)}`;
         lineBtn.target = "_blank";
         lineBtn.style.cssText = "display: inline-flex; align-items: center; gap: 8px; background-color: #06C755; color: #fff; padding: 12px 20px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 0.95em; box-shadow: 0 4px 12px rgba(6, 199, 85, 0.2);";
-        lineBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 1.2em;">chat</span> LINEでシェア';
+        lineBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 1.2em;">chat</span> 結果をLINEでシェア';
         topActionsDiv.appendChild(lineBtn);
     }
 
     const topResetBtn = document.createElement('button');
     topResetBtn.style.cssText = "display: inline-flex; align-items: center; gap: 8px; background-color: #4a5568; color: #fff; padding: 12px 20px; border: none; border-radius: 8px; font-size: 0.95em; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(74, 85, 104, 0.2);";
-    topResetBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 1.2em;">refresh</span> もう一度診断する';
+    topResetBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 1.2em;">refresh</span> 再診断';
     topResetBtn.addEventListener('click', resetApp);
     topActionsDiv.appendChild(topResetBtn);
-
     container.appendChild(topActionsDiv);
 
-    // スマホでも見やすい評価ブロック
     function createEvalBlock(left, val, right) {
         if (!val || val === "") return "";
         let dots = "";
@@ -442,13 +393,10 @@ function displayResults(results, isSelected, mode) {
 
         let rankHtml = "";
         if (rank !== null) {
-            let rankMedal = "";
-            let bgColor = "#f4f6f8";
-            let borderColor = "#cbd5e0";
+            let rankMedal = ""; let bgColor = "#f4f6f8"; let borderColor = "#cbd5e0";
             if (rank === 1) { rankMedal = "🥇"; bgColor = "#fffaf0"; borderColor = "#ecc94b"; }
             else if (rank === 2) { rankMedal = "🥈"; bgColor = "#f7fafc"; borderColor = "#a0aec0"; }
             else if (rank === 3) { rankMedal = "🥉"; bgColor = "#fff5f5"; borderColor = "#ed8936"; }
-            
             rankHtml = `<span style="background-color: ${bgColor}; border: 1px solid ${borderColor}; padding: 4px 10px; border-radius: 16px; font-size: 0.85em; margin-right: 12px; white-space: nowrap; display: inline-block; vertical-align: middle;">${rankMedal} <strong>${rank}位</strong></span>`;
         }
 
@@ -478,16 +426,9 @@ function displayResults(results, isSelected, mode) {
         if (typeof lab.分野 === 'string') {
             const fieldMatches = lab.分野.match(/'([^']+)'/g);
             if (fieldMatches) fieldDisplay = fieldMatches.map(s => s.replace(/'/g, '')).join('，');
-        } else if (Array.isArray(lab.分野)) {
-            fieldDisplay = lab.分野.join('，');
-        }
+        } else if (Array.isArray(lab.分野)) { fieldDisplay = lab.分野.join('，'); }
 
-        let coreStr = "未設定";
-        if (lab.core_time === "あり") {
-            coreStr = `あり（${lab.core_start || ''} 〜 ${lab.core_end || ''}）`;
-        } else if (lab.core_time === "なし") {
-            coreStr = "なし";
-        }
+        let coreStr = (lab.core_time === "あり") ? `あり（${lab.core_start || ''} 〜 ${lab.core_end || ''}）` : "なし";
 
         card.innerHTML = `
             <details>
@@ -509,7 +450,7 @@ function displayResults(results, isSelected, mode) {
                     </div>
                     <p style="margin: 5px 0 20px 0; color:#4a5568;"><strong style="color:#0f284a;">コアタイム：</strong> ${coreStr}</p>
                     <div style="background: #ffffff; border: 1px solid #e2e8f0; padding: 16px; border-radius: 12px;">
-                        <p style="margin-top: 0;"><strong style="color:#0f284a;"><span class="material-symbols-outlined" style="font-size: 1.1em; vertical-align: middle;">vpn_key</span> 関連キーワード</strong></p>
+                        <p style="margin-top: 0;"><strong style="color:#0f284a;"><span class="material-symbols-outlined" style="font-size: 1.1em; vertical-align: middle;">vpn_key</span> 登録キーワード</strong></p>
                         ${kwHtml}
                     </div>
                     <p style="margin-top: 20px;"><strong style="color:#0f284a;">関連リンク：</strong> ${links || '<span style="color:#a0aec0;">なし</span>'}</p>
@@ -519,21 +460,18 @@ function displayResults(results, isSelected, mode) {
         return card;
     }
 
-    // 3. 診断結果の表示
     if (!isSelected) {
         results.forEach(lab => container.appendChild(createLabCard(lab)));
     } else {
         if (recommendedLabs.length > 0) {
             const recTitle = document.createElement('h3');
-            recTitle.innerHTML = '<span class="material-symbols-outlined" style="vertical-align: middle; color:#dd6b20;">recommend</span> おすすめの研究室';
+            recTitle.innerHTML = '<span class="material-symbols-outlined" style="vertical-align: middle; color:#dd6b20;">recommend</span> マッチする研究室';
             recTitle.style.marginTop = "0px";
             recTitle.style.borderBottom = "2px solid #edf2f7";
             recTitle.style.paddingBottom = "8px";
             container.appendChild(recTitle);
             
-            let previousScore = -1;
-            let displayRank = 1;
-            
+            let previousScore = -1; let displayRank = 1;
             recommendedLabs.forEach((lab, index) => {
                 if (lab.Match_Score !== previousScore) displayRank = index + 1; 
                 container.appendChild(createLabCard(lab, displayRank));
@@ -541,7 +479,7 @@ function displayResults(results, isSelected, mode) {
             });
         } else {
             const noRec = document.createElement('p');
-            noRec.innerText = "条件に一致する研究室はありませんでした。";
+            noRec.innerText = "条件に一致する研究室がありません。";
             noRec.style.color = "#718096";
             noRec.style.textAlign = "center";
             noRec.style.padding = "40px";
@@ -559,55 +497,30 @@ function displayResults(results, isSelected, mode) {
         }
     }
 
-    // 4. 診断の仕組み（一番下）
     let descHtml = "";
     if (mode === 'keyword') {
         descHtml = `
-            <p style="margin: 0 0 8px 0; color: #0f284a;"><strong><span class="material-symbols-outlined" style="vertical-align: middle;">info</span> 診断の仕組み（キーワード）</strong></p>
-            <p style="margin: 0 0 12px 0;">あなたが希望する研究テーマを、その研究室がどの程度カバーしているか（網羅率）を算出しています。キーワードに重み（主要:50点、専門:10点）を持たせ、以下の式で100点満点に換算します。</p>
-            <div style="background-color: #ffffff; padding: 16px; border-radius: 8px; margin-bottom: 12px; display: flex; justify-content: center; align-items: center; color: #0f284a; font-size: 1.1em; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-                <span>スコア ＝ </span>
-                <span style="display: inline-flex; flex-direction: column; text-align: center; margin: 0 12px;">
-                    <span style="border-bottom: 2px solid #0f284a; padding: 0 4px; line-height: 1.2;">分子</span>
-                    <span style="padding: 0 4px; line-height: 1.2;">分母</span>
-                </span>
-                <span> × 100</span>
-            </div>
-            <ul style="margin: 0; padding-left: 24px; color: #4a5568; line-height: 1.6;">
-                <li><strong>分子：</strong>選択したキーワードのうち、その研究室が実際に扱っているキーワードの合計点数</li>
-                <li><strong>分母：</strong>あなたが選択した全キーワードの合計点数</li>
-            </ul>
+            <p style="margin: 0 0 8px 0; color: #0f284a;"><strong><span class="material-symbols-outlined" style="vertical-align: middle;">info</span> スコア算出基準（キーワード）</strong></p>
+            <p style="margin: 0 0 12px 0;">選択したキーワードと各研究室の登録データの合致度から算出（主要: 50点, 専門: 10点）。</p>
         `;
     } else {
         descHtml = `
-            <p style="margin: 0 0 8px 0; color: #0f284a;"><strong><span class="material-symbols-outlined" style="vertical-align: middle;">info</span> 診断の仕組み（スタイル・雰囲気）</strong></p>
-            <p style="margin: 0 0 12px 0;">あなたが選んだ理想のスタイルと、先輩が登録した実際の雰囲気の「近さ」を項目ごとに比較し、相性を100点満点で算出しています。</p>
-            <div style="background-color: #ffffff; padding: 16px; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-                <p style="margin: 0 0 8px 0; color:#0f284a;"><strong>【項目ごとの加点ルール】</strong></p>
-                <ul style="margin: 0; padding-left: 24px; color: #4a5568;">
-                    <li>ピッタリ一致：10点</li>
-                    <li>1メモリずれ：7点</li>
-                    <li>2メモリずれ：4点</li>
-                    <li>3メモリずれ：1点</li>
-                    <li>4メモリずれ：0点</li>
-                </ul>
-                <p style="margin: 8px 0 0 0; font-size: 0.85em; color: #a0aec0;">※「指定しない」を選んだ項目は計算から除外されます。</p>
-            </div>
+            <p style="margin: 0 0 8px 0; color: #0f284a;"><strong><span class="material-symbols-outlined" style="vertical-align: middle;">info</span> スコア算出基準（スタイル）</strong></p>
+            <p style="margin: 0 0 12px 0;">選択した項目と各研究室の登録データの差分から減点方式で算出（完全一致: 10点, 1段階差: 7点, 2段階差: 4点, 3段階差: 1点, 4段階差: 0点）。※「指定しない」項目は除外。</p>
         `;
     }
     const bottomDescDiv = document.createElement('div');
     bottomDescDiv.className = 'no-print';
-    bottomDescDiv.style.cssText = "background-color: #f4f6f8; padding: 24px; border-radius: 12px; margin: 40px 0 24px 0; font-size: 0.95em;";
+    bottomDescDiv.style.cssText = "background-color: #f4f6f8; padding: 16px 24px; border-radius: 12px; margin: 40px 0 24px 0; font-size: 0.95em;";
     bottomDescDiv.innerHTML = descHtml;
     container.appendChild(bottomDescDiv);
 
-    // 5. 一番下の「もう一度診断する」ボタン
     const bottomResetDiv = document.createElement('div');
     bottomResetDiv.className = 'no-print';
     bottomResetDiv.style.textAlign = "center";
     bottomResetDiv.innerHTML = `
         <button style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; background-color: #4a5568; color: #fff; padding: 16px 32px; border: none; border-radius: 12px; font-size: 1.1em; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(74, 85, 104, 0.2); transition: transform 0.2s, box-shadow 0.2s;">
-            <span class="material-symbols-outlined">refresh</span> もう一度診断する（条件をクリア）
+            <span class="material-symbols-outlined">refresh</span> 再診断
         </button>
     `;
     bottomResetDiv.querySelector('button').addEventListener('click', resetApp);
@@ -616,27 +529,19 @@ function displayResults(results, isSelected, mode) {
     setTimeout(() => { container.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
 }
 
-// ==========================================
-// アクセスログの送信
-// ==========================================
 window.addEventListener('DOMContentLoaded', () => {
     const GAS_LOG_URL = "https://script.google.com/macros/s/AKfycbxpc4VrxQXak5nvJWXWUL8M56YO5fZK5Zgy6DEIEdikhdjar4wqya5KijWdV1-KXiOtdA/exec";
-    
     let userId = localStorage.getItem('me_user_id');
     if (!userId) {
         userId = 'user_' + Math.random().toString(36).substr(2, 9);
         localStorage.setItem('me_user_id', userId);
     }
-
     fetch(GAS_LOG_URL, {
         method: 'POST',
         body: JSON.stringify({ action: "log", type: "PV", page: "診断ツール(index)", userId: userId })
     }).catch(e => {}); 
 });
 
-// ==========================================
-// ネイティブUI/UXの拡張（リップルエフェクト）
-// ==========================================
 document.addEventListener('mousedown', function(e) {
     const target = e.target.closest('button, .menu-button, .kw-label, .lab-check-label, .custom-radio');
     if (!target) return;

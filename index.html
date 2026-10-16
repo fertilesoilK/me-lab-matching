@@ -5,267 +5,112 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ME研究室マッチング</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Google Material Symbolsの読み込み（細字で洗練されたアイコン） -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0" />
     <style>
-        /* =========================================
-           トップページ専用UIスタイル（ネイティブアプリ風）
-           ========================================= */
-        h1 {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 1.6rem;
-        }
-
-        .main-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            margin: 24px 0 32px 0;
-        }
-
-        /* -------------------------------------
-           メインメニューボタン
-           ------------------------------------- */
+        h1 { display: flex; align-items: center; gap: 8px; font-size: 1.6rem; }
+        .main-menu { display: flex; flex-direction: column; gap: 16px; margin: 24px 0 32px 0; }
+        
         .menu-button {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #ffffff;
-            border: none;
-            border-radius: 16px;
-            padding: 24px;
-            text-decoration: none;
-            color: #4a5568; /* チタン・グレー */
-            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
-            position: relative;
-            overflow: hidden; /* リップルエフェクト用 */
-            text-align: left;
-            width: 100%;
-            box-sizing: border-box;
+            display: flex; align-items: center; justify-content: space-between;
+            background: #ffffff; border: none; border-radius: 16px; padding: 24px;
+            color: #4a5568; box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+            position: relative; overflow: hidden; text-align: left; width: 100%; box-sizing: border-box;
             transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
         }
-        
-        .menu-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
-        }
+        .menu-button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
+        .menu-button:active { transform: scale(0.98); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        .menu-text h2 { color: #0f284a; margin: 0 0 8px 0; font-size: 1.25rem; display: flex; align-items: center; gap: 8px; }
+        .menu-text p { margin: 0; font-size: 0.9rem; color: #718096; line-height: 1.5; }
+        .menu-button .arrow { color: #a0aec0; font-size: 2rem; }
 
-        .menu-button:active {
-            transform: scale(0.98);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
+        @media (min-width: 600px) { .main-menu { flex-direction: row; } .menu-button { flex: 1; } }
 
-        .menu-text h2 {
-            color: #0f284a; /* ディープ・ネイビーブルー */
-            margin: 0 0 8px 0;
-            font-size: 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .menu-text p {
-            margin: 0;
-            font-size: 0.9rem;
-            color: #718096;
-            line-height: 1.5;
-        }
-
-        .menu-button .arrow {
-            color: #a0aec0;
-            font-size: 2rem;
-        }
-
-        @media (min-width: 600px) {
-            .main-menu {
-                flex-direction: row;
-            }
-            .menu-button {
-                flex: 1;
-            }
-        }
-
-        /* -------------------------------------
-           通知・Tips・選択ボックス
-           ------------------------------------- */
+        /* 左端のオレンジ線を廃止し、シンプルでフラットな通知枠に変更 */
         .warning-box {
-            background-color: rgba(221, 107, 32, 0.05); /* 薄いクリアオレンジ */
-            border-left: 4px solid #dd6b20;
-            padding: 16px;
-            border-radius: 8px 12px 12px 8px;
-            color: #4a5568;
-            font-size: 0.9rem;
-            display: flex;
-            gap: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-            margin-bottom: 24px;
+            background-color: #fff5f5; border: 1px solid #fed7d7;
+            padding: 16px; border-radius: 12px; color: #4a5568; font-size: 0.9rem;
+            display: flex; gap: 12px; margin-bottom: 24px;
         }
+        .warning-box .material-symbols-outlined { color: #e53e3e; }
 
-        .warning-box .material-symbols-outlined {
-            color: #dd6b20;
-        }
+        .selection-box { background-color: #f4f6f8; padding: 24px; border-radius: 16px; margin-bottom: 24px; }
+        .box-title { margin-top: 0; font-weight: bold; color: #0f284a; display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+        .box-title .material-symbols-outlined { color: #00b5d8; }
 
-        .selection-box {
-            background-color: #f4f6f8;
-            padding: 24px;
-            border-radius: 16px;
-            margin-bottom: 24px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-        }
-
-        .box-title {
-            margin-top: 0;
-            font-weight: bold;
-            color: #0f284a;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-
-        .box-title .material-symbols-outlined {
-            color: #00b5d8; /* シアン */
-        }
-
-        /* カスタムラジオボタン（カード型） */
         .custom-radio {
-            cursor: pointer;
-            display: block;
-            background: #ffffff;
-            padding: 16px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease, background-color 0.2s ease;
-            position: relative;
-            overflow: hidden;
+            cursor: pointer; display: block; background: #ffffff; padding: 16px; border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease, background-color 0.2s ease;
+            position: relative; overflow: hidden;
         }
+        .custom-radio:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+        .custom-radio:active { transform: scale(0.98); }
+        .custom-radio input[type="radio"] { display: none; }
+        .radio-content { display: flex; align-items: flex-start; gap: 12px; color: #4a5568; }
+        .radio-content .icon { color: #a0aec0; transition: color 0.2s ease; }
+        
+        .custom-radio:has(input:checked) { background-color: #e0f7fa; box-shadow: 0 4px 12px rgba(0, 181, 216, 0.15); }
+        .custom-radio:has(input:checked) .icon { color: #00b5d8; }
+        .custom-radio strong { color: #0f284a; font-size: 1.05rem; display: block; margin-bottom: 4px; }
+        .custom-radio span.desc { font-size: 0.85rem; color: #718096; }
 
-        .custom-radio:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-        }
-
-        .custom-radio:active {
-            transform: scale(0.98);
-        }
-
-        .custom-radio input[type="radio"] {
-            display: none; /* デフォルトの丸いラジオボタンを隠す */
-        }
-
-        .radio-content {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            color: #4a5568;
-        }
-
-        .radio-content .icon {
-            color: #a0aec0;
-            transition: color 0.2s ease;
-        }
-
-        /* 選択時の状態（楽観的UI） */
-        .custom-radio:has(input:checked) {
-            background-color: #e0f7fa;
-            box-shadow: 0 4px 12px rgba(0, 181, 216, 0.15);
-        }
-
-        .custom-radio:has(input:checked) .icon {
-            color: #00b5d8;
-        }
-
-        .custom-radio strong {
-            color: #0f284a;
-            font-size: 1.05rem;
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        .custom-radio span.desc {
-            font-size: 0.85rem;
-            color: #718096;
-        }
-
-        .tips-box {
-            background-color: #f4f6f8;
-            padding: 16px;
-            border-radius: 12px;
-            font-size: 0.9rem;
-            margin-bottom: 20px;
-            display: flex;
-            gap: 12px;
-            align-items: flex-start;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-        }
-
-        .tips-box .material-symbols-outlined {
-            color: #00b5d8;
-        }
+        .tips-box { background-color: #f4f6f8; padding: 16px; border-radius: 12px; font-size: 0.9rem; margin-bottom: 20px; display: flex; gap: 12px; align-items: flex-start; }
+        .tips-box .material-symbols-outlined { color: #00b5d8; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>
             <span class="material-symbols-outlined" style="font-size: 2rem; color: #00b5d8;">rocket_launch</span>
-            <span style="display: inline-block;">ME研究室マッチング</span>
+            <span>ME研究室マッチング・比較ツール</span>
         </h1>
-        
-        <p style="color: #718096;">あなたの研究室選びをサポートします。</p>
         
         <div class="warning-box">
             <span class="material-symbols-outlined">warning</span>
             <div>
-                <strong>注意事項</strong><br>
-                本サイトは非公式サイトであり、情報はあくまでB4が収集したものです。鵜呑みにせず、正確な情報は必ず各研究室の公式ホームページや見学等で確認してください。
+                <strong>【非公式情報】</strong><br>
+                本サイトはB4学生が独自に収集した参考情報です。最新かつ正確な情報は各研究室の公式HP等で必ず確認してください。
             </div>
         </div>
 
-        <!-- メインメニュー -->
         <div class="main-menu" id="main-menu">
             <a href="compare.html" class="menu-button">
                 <div class="menu-text">
-                    <h2><span class="material-symbols-outlined">compare_arrows</span> 任意の研究室を比較する</h2>
-                    <p>気になる研究室を複数選んで、詳細なデータを横並びの表で比較します。</p>
+                    <h2><span class="material-symbols-outlined">compare_arrows</span> 研究室を比較</h2>
+                    <p>選択した複数の研究室のデータを一覧表で比較します。</p>
                 </div>
                 <span class="material-symbols-outlined arrow">chevron_right</span>
             </a>
             
             <button class="menu-button" id="btn-diagnose">
                 <div class="menu-text">
-                    <h2><span class="material-symbols-outlined">explore</span> 自分に合う研究室を診断する</h2>
-                    <p>キーワードや雰囲気から、あなたにぴったりの研究室をスコア化して探します。</p>
+                    <h2><span class="material-symbols-outlined">explore</span> 相性診断</h2>
+                    <p>希望するキーワードやスタイルから、条件に合う研究室をスコア化します。</p>
                 </div>
                 <span class="material-symbols-outlined arrow">chevron_right</span>
             </button>
         </div>
 
-        <!-- 診断モードの選択エリア（初期状態は非表示） -->
         <div id="diag-selection-area" style="display: none;">
             <div class="selection-box">
-                <p class="box-title"><span class="material-symbols-outlined">lightbulb</span> どのように診断しますか？</p>
-                
+                <p class="box-title"><span class="material-symbols-outlined">tune</span> 診断方法の選択</p>
                 <div style="display: flex; flex-direction: column; gap: 12px;">
                     <label class="custom-radio">
                         <input type="radio" name="diag-mode" value="keyword">
                         <div class="radio-content">
                             <span class="material-symbols-outlined icon">search</span>
                             <div>
-                                <strong>研究キーワードから探す</strong>
-                                <span class="desc">やりたい分野や研究が決まっている方向け</span>
+                                <strong>キーワードで診断</strong>
+                                <span class="desc">具体的な研究テーマや使用ツールから探す</span>
                             </div>
                         </div>
                     </label>
-                    
                     <label class="custom-radio">
                         <input type="radio" name="diag-mode" value="style">
                         <div class="radio-content">
                             <span class="material-symbols-outlined icon">psychology</span>
                             <div>
-                                <strong>雰囲気・スタイルから探す</strong>
-                                <span class="desc">自分に合った環境を重視する方向け</span>
+                                <strong>スタイルで診断</strong>
+                                <span class="desc">研究室の環境や指導方針から探す</span>
                             </div>
                         </div>
                     </label>
@@ -273,42 +118,29 @@
             </div>
         </div>
         
-        <!-- ▼ どちらかを選択した後に表示されるエリア ▼ -->
         <div id="form-area" style="display: none;">
-            <!-- キーワード診断用のコンテナ -->
             <div id="keywords-container" style="display: none;">
                 <div class="tips-box">
-                    <span class="material-symbols-outlined">lightbulb</span>
-                    <div>
-                        <strong>キーワード選びのコツ</strong><br>
-                        専門的な単語も多数含まれています。見慣れない単語がある場合は無理に選ばず、まずは直感的に気になる「主要キーワード」を中心にチェックしてみてください。
-                    </div>
+                    <span class="material-symbols-outlined">info</span>
+                    <div>関心のあるキーワードをすべて選択してください。</div>
                 </div>
-                <!-- ここにJavaScriptでチェックボックスが自動生成されます -->
             </div>
 
-            <!-- 雰囲気・スタイル診断用のコンテナ -->
             <div id="styles-container" style="display: none;">
                 <div class="tips-box">
-                    <span class="material-symbols-outlined">lightbulb</span>
-                    <div>
-                        <strong>スタイル選びのコツ</strong><br>
-                        あなたが理想とする研究室の環境に近いものを選んでください。特にこだわりがない項目は「指定しない」のままで構いません。
-                    </div>
+                    <span class="material-symbols-outlined">info</span>
+                    <div>希望する研究室のスタイルを選択してください。こだわりのない項目は「指定しない」のままで構いません。</div>
                 </div>
-                <!-- ここにJavaScriptで5段階評価のUIが自動生成されます -->
             </div>
 
             <button id="diagnose-btn" style="margin-top: 20px;">
                 <span style="display: flex; justify-content: center; align-items: center; gap: 8px;">
-                    <span class="material-symbols-outlined">check_circle</span> 診断する
+                    <span class="material-symbols-outlined">check_circle</span> 診断を実行
                 </span>
             </button>
         </div>
         
-        <div id="results-container">
-            <!-- ここに診断結果が表示されます -->
-        </div>
+        <div id="results-container"></div>
     </div>
     
     <script src="script.js"></script>
