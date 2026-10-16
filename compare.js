@@ -24,7 +24,6 @@ function renderCheckboxes() {
     });
 }
 
-// 確実な時刻抽出ロジック（文字列から "HH:MM" を探し出す）
 const formatTime = (timeStr) => {
     if (!timeStr) return '';
     const match = timeStr.match(/(\d{2}:\d{2})/);
@@ -76,7 +75,8 @@ function updateTable() {
     thead += '<tr><th class="row-header">コアタイム</th>';
     selectedLabs.forEach(lab => {
         let coreStr = (lab.core_time === "あり") ? `あり<br>（${formatTime(lab.core_start)} 〜 ${formatTime(lab.core_end)}）` : "なし";
-        thead += `<td class="data-cell">${coreStr}</td>`;
+        // コアタイムを中央揃えに修正
+        thead += `<td class="data-cell" style="text-align: center; vertical-align: middle;">${coreStr}</td>`;
     });
     thead += '</tr>';
 
