@@ -62,77 +62,6 @@
 
         .compare-table th.row-header { 
             width: 100px; min-width: 100px; max-width: 100px; 
-            textスマホ版（画面の幅が狭い端末）でアクセスした際に、表内の文字サイズを小さくし、セルの余白（パディング）や列幅も全体的にキュッと縮小するようCSSに「メディアクエリ（スマホ用スタイル設定）」を追加しました[cite: 32]。
-
-これにより、スマートフォンでも一度に目に入る情報量が増え、スクロールしやすくなります。
-
-今回は **`compare.html`** のみの変更となります。以下のコードで上書き保存してください（`compare.js` は変更不要です）。
-
-```html
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>研究室 比較ツール</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="[https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0](https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0)" />
-    <style>
-        .compare-container { 
-            max-width: 96%; 
-            margin: 0 auto; 
-            background: transparent; 
-            padding: 10px 0 40px 0; 
-            border-radius: 0; 
-            box-shadow: none; 
-        }
-        .lab-selector { background-color: #f4f6f8; padding: 24px; border-radius: 12px; margin-bottom: 24px; }
-        .checkbox-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
-        
-        .lab-check-label {
-            background: #fff; border: 1px solid #e2e8f0; padding: 10px 18px; border-radius: 30px; cursor: pointer;
-            font-size: 0.95em; color: #4a5568; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        }
-        .lab-check-label:hover { transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.04); }
-        .lab-check-label input { display: none; }
-        .lab-check-label.selected { background: #e0f7fa; border-color: #00b5d8; color: #00838f; font-weight: bold; }
-
-        .table-wrapper { 
-            overflow: auto; 
-            max-height: 75vh; 
-            margin-top: 24px; 
-            border-radius: 8px; 
-            border: 2px solid #cbd5e0; 
-        }
-        
-        .compare-table { 
-            width: 100%; 
-            border-collapse: separate; 
-            border-spacing: 0; 
-            min-width: 800px; 
-        }
-        
-        .compare-table th, .compare-table td {
-            border-right: 1px solid #94a3b8;
-            border-bottom: 1px solid #94a3b8;
-            padding: 14px; 
-            vertical-align: top; 
-            line-height: 1.6; 
-            color: #334155;
-            background-color: #ffffff; 
-            background-clip: padding-box; 
-        }
-        .compare-table th:last-child, .compare-table td:last-child { border-right: none; }
-        .compare-table tbody tr:last-child th, .compare-table tbody tr:last-child td { border-bottom: none; }
-
-        .compare-table thead th {
-            position: sticky;
-            top: 0;
-            z-index: 2;
-        }
-
-        .compare-table th.row-header { 
-            width: 100px; min-width: 100px; max-width: 100px; 
             text-align: center; vertical-align: middle; 
             background-color: #f8fafc; color: #0f284a; 
             position: sticky; left: 0; z-index: 3; 
@@ -158,30 +87,27 @@
         .nav-links { text-align: right; margin-bottom: 20px; }
         .nav-links a { display: inline-flex; align-items: center; gap: 4px; background-color: #4a5568; color: white; padding: 10px 16px; border-radius: 8px; text-decoration: none; font-size: 0.9em; font-weight: bold; }
         
-        .info-bar { background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; border-radius: 8px; font-size: 0.9rem; color: #4a5568; margin-bottom: 24px; display: flex; gap: 12px; line-height: 1.5; }
-        .info-bar .material-symbols-outlined { color: #718096; }
+        .info-bar { background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; border-radius: 8px; font-size: 0.9rem; color: #4a5568; margin-bottom: 24px; display: flex; align-items: flex-start; gap: 12px; line-height: 1.5; }
+        .info-bar .material-symbols-outlined { color: #718096; margin-top: 2px; }
 
-        /* =========================================
-           スマホ向けレイアウト調整（画面幅600px以下）
-           ========================================= */
         @media (max-width: 600px) {
             .compare-table th, .compare-table td {
-                font-size: 0.8rem; /* 文字を小さく */
-                padding: 8px 6px;  /* セル内の余白を詰める */
+                font-size: 0.8rem;
+                padding: 8px 6px; 
             }
             .compare-table th.row-header {
-                width: 75px; min-width: 75px; max-width: 75px; /* 項目列をさらに細く */
+                width: 75px; min-width: 75px; max-width: 75px;
                 font-size: 0.8rem;
             }
             .compare-table td.data-cell, .compare-table th.col-header {
-                width: 180px; min-width: 180px; /* 研究室の列幅を細く */
+                width: 180px; min-width: 180px;
             }
             .col-header {
-                font-size: 0.9rem; /* ヘッダーの研究室名も小さく */
+                font-size: 0.9rem;
                 padding: 10px 6px;
             }
             .kw-tag {
-                font-size: 0.75rem; /* キーワードのタグも小さく */
+                font-size: 0.75rem;
                 padding: 3px 6px;
             }
         }
@@ -199,7 +125,8 @@
             <span class="material-symbols-outlined">info</span>
             <div>
                 【推奨環境】PC・タブレットでの閲覧を推奨します（スマートフォンの場合は表を横にスクロールしてください）。<br>
-                本サイトのデータは非公式情報です。正確な情報については、必ず<a href="[https://www.rs.tus.ac.jp/me/laboratory.html](https://www.rs.tus.ac.jp/me/laboratory.html)" target="_blank" style="color: #00b5d8; text-decoration: underline; font-weight: bold;">学科公式ホームページ</a>等も併せて参考にしてください。
+                本サイトのデータは非公式情報です。正確な情報については、必ず<a href="https://www.rs.tus.ac.jp/me/laboratory.html" target="_blank" style="color: #00b5d8; text-decoration: underline; font-weight: bold;">学科公式ホームページ</a>等も併せて参考にしてください。<br>
+                <span style="color: #dd6b20;">※各研究室のB4学生が個別に情報を登録しているため、研究室ごとに情報量（キーワードの登録数など）にばらつきがあります。あらかじめご了承ください。</span>
             </div>
         </div>
 

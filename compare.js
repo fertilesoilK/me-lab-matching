@@ -27,8 +27,17 @@ function renderCheckboxes() {
     });
 }
 
+// 時刻のバグを修正（日本時間でパースする）
 const formatTime = (timeStr) => {
     if (!timeStr) return '';
+    if (timeStr.includes('T') && timeStr.includes('Z')) {
+        const d = new Date(timeStr);
+        if (!isNaN(d.getTime())) {
+            const h = String(d.getHours()).padStart(2, '0');
+            const m = String(d.getMinutes()).padStart(2, '0');
+            return `${h}:${m}`;
+        }
+    }
     const match = timeStr.match(/(\d{2}:\d{2})/);
     return match ? match[1] : timeStr;
 };
@@ -74,7 +83,6 @@ function updateTable() {
             const matches = lab.分野.match(/'([^']+)'/g);
             if (matches) fieldDisplay = matches.map(s => s.replace(/'/g, '')).join('，');
         } else if (Array.isArray(lab.分野)) { fieldDisplay = lab.分野.join('，'); }
-        // ★分野のセルを中央揃えに修正
         thead += `<td class="data-cell" style="font-weight:bold; color:#0f284a; text-align: center; vertical-align: middle;">${fieldDisplay}</td>`;
     });
     thead += '</tr>';
@@ -107,7 +115,6 @@ function updateTable() {
     });
     thead += '</tr>';
 
-    // ★項目名を「主要<br>キーワード」と改行
     thead += '<tr><th class="row-header">主要<br>キーワード</th>';
     selectedLabs.forEach(lab => {
         let kwHtml = '';
@@ -117,7 +124,6 @@ function updateTable() {
     });
     thead += '</tr>';
 
-    // ★項目名を「専門<br>キーワード」と改行
     thead += '<tr><th class="row-header">専門<br>キーワード</th>';
     selectedLabs.forEach(lab => {
         let kwHtml = '';

@@ -360,8 +360,17 @@ function resetApp() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// 時刻のバグを修正（日本時間でパースする）
 const formatTime = (timeStr) => {
     if (!timeStr) return '';
+    if (timeStr.includes('T') && timeStr.includes('Z')) {
+        const d = new Date(timeStr);
+        if (!isNaN(d.getTime())) {
+            const h = String(d.getHours()).padStart(2, '0');
+            const m = String(d.getMinutes()).padStart(2, '0');
+            return `${h}:${m}`;
+        }
+    }
     const match = timeStr.match(/(\d{2}:\d{2})/);
     return match ? match[1] : timeStr;
 };
@@ -372,11 +381,14 @@ function displayResults(results, isSelected, mode) {
 
     const topRefDiv = document.createElement('div');
     topRefDiv.className = 'no-print';
-    topRefDiv.style.cssText = "background-color: #f8fafc; padding: 16px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 12px;";
+    topRefDiv.style.cssText = "background-color: #f8fafc; padding: 16px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0; display: flex; align-items: flex-start; gap: 12px;";
+    
+    // ★注意書きを追加
     topRefDiv.innerHTML = `
-        <span class="material-symbols-outlined" style="color: #a0aec0;">info</span>
-        <div style="font-size: 0.9em; color: #4a5568;">
-            本サイトのデータは非公式情報です。正確な情報については、必ず<a href="https://www.rs.tus.ac.jp/me/laboratory.html" target="_blank" style="color: #00b5d8; text-decoration: underline; font-weight: bold;">学科公式ホームページ（研究室紹介）</a>等も併せて参考にしてください。
+        <span class="material-symbols-outlined" style="color: #a0aec0; margin-top: 2px;">info</span>
+        <div style="font-size: 0.9em; color: #4a5568; line-height: 1.5;">
+            本サイトのデータは非公式情報です。正確な情報については、必ず<a href="https://www.rs.tus.ac.jp/me/laboratory.html" target="_blank" style="color: #00b5d8; text-decoration: underline; font-weight: bold;">学科公式ホームページ（研究室紹介）</a>等も併せて参考にしてください。<br>
+            <span style="color: #dd6b20;">※各研究室のB4学生が個別に情報を登録しているため、研究室ごとに情報量（キーワードの登録数など）にばらつきがあります。あらかじめご了承ください。</span>
         </div>
     `;
     container.appendChild(topRefDiv);
@@ -398,7 +410,6 @@ function displayResults(results, isSelected, mode) {
         const medals = ["🥇 1位", "🥈 2位", "🥉 3位"];
         top3.forEach((lab, index) => { shareText += `${medals[index]}：${lab.研究室名} (${lab.Match_Score}点)\n`; });
         
-        // ★固定のURLとスタイリッシュなテキストを追加
         shareText += "\nあなたにぴったりの研究室は？今すぐ診断してみよう👇\nhttps://fertilesoilk.github.io/me-lab-matching/index.html";
         
         const lineBtn = document.createElement('a');
