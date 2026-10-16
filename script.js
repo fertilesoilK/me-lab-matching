@@ -1,4 +1,3 @@
-// ローディングアニメーション用のCSSを動的に追加
 if (!document.getElementById('spin-style')) {
     const style = document.createElement('style');
     style.id = 'spin-style';
@@ -145,7 +144,6 @@ function renderKeywordsUI() {
         section.className = 'category-section';
         section.style.cssText = "margin-bottom: 24px;";
         
-        // 分野の区切り線を明確に追加
         const title = document.createElement('div');
         title.className = 'category-title';
         title.style.cssText = "font-weight: bold; color: #0f284a; border-bottom: 2px solid #cbd5e0; padding-bottom: 8px; margin-bottom: 12px; font-size: 1.1rem;";
@@ -228,7 +226,6 @@ function renderStylesUI() {
         html += `</div></div>`;
         wrapper.innerHTML = html;
 
-        // ラジオボタンのハイライト処理
         wrapper.querySelectorAll('input[type="radio"]').forEach(radio => {
             radio.addEventListener('change', function() {
                 const group = wrapper.querySelectorAll('.kw-label');
@@ -328,7 +325,7 @@ document.getElementById('diagnose-btn').addEventListener('click', function() {
         let userId = localStorage.getItem('me_user_id');
         fetch(GAS_LOG_URL, {
             method: 'POST',
-            body: JSON.stringify({ action: "log", type: "PV", page: "診断実行", userId: userId })
+            body: JSON.stringify({ action: "log", type: "Event", page: "診断実行", userId: userId })
         }).catch(e => {});
 
         window.history.replaceState({}, '', url);
@@ -360,7 +357,6 @@ function resetApp() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// 時刻文字列からHH:MMを確実に抽出する関数
 const formatTime = (timeStr) => {
     if (!timeStr) return '';
     const match = timeStr.match(/(\d{2}:\d{2})/);
@@ -376,7 +372,9 @@ function displayResults(results, isSelected, mode) {
     topRefDiv.style.cssText = "background-color: #f8fafc; padding: 16px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 12px;";
     topRefDiv.innerHTML = `
         <span class="material-symbols-outlined" style="color: #a0aec0;">info</span>
-        <div style="font-size: 0.9em; color: #4a5568;">最新かつ正確な情報は、各研究室の<a href="https://www.rs.tus.ac.jp/me/laboratory.html" target="_blank" style="color: #00b5d8; text-decoration: underline; font-weight: bold;">公式ホームページ等</a>で必ず確認してください。</div>
+        <div style="font-size: 0.9em; color: #4a5568;">
+            本サイトのデータは非公式情報です。正確な情報については、必ず<a href="https://www.rs.tus.ac.jp/me/laboratory.html" target="_blank" style="color: #00b5d8; text-decoration: underline; font-weight: bold;">学科公式ホームページ（研究室紹介）</a>等も併せて参考にしてください。
+        </div>
     `;
     container.appendChild(topRefDiv);
 
@@ -433,7 +431,6 @@ function displayResults(results, isSelected, mode) {
 
     function createLabCard(lab, rank = null) {
         const card = document.createElement('div');
-        // 余白を狭く設定して一覧性を高める
         card.style.cssText = "margin-bottom: 8px; background: transparent;";
 
         let rankHtml = "";
@@ -546,7 +543,6 @@ function displayResults(results, isSelected, mode) {
         }
     }
 
-    // 算出基準の詳しい説明を復活
     let descHtml = "";
     if (mode === 'keyword') {
         descHtml = `
