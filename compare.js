@@ -80,7 +80,7 @@ function updateTable() {
     });
     thead += '</tr>';
 
-    thead += '<tr><th class="row-header">スタイル・雰囲気</th>';
+    thead += '<tr><th class="row-header">スタイル</th>';
     selectedLabs.forEach(lab => {
         let evalHtml = '';
         EVAL_QUESTIONS.forEach(q => {
