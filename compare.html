@@ -8,10 +8,10 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0" />
     <style>
         .compare-container { 
-            max-width: 1200px; 
+            max-width: 96%; 
             margin: 0 auto; 
-            background: transparent; /* ★白枠を撤廃 */
-            padding: 10px 0 40px 0; /* ★幅を広く使う */
+            background: transparent; 
+            padding: 10px 0 40px 0; 
             border-radius: 0; 
             box-shadow: none; 
         }
@@ -60,12 +60,12 @@
             z-index: 2;
         }
 
-        /* 項目名の列幅を120pxに狭める */
         .compare-table th.row-header { 
-            width: 120px; min-width: 120px; max-width: 120px; 
+            width: 130px; min-width: 130px; max-width: 130px; 
             text-align: center; vertical-align: middle; 
             background-color: #f8fafc; color: #0f284a; 
             position: sticky; left: 0; z-index: 3; 
+            white-space: nowrap; 
         }
 
         .compare-table thead th.row-header {
@@ -78,6 +78,7 @@
             text-align: center; font-size: 1.1em; 
             background-color: #2b4c7e !important; 
             color: white !important; 
+            white-space: nowrap; 
         }
 
         .kw-tag { display: inline-block; background-color: #f4f6f8; padding: 4px 10px; border-radius: 6px; font-size: 0.85em; margin: 3px; border: 1px solid #e2e8f0; color: #4a5568; }

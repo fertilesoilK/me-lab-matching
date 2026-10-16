@@ -19,7 +19,10 @@ function renderCheckboxes() {
             updateTable();
         });
         label.appendChild(input);
-        label.appendChild(document.createTextNode(lab.研究室名));
+        
+        const shortName = lab.研究室名.replace('研究室', '研');
+        label.appendChild(document.createTextNode(shortName));
+        
         container.appendChild(label);
     });
 }
@@ -58,7 +61,10 @@ function updateTable() {
     ];
 
     let thead = '<thead><tr><th class="row-header">項目</th>';
-    selectedLabs.forEach(lab => { thead += `<th class="col-header">${lab.研究室名}</th>`; });
+    selectedLabs.forEach(lab => { 
+        const shortName = lab.研究室名.replace('研究室', '研');
+        thead += `<th class="col-header">${shortName}</th>`; 
+    });
     thead += '</tr></thead><tbody>';
 
     thead += '<tr><th class="row-header">分野</th>';
@@ -75,7 +81,6 @@ function updateTable() {
     thead += '<tr><th class="row-header">コアタイム</th>';
     selectedLabs.forEach(lab => {
         let coreStr = (lab.core_time === "あり") ? `あり<br>（${formatTime(lab.core_start)} 〜 ${formatTime(lab.core_end)}）` : "なし";
-        // コアタイムを中央揃えに修正
         thead += `<td class="data-cell" style="text-align: center; vertical-align: middle;">${coreStr}</td>`;
     });
     thead += '</tr>';
@@ -90,10 +95,10 @@ function updateTable() {
                 for (let i = 1; i <= 5; i++) dots += (i == val) ? '<span style="color:#00b5d8; font-size:1.2em;">●</span>' : '<span style="color:#e2e8f0; font-size:1em;">●</span>';
                 evalHtml += `
                     <div style="margin-bottom: 8px; font-size: 0.85em;">
-                        <div style="display: flex; justify-content: space-between; color: #4a5568; margin-bottom: 2px;">
+                        <div style="display: flex; justify-content: space-between; color: #4a5568; margin-bottom: 2px; white-space: nowrap; gap: 8px;">
                             <span>${q.left}</span><span>${q.right}</span>
                         </div>
-                        <div style="text-align: center; letter-spacing: 2px;">${dots}</div>
+                        <div style="text-align: center; letter-spacing: 2px; white-space: nowrap;">${dots}</div>
                     </div>`;
             }
         });
