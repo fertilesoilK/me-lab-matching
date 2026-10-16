@@ -90,21 +90,25 @@
         .info-bar { background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; border-radius: 8px; font-size: 0.9rem; color: #4a5568; margin-bottom: 24px; display: flex; align-items: flex-start; gap: 12px; line-height: 1.5; }
         .info-bar .material-symbols-outlined { color: #718096; margin-top: 2px; }
 
+        /* =========================================
+           スマホ向けレイアウト調整（画面幅600px以下）
+           ========================================= */
         @media (max-width: 600px) {
             .compare-table th, .compare-table td {
                 font-size: 0.8rem;
-                padding: 8px 6px; 
+                padding: 6px 4px; /* セル内の余白をさらに詰める */
             }
             .compare-table th.row-header {
-                width: 75px; min-width: 75px; max-width: 75px;
-                font-size: 0.8rem;
+                width: 65px; min-width: 65px; max-width: 65px; /* 「キーワード」がギリギリ収まる幅に縮小 */
+                font-size: 0.75rem; /* 項目名を少し小さく */
+                padding: 6px 2px;
             }
             .compare-table td.data-cell, .compare-table th.col-header {
-                width: 180px; min-width: 180px;
+                width: 170px; min-width: 170px; /* 研究室の列幅を少し細く調整 */
             }
             .col-header {
                 font-size: 0.9rem;
-                padding: 10px 6px;
+                padding: 8px 4px;
             }
             .kw-tag {
                 font-size: 0.75rem;
