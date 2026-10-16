@@ -19,7 +19,6 @@
         .lab-check-label input { display: none; }
         .lab-check-label.selected { background: #e0f7fa; border-color: #00b5d8; color: #00838f; font-weight: bold; }
 
-        /* 縦横スクロールを可能にし、高さを制限 */
         .table-wrapper { 
             overflow: auto; 
             max-height: 75vh; 
@@ -28,7 +27,6 @@
             border: 2px solid #cbd5e0; 
         }
         
-        /* stickyを効かせるため border-collapse を separate に変更 */
         .compare-table { 
             width: 100%; 
             border-collapse: separate; 
@@ -36,7 +34,6 @@
             min-width: 800px; 
         }
         
-        /* 格子線と透け防止の背景色を設定 */
         .compare-table th, .compare-table td {
             border-right: 1px solid #94a3b8;
             border-bottom: 1px solid #94a3b8;
@@ -45,33 +42,31 @@
             line-height: 1.6; 
             color: #334155;
             background-color: #ffffff; 
-            background-clip: padding-box; /* スクロール時のフチ漏れを防止 */
+            background-clip: padding-box; 
         }
         .compare-table th:last-child, .compare-table td:last-child { border-right: none; }
         .compare-table tbody tr:last-child th, .compare-table tbody tr:last-child td { border-bottom: none; }
 
-        /* 縦スクロール時に上部（研究室名）を固定 */
         .compare-table thead th {
             position: sticky;
             top: 0;
             z-index: 2;
         }
 
-        /* 横スクロール時に左端（項目名）を固定 */
+        /* 項目名の列幅を120pxに狭める */
         .compare-table th.row-header { 
-            width: 160px; min-width: 160px; text-align: center; vertical-align: middle; 
+            width: 120px; min-width: 120px; max-width: 120px; 
+            text-align: center; vertical-align: middle; 
             background-color: #f8fafc; color: #0f284a; 
             position: sticky; left: 0; z-index: 3; 
         }
 
-        /* 左上の角セル（「項目」）は両方で固定するため一番前面に */
         .compare-table thead th.row-header {
             z-index: 4;
         }
 
         .compare-table td.data-cell, .compare-table th.col-header { width: 300px; min-width: 250px; }
         
-        /* 研究室名の背景色を薄く（#2b4c7e）して枠線を見やすく */
         .col-header { 
             text-align: center; font-size: 1.1em; 
             background-color: #2b4c7e !important; 

@@ -210,19 +210,24 @@ function renderStylesUI() {
     EVAL_QUESTIONS.forEach(q => {
         const wrapper = document.createElement('div');
         wrapper.style.cssText = "background-color: #ffffff; padding: 20px; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);";
+        
+        // スマホ画面でもボタンが綺麗に並ぶように width: 100% と flex-wrap を調整
         let html = `
             <div style="text-align: center; margin-bottom: 16px; font-weight: bold; color: #0f284a; font-size: 1.05em;">
                 ${q.left} ⇔ ${q.right}
             </div>
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%;">
                 <label class="kw-label" style="background-color: #f4f6f8; color: #718096; padding: 8px 20px; font-size: 0.9em; border-radius: 20px; cursor: pointer; display: inline-flex; transition: all 0.2s;">
                     <input type="radio" name="${q.id}" value="0" checked style="display: none;"> 指定しない
                 </label>
-                <div style="display: flex; justify-content: center; gap: 12px; width: 100%; flex-wrap: wrap;" class="radio-group">
+                <div style="display: flex; justify-content: center; gap: 10px; width: 100%; flex-wrap: wrap;" class="radio-group">
         `;
+        
+        // min-width を追加し、幅が狭くてもボタンが縮みすぎないように設定
         for (let i = 1; i <= 5; i++) {
-            html += `<label class="kw-label" style="font-size: 1.1em; width: 40px; justify-content: center; background-color: #f4f6f8; color: #4a5568; border-radius: 20px; cursor: pointer; display: inline-flex; transition: all 0.2s;"><input type="radio" name="${q.id}" value="${i}" style="display: none;"> ${i}</label>`;
+            html += `<label class="kw-label" style="font-size: 1.1em; width: 45px; min-width: 45px; height: 45px; justify-content: center; align-items: center; background-color: #f4f6f8; color: #4a5568; border-radius: 50%; cursor: pointer; display: inline-flex; padding: 0; transition: all 0.2s;"><input type="radio" name="${q.id}" value="${i}" style="display: none;"> ${i}</label>`;
         }
+        
         html += `</div></div>`;
         wrapper.innerHTML = html;
 
