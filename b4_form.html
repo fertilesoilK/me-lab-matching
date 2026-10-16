@@ -4,81 +4,264 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>【B4向け】研究室情報登録フォーム</title>
+    <!-- Material Symbols (Google Icons) の読み込み -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
     <style>
-        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f0f2f6; color: #31333F; padding: 20px; line-height: 1.6; }
-        .container { max-width: 800px; margin: 0 auto; background: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        h1 { font-size: 1.8em; margin-bottom: 5px; border-bottom: 2px solid #f0f2f6; padding-bottom: 10px; }
-        .info-box { background-color: #e6f7ff; padding: 15px; border-radius: 5px; border-left: 5px solid #0056b3; margin-bottom: 25px; font-size: 0.95em; }
-        .section-header { background-color: #e6f7ff; padding: 10px 15px; border-radius: 5px; border-left: 5px solid #0056b3; font-weight: bold; color: #0056b3; margin-top: 40px; margin-bottom: 20px; font-size: 1.2em; }
-        .form-group { margin-bottom: 20px; }
-        label.block-label { display: block; font-weight: bold; margin-bottom: 8px; }
-        select, input[type="text"], input[type="time"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 1em; box-sizing: border-box; }
+        /* =========================================
+           ベース設定（バウンス排除とモダンな質感）
+           ========================================= */
+        body { 
+            font-family: 'Helvetica Neue', Arial, sans-serif; 
+            background-color: #f4f6f8; /* クールグレー */
+            color: #4a5568; /* チタン・グレー */
+            padding: 20px; 
+            line-height: 1.6;
+            margin: 0;
+            overscroll-behavior-y: none; /* バウンスの排除 */
+            -webkit-font-smoothing: antialiased;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: #ffffff; /* 純白 */
+            padding: 30px 40px; 
+            border-radius: 24px; 
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02); 
+            border: none;
+        }
+
+        h1 { 
+            font-size: 1.8em; 
+            margin-bottom: 20px; 
+            color: #0f284a; /* ディープ・ネイビーブルー */
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* 案内ボックス */
+        .info-box { 
+            background-color: #e0f7fa; /* 極薄いシアン */
+            color: #006064;
+            padding: 20px; 
+            border-radius: 12px; 
+            margin-bottom: 30px; 
+            font-size: 0.95em;
+            display: flex;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(0, 181, 216, 0.05);
+        }
+
+        /* セクションヘッダー */
+        .section-header { 
+            background-color: #f4f6f8; 
+            padding: 12px 20px; 
+            border-radius: 12px; 
+            border-left: 4px solid #00b5d8; /* シアンのアクセント */
+            font-weight: bold; 
+            color: #0f284a; 
+            margin-top: 45px; 
+            margin-bottom: 20px; 
+            font-size: 1.2em; 
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group { margin-bottom: 25px; }
+        label.block-label { 
+            display: flex; 
+            align-items: center;
+            gap: 6px;
+            font-weight: bold; 
+            margin-bottom: 10px; 
+            color: #0f284a;
+        }
+
+        /* 入力フォームのフラット化 */
+        select, input[type="text"], input[type="time"] { 
+            width: 100%; 
+            padding: 14px; 
+            background-color: #f4f6f8;
+            border: 2px solid transparent; 
+            border-radius: 12px; 
+            font-size: 1em; 
+            color: #4a5568;
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+        select:focus, input[type="text"]:focus, input[type="time"]:focus {
+            border-color: #00b5d8;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 4px rgba(0, 181, 216, 0.1);
+        }
         
         /* 複数選択チェックボックス群（基本情報用） */
         .checkbox-group { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 10px; }
-        .checkbox-label { display: flex; align-items: center; cursor: pointer; font-size: 1.05em; }
-        .checkbox-label input { transform: scale(1.3); margin-right: 8px; }
+        .checkbox-label { display: flex; align-items: center; cursor: pointer; font-size: 1.05em; transition: opacity 0.2s; }
+        .checkbox-label:active { opacity: 0.7; }
+        .checkbox-label input { transform: scale(1.3); margin-right: 8px; accent-color: #00b5d8; }
         
-        /* キーワードのピル型デザイン */
-        .category-header { background-color: #e2e3e5; padding: 10px 15px; border-radius: 5px; font-weight: bold; margin-top: 30px; margin-bottom: 15px; font-size: 1.05em; }
-        .sub-header { font-weight: bold; color: #555; margin-bottom: 10px; }
-        .pill-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
-        .pill-label { display: flex; align-items: center; border: 1px solid #ccc; padding: 6px 15px; border-radius: 20px; cursor: pointer; background: #fff; font-size: 0.95em; transition: background-color 0.2s; }
-        .pill-label:hover { background-color: #f8f9fa; }
-        .pill-label input { margin-right: 8px; transform: scale(1.2); }
+        /* キーワードのピル型デザイン（ネイティブ風） */
+        .category-header { 
+            padding: 10px 15px; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            margin-top: 30px; 
+            margin-bottom: 15px; 
+            font-size: 1.05em; 
+            color: #0f284a;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .sub-header { font-weight: bold; color: #718096; margin-bottom: 10px; font-size: 0.9em; }
+        .pill-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 25px; }
+        
+        /* 枠線排除とシャドウ活用 */
+        .pill-label { 
+            position: relative;
+            overflow: hidden;
+            display: inline-flex; 
+            align-items: center; 
+            background: #f4f6f8; 
+            padding: 10px 18px; 
+            border-radius: 30px; 
+            cursor: pointer; 
+            font-size: 0.95em; 
+            color: #4a5568;
+            transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s ease, background-color 0.2s, color 0.2s; 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            will-change: transform;
+            user-select: none;
+        }
+        .pill-label input { display: none; /* デフォルトのチェックボックスを隠す */ }
+        
+        /* 選択時の状態（楽観的UIフィードバック） */
+        .pill-label:has(input:checked) {
+            background-color: #e0f7fa;
+            color: #00838f;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0, 181, 216, 0.15);
+        }
+        .pill-label:active, button:active, .add-btn:active, .remove-btn:active { 
+            transform: scale(0.96); /* 沈み込み */
+        }
         
         /* 追加キーワード領域 */
-        .custom-kw-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
+        .custom-kw-row { display: flex; gap: 10px; margin-bottom: 12px; align-items: center; }
         .custom-kw-row input { flex: 2; margin: 0; }
         .custom-kw-row select { flex: 1; margin: 0; }
-        .remove-btn { background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer; padding: 10px 15px; font-weight: bold; }
-        .add-btn { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 5px; display: inline-block; }
+        .remove-btn { 
+            background: #cbd5e0; color: #4a5568; border: none; border-radius: 12px; 
+            cursor: pointer; padding: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center;
+        }
+        .add-btn { 
+            background: #e2e8f0; color: #0f284a; border: none; padding: 12px 20px; 
+            border-radius: 30px; cursor: pointer; font-weight: bold; margin-top: 5px; 
+            display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
         
         /* 5段階評価 */
-        .scale-q { margin-bottom: 25px; }
-        .scale-labels { text-align: center; font-weight: bold; font-size: 1.05em; margin-bottom: 10px; }
-        .scale-radios { display: flex; justify-content: center; gap: 20px; background: #f8f9fa; padding: 12px; border-radius: 8px; }
+        .scale-q { margin-bottom: 30px; }
+        .scale-labels { text-align: center; font-weight: bold; font-size: 1.05em; margin-bottom: 15px; color: #0f284a; }
+        .scale-radios { display: flex; justify-content: center; gap: 25px; background: #f4f6f8; padding: 15px; border-radius: 16px; }
         .scale-radios label { display: flex; flex-direction: column; align-items: center; cursor: pointer; font-weight: bold; }
-        .scale-radios input { transform: scale(1.3); margin-bottom: 5px; }
+        .scale-radios input { transform: scale(1.4); margin-bottom: 8px; accent-color: #00b5d8; }
 
         /* --- プレビューエリアのデザイン --- */
         .preview-section {
-            background-color: #f8f9fa;
-            border: 2px dashed #17a2b8;
-            padding: 20px;
-            border-radius: 8px;
+            background-color: #ffffff;
+            border: none;
+            padding: 30px;
+            border-radius: 16px;
             margin-bottom: 25px;
             margin-top: 40px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.04); /* ソフトシャドウ */
         }
         .preview-header {
             font-weight: bold;
-            color: #17a2b8;
+            color: #00b5d8;
             margin-bottom: 10px;
             font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         /* エラーメッセージ領域 */
-        #errorMessage { color: #ff4b4b; background-color: #ffe6e6; border: 1px solid #ff4b4b; padding: 15px; border-radius: 5px; margin-bottom: 20px; display: none; line-height: 1.8; }
+        #errorMessage { color: #c53030; background-color: #fff5f5; border: none; padding: 15px; border-radius: 12px; margin-bottom: 20px; display: none; line-height: 1.8; box-shadow: 0 2px 8px rgba(197, 48, 48, 0.1); }
         
-        button[type="submit"] { background-color: #ff4b4b; color: white; padding: 15px; border: none; border-radius: 5px; font-size: 1.2em; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; transition: background 0.3s; }
-        button[type="submit"]:hover { background-color: #ff3333; }
-        button[type="submit"]:disabled { background-color: #ccc; cursor: not-allowed; }
+        /* メインボタン（クリア・オレンジ） */
+        button[type="submit"] { 
+            position: relative;
+            overflow: hidden;
+            background-color: #dd6b20; 
+            color: white; 
+            padding: 16px; 
+            border: none; 
+            border-radius: 12px; 
+            font-size: 1.15em; 
+            font-weight: bold; 
+            cursor: pointer; 
+            width: 100%; 
+            margin-top: 20px; 
+            box-shadow: 0 4px 12px rgba(221, 107, 32, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        button[type="submit"]:hover { background-color: #c05616; }
+        button[type="submit"]:disabled { background-color: #cbd5e0; box-shadow: none; cursor: not-allowed; color: #a0aec0; }
         
-        hr { border: none; border-top: 1px solid #eee; margin: 30px 0; }
+        hr { border: none; border-top: 1px solid #e2e8f0; margin: 40px 0; }
+
+        /* リップルエフェクト用クラス */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            background-color: rgba(255, 255, 255, 0.4);
+            pointer-events: none;
+        }
+        .pill-label .ripple, .add-btn .ripple, .remove-btn .ripple {
+            background-color: rgba(0, 0, 0, 0.05); /* 薄い色のボタン用 */
+        }
+        @keyframes ripple-animation {
+            to { transform: scale(4); opacity: 0; }
+        }
+        
+        /* スピナーアニメーション */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .spin { animation: spin 1s linear infinite; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>B4向け研究室情報 登録フォーム</h1>
+        <h1><span class="material-symbols-outlined" style="font-size: 1.2em; color: #0f284a;">rocket_launch</span> B4向け研究室情報 登録フォーム</h1>
         <div class="info-box">
-            💡 <b>情報登録にあたって</b><br>
-            B3の研究室選びに向けた情報登録へご協力をお願いいたします．<br>
-            ここで選択されたキーワードや評価は，そのままB3向けの診断に反映されます．<br>
-            何度でも登録し直していただいて構いませんが，採用されるのは最新のデータのみとなります．
+            <span class="material-symbols-outlined" style="font-size: 1.5em;">info</span>
+            <div>
+                <strong>情報登録にあたって</strong><br>
+                B3の研究室選びに向けた情報登録へご協力をお願いいたします。<br>
+                ここで選択されたキーワードや評価は、そのままB3向けの診断に反映されます。<br>
+                何度でも登録し直していただいて構いませんが、採用されるのは最新のデータのみとなります。
+            </div>
         </div>
 
         <form id="labForm">
-            <div class="section-header">1. 基本情報</div>
+            <div class="section-header">
+                <span class="material-symbols-outlined">apartment</span> 1. 基本情報
+            </div>
             <div class="form-group">
                 <label class="block-label">■ 研究室名</label>
                 <select id="labName">
@@ -109,24 +292,32 @@
                 </div>
             </div>
 
-            <div class="section-header">2. 研究キーワードの登録</div>
-            <p>所属研究室の研究内容に該当するキーワードを選択してください．</p>
+            <div class="section-header">
+                <span class="material-symbols-outlined">key</span> 2. 研究キーワードの登録
+            </div>
+            <p style="color: #718096; margin-bottom: 20px;">所属研究室の研究内容に該当するキーワードをタップして選択してください。</p>
             <div id="keywordsArea"></div>
 
             <hr>
             <label class="block-label">■ 選択肢にないキーワードを追加</label>
-            <p style="font-size: 0.9em; color: #666;">※ 上記の中に適当なキーワードがない場合，適宜追加してください<br>
-            <span style="color: #ff4b4b; font-weight: bold;">B3が興味をひかれるような単語を追加することをお勧めします．</span></p>
+            <p style="font-size: 0.9em; color: #718096;">※ 上記の中に適当なキーワードがない場合、適宜追加してください<br>
+            <span style="color: #dd6b20; font-weight: bold;">B3が興味をひかれるような単語を追加することをお勧めします。</span></p>
             <div id="customKwArea">
                 <!-- JSで動的に行を生成 -->
             </div>
-            <button type="button" class="add-btn" id="addKwBtn">＋ 欄を追加</button>
+            <button type="button" class="add-btn" id="addKwBtn">
+                <span class="material-symbols-outlined">add</span> 欄を追加
+            </button>
 
-            <div class="section-header">3. 研究室のスタイル・雰囲気 (5段階評価)</div>
-            <p>研究室の実際の様子に最も近いものを 1〜5 の中で選んでください．</p>
+            <div class="section-header">
+                <span class="material-symbols-outlined">psychology</span> 3. 研究室のスタイル・雰囲気 (5段階評価)
+            </div>
+            <p style="color: #718096;">研究室の実際の様子に最も近いものを 1〜5 の中で選んでください。</p>
             <div id="evalArea"></div>
 
-            <div class="section-header">4. コアタイムについて</div>
+            <div class="section-header">
+                <span class="material-symbols-outlined">schedule</span> 4. コアタイムについて
+            </div>
             <div class="form-group">
                 <label class="block-label">■ コアタイムはありますか？</label>
                 <div class="checkbox-group">
@@ -145,7 +336,9 @@
                 </div>
             </div>
 
-            <div class="section-header">5. 研究室の関連URLの登録（任意）</div>
+            <div class="section-header">
+                <span class="material-symbols-outlined">link</span> 5. 研究室の関連URLの登録（任意）
+            </div>
             <div class="form-group">
                 <label class="block-label">■ 公式HPのURL</label>
                 <input type="text" id="officialUrl" placeholder="https://...">
@@ -161,8 +354,10 @@
 
             <!-- プレビュー表示エリア -->
             <div class="preview-section">
-                <div class="preview-header">✅ 入力内容の確認</div>
-                <p style="font-size: 0.9em; color: #666; margin-top: 0;">以下の内容で登録されます．送信前に間違いがないか確認してください．</p>
+                <div class="preview-header">
+                    <span class="material-symbols-outlined">visibility</span> 入力内容のプレビュー
+                </div>
+                <p style="font-size: 0.9em; color: #718096; margin-top: 0; margin-bottom: 20px;">以下の内容で登録されます。送信前に間違いがないか確認してください。</p>
                 <div id="preview-container">
                     <!-- JSでプレビューが生成されます -->
                 </div>
@@ -171,11 +366,42 @@
             <!-- エラーメッセージを表示する領域 -->
             <div id="errorMessage"></div>
 
-            <button type="submit" id="submitBtn">この内容で登録する</button>
+            <button type="submit" id="submitBtn">
+                <span class="material-symbols-outlined">send</span> この内容で登録する
+            </button>
         </form>
     </div>
 
     <script>
+        // ==========================================
+        // ネイティブUI/UXの拡張（リップルエフェクト）
+        // ==========================================
+        document.addEventListener('mousedown', function(e) {
+            const target = e.target.closest('button, .pill-label, .add-btn, .remove-btn');
+            if (!target) return;
+
+            const circle = document.createElement('span');
+            const diameter = Math.max(target.clientWidth, target.clientHeight);
+            const radius = diameter / 2;
+
+            const rect = target.getBoundingClientRect();
+            const x = e.clientX - rect.left - radius;
+            const y = e.clientY - rect.top - radius;
+
+            circle.style.width = circle.style.height = `${diameter}px`;
+            circle.style.left = `${x}px`;
+            circle.style.top = `${y}px`;
+            circle.classList.add('ripple');
+
+            const existingRipple = target.querySelector('.ripple');
+            if (existingRipple) existingRipple.remove();
+
+            target.appendChild(circle);
+        });
+
+        // ==========================================
+        // 既存のフォーム処理ロジック
+        // ==========================================
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxpc4VrxQXak5nvJWXWUL8M56YO5fZK5Zgy6DEIEdikhdjar4wqya5KijWdV1-KXiOtdA/exec";
         
         const ROMAJI_DICT = {
@@ -208,8 +434,8 @@
                 "専門・詳細": ["航空機設計", "航空機翼", "風洞実験", "離陸飛行実験", "パラフォイル", "風洞", "極超音速", "衝撃波"]
             },
             "宇宙工学・推進エンジン": {
-                "主要": ["宇宙環境", "エンジン", "ロケット"],
-                "専門・詳細": ["ターボジェットエンジン", "極超音速エンジン", "複合サイクルエンジン", "エンジン設計", "エンジン制御", "衛星", "流路切替機構設計", "スペースプレーン", "火星飛行探索機", "火星利用", "生命維持", "水電解", "航空宇宙用複合材料", "JAXA", "再突入ロケットのタンク", "サイジング"]
+                "主要": ["宇宙環境", "エンジン", "ロケット", "衛星"],
+                "専門・詳細": ["ターボジェットエンジン", "極超音速エンジン", "複合サイクルエンジン", "エンジン設計", "エンジン制御", "流路切替機構設計", "スペースプレーン", "火星飛行探索機", "火星利用", "生命維持", "水電解", "航空宇宙用複合材料", "JAXA", "再突入ロケットのタンク", "サイジング"]
             },
             "材料": {
                 "主要": ["航空宇宙材料", "複合材料", "CFRP", "炭素繊維・連続繊維", "加工学", "微細加工"],
@@ -262,10 +488,10 @@
         const kwArea = document.getElementById('keywordsArea');
         for (const [category, groups] of Object.entries(categorized_keywords)) {
             const catDiv = document.createElement('div');
-            catDiv.innerHTML = `<div class="category-header">▼ 【${category}】</div>`;
+            catDiv.innerHTML = `<div class="category-header"><span class="material-symbols-outlined" style="font-size: 1em;">label</span> ${category}</div>`;
             
             if (groups["主要"].length > 0) {
-                catDiv.innerHTML += `<div class="sub-header">■ 主要キーワード</div>`;
+                catDiv.innerHTML += `<div class="sub-header">主要キーワード</div>`;
                 const grid = document.createElement('div');
                 grid.className = 'pill-grid';
                 groups["主要"].forEach(kw => {
@@ -274,7 +500,7 @@
                 catDiv.appendChild(grid);
             }
             if (groups["専門・詳細"].length > 0) {
-                catDiv.innerHTML += `<div class="sub-header">■ 専門・詳細キーワード</div>`;
+                catDiv.innerHTML += `<div class="sub-header">専門・詳細キーワード</div>`;
                 const grid = document.createElement('div');
                 grid.className = 'pill-grid';
                 groups["専門・詳細"].forEach(kw => {
@@ -296,7 +522,7 @@
             row.innerHTML = `
                 <input type="text" class="custom-kw-input" placeholder="追加キーワード">
                 <select class="custom-cat-select">${catOptions}</select>
-                <button type="button" class="remove-btn">－</button>
+                <button type="button" class="remove-btn"><span class="material-symbols-outlined">close</span></button>
             `;
             row.querySelector('.remove-btn').addEventListener('click', function() {
                 this.parentElement.remove();
@@ -389,7 +615,7 @@
             previewContainer.appendChild(createPreviewCard(lab));
         }
 
-        // プレビューカードのHTML組み立て（B3向け画面と同じロジック）
+        // プレビューカードのHTML組み立て
         function createPreviewCard(lab) {
             const card = document.createElement('div');
             
@@ -404,16 +630,16 @@
             const sortedCats = CATEGORY_LIST.filter(cat => categorizedKws[cat]);
             const kwHtml = sortedCats.map(cat => `
                 <div style="margin-bottom: 10px;">
-                    <strong style="color: #444;">・${cat}</strong>
-                    ${categorizedKws[cat]["主要"].length > 0 ? `<div style="margin-left:15px; font-size:0.85em;"><em>[主要]</em> ${categorizedKws[cat]["主要"].join('， ')}</div>` : ''}
-                    ${categorizedKws[cat]["専門・詳細"].length > 0 ? `<div style="margin-left:15px; font-size:0.85em;"><em>[専門]</em> ${categorizedKws[cat]["専門・詳細"].join('， ')}</div>` : ''}
+                    <strong style="color: #4a5568;">・${cat}</strong>
+                    ${categorizedKws[cat]["主要"].length > 0 ? `<div style="margin-left:15px; font-size:0.85em; color: #718096;"><em>[主要]</em> ${categorizedKws[cat]["主要"].join('， ')}</div>` : ''}
+                    ${categorizedKws[cat]["専門・詳細"].length > 0 ? `<div style="margin-left:15px; font-size:0.85em; color: #718096;"><em>[専門]</em> ${categorizedKws[cat]["専門・詳細"].join('， ')}</div>` : ''}
                 </div>
             `).join('');
 
             const links = [
-                lab.公式HP ? `<a href="${lab.公式HP}" target="_blank">公式HP</a>` : null,
-                lab.関連URL1 ? `<a href="${lab.関連URL1}" target="_blank">関連URL1</a>` : null,
-                lab.関連URL2 ? `<a href="${lab.関連URL2}" target="_blank">関連URL2</a>` : null
+                lab.公式HP ? `<a href="${lab.公式HP}" target="_blank" style="color: #00b5d8; text-decoration: none;">公式HP</a>` : null,
+                lab.関連URL1 ? `<a href="${lab.関連URL1}" target="_blank" style="color: #00b5d8; text-decoration: none;">関連URL1</a>` : null,
+                lab.関連URL2 ? `<a href="${lab.関連URL2}" target="_blank" style="color: #00b5d8; text-decoration: none;">関連URL2</a>` : null
             ].filter(Boolean).join(' / ');
             
             let fieldDisplay = lab.分野.length > 0 ? lab.分野.join('，') : '未設定';
@@ -429,11 +655,11 @@
                 if (!val || val === "") return "";
                 let dots = "";
                 for (let i = 1; i <= 5; i++) {
-                    dots += (i == val) ? '<span style="color:#ffcc00; font-size:1.4em; line-height:1;">●</span>' : '<span style="color:#ddd; font-size:1.2em; line-height:1;">●</span>';
+                    dots += (i == val) ? '<span style="color:#00b5d8; font-size:1.4em; line-height:1;">●</span>' : '<span style="color:#cbd5e0; font-size:1.2em; line-height:1;">●</span>';
                 }
                 return `
                     <div style="margin: 12px 0;">
-                        <div style="display: flex; justify-content: space-between; font-size: 0.85em; font-weight: bold; color: #555; margin-bottom: 4px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.85em; font-weight: bold; color: #718096; margin-bottom: 4px;">
                             <span style="flex: 1; text-align: left;">${left}</span>
                             <span style="flex: 1; text-align: right;">${right}</span>
                         </div>
@@ -444,12 +670,12 @@
             }
 
             card.innerHTML = `
-                <div style="border: 1px solid #ddd; border-radius: 5px; padding: 15px; background: #fff;">
-                    <div style="font-weight: bold; font-size: 1.1em; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 10px; color: #333;">
+                <div style="border-radius: 12px; padding: 20px; background: #f4f6f8;">
+                    <div style="font-weight: bold; font-size: 1.1em; margin-bottom: 10px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; color: #0f284a;">
                         【${lab.研究室名}】 の詳細
                     </div>
                     <p style="margin: 5px 0;"><strong>分野：</strong> ${fieldDisplay}</p>
-                    <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 15px 0;">
+                    <div style="background: #ffffff; padding: 15px; border-radius: 12px; margin: 15px 0; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
                         ${createEvalBlock("実験", lab.eval_1, "解析・計算")}
                         ${createEvalBlock("自主性重視", lab.eval_2, "進捗管理あり")}
                         ${createEvalBlock("教授指導", lab.eval_3, "学生間サポート")}
@@ -459,7 +685,7 @@
                     </div>
                     <p style="margin: 5px 0 15px 0;"><strong>コアタイム：</strong> ${coreStr}</p>
                     <p><strong>関連キーワード:</strong></p>
-                    ${kwHtml || '<span style="color:#999;">キーワードが選択されていません</span>'}
+                    ${kwHtml || '<span style="color:#a0aec0;">キーワードが選択されていません</span>'}
                     <p style="margin-top: 15px;"><strong>関連リンク:</strong> ${links || 'なし'}</p>
                 </div>
             `;
@@ -499,12 +725,12 @@
                 return [cb.value, cb.getAttribute('data-category'), cb.getAttribute('data-level')];
             });
             
-            // 入力された独自の追加キーワードを取得 (問答無用で「専門・詳細」にする)
+            // 入力された独自の追加キーワードを取得
             const customRows = document.querySelectorAll('.custom-kw-row');
             customRows.forEach(row => {
                 const kw = row.querySelector('.custom-kw-input').value.trim();
                 const cat = row.querySelector('.custom-cat-select').value;
-                const lvl = "専門・詳細"; // 常に専門・詳細として送信
+                const lvl = "専門・詳細"; 
                 if(kw) keywords.push([kw, cat, lvl]);
             });
 
@@ -527,14 +753,12 @@
             if (errorList.length > 0) {
                 errorMsgDiv.innerHTML = "<span style='font-weight: bold;'>【必須項目の入力エラー】</span><br>" + errorList.join("<br>");
                 errorMsgDiv.style.display = 'block';
-                // エラーメッセージが画面の中央付近にくるようにスクロール
                 const yOffset = -150;
                 const y = errorMsgDiv.getBoundingClientRect().top + window.pageYOffset + yOffset;
                 window.scrollTo({ top: y, behavior: 'smooth' });
                 return;
             }
 
-            // B3のJSONと同じ形式（配列の文字列表現）にする
             const kwDataString = JSON.stringify(keywords).replace(/"/g, "'"); 
             const fieldsString = JSON.stringify(fields).replace(/"/g, "'");
 
@@ -558,22 +782,25 @@
             };
 
             const btn = document.getElementById('submitBtn');
-            btn.innerText = "送信中...";
-            btn.disabled = true;
+            const originalText = btn.innerHTML;
+            
+            // 楽観的UI：押した瞬間に状態を変更
+            btn.innerHTML = '<span class="material-symbols-outlined spin" style="vertical-align: middle;">sync</span> 送信中...';
+            btn.style.opacity = '0.8';
+            btn.style.pointerEvents = 'none';
 
-            // データの送信（裏側で実行）
             // データの送信（裏側で実行）
             fetch(GAS_URL, {
                 method: 'POST',
                 mode: 'no-cors',
-                keepalive: true, // ← 【追加】ページを閉じられても通信を継続するおまじない
+                keepalive: true, // ページを閉じられても通信を継続するおまじない
                 headers: {
                     'Content-Type': 'text/plain'
                 },
                 body: JSON.stringify(data)
             }).catch(e => console.log(e)); // エラーが出ても無視する
 
-            // サーバーからの返事を待たずに、すぐに完了処理を行う（体感速度を上げるため）
+            // サーバーからの返事を待たずに、すぐに完了処理を行う
             setTimeout(() => {
                 alert(`「${labName}」のデータを登録しました！`);
                 document.getElementById('labForm').reset();
@@ -585,9 +812,11 @@
                 updatePreview();
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 
-                btn.innerText = "この内容で登録する";
-                btn.disabled = false;
-            }, 500); // 0.5秒だけ「送信中...」を見せてから完了させる
+                // ボタンを元に戻す
+                btn.innerHTML = originalText;
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+            }, 500); 
         });
     </script>
 </body>
