@@ -1,4 +1,3 @@
-// スライダー用のCSSを動的に追加
 if (!document.getElementById('spin-style')) {
     const style = document.createElement('style');
     style.id = 'spin-style';
@@ -467,11 +466,10 @@ function displayResults(results, isSelected, mode) {
     topRefDiv.style.cssText = "background-color: #f8fafc; padding: 16px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0; display: flex; align-items: flex-start; gap: 12px;";
     
     topRefDiv.innerHTML = `
-        <span class="material-symbols-outlined" style="color: #a0aec0; margin-top: 2px;">info</span>
-        <div style="font-size: 0.9em; color: #4a5568; line-height: 1.5;">
-            本サイトのデータは非公式情報です。正確な情報については、必ず<a href="https://www.rs.tus.ac.jp/me/laboratory.html" target="_blank" style="color: #00b5d8; text-decoration: underline; font-weight: bold;">学科公式ホームページ</a>等も併せて参考にしてください。<br>
-            <span style="color: #e53e3e; font-weight: bold;">本サイトの情報の正確性・信頼性について、作成者は一切の責任を負いません。</span><br>
-            <span style="color: #e53e3e;">※各研究室のB4学生が個別に情報を登録しているため、研究室ごとに情報量（キーワードの登録数など）にばらつきがあります。あらかじめご了承ください。</span>
+        <span class="material-symbols-outlined" style="color: #e53e3e; margin-top: 2px;">info</span>
+        <div style="font-size: 0.9em; color: #e53e3e; line-height: 1.5;">
+            本サイトのデータはB4学生が独自に収集した非公式情報です。本サイトの情報の正確性・信頼性について、作成者は一切の責任を負いません。正確な情報については、必ず<a href="https://www.rs.tus.ac.jp/me/laboratory.html" target="_blank" style="color: #00b5d8; text-decoration: underline;">学科公式ホームページ</a>等も併せて参考にしてください。<br>
+            ※各研究室のB4学生が個別に情報を登録しているため、研究室ごとに情報量（キーワードの登録数など）にばらつきがあります。あらかじめご了承ください。
         </div>
     `;
     container.appendChild(topRefDiv);
