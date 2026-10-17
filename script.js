@@ -1,28 +1,26 @@
-// ★スライダー用のCSSを動的に追加
+// スライダー用のCSSを動的に追加
 if (!document.getElementById('spin-style')) {
     const style = document.createElement('style');
     style.id = 'spin-style';
     style.innerHTML = `
         @keyframes spin { 100% { transform: rotate(360deg); } }
         
-        /* カスタムスライダーのツマミ（サム）のスタイル */
         input[type=range].custom-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             height: 24px;
             width: 24px;
             border-radius: 50%;
-            background: #cbd5e0; /* 未選択時はグレー */
+            background: #cbd5e0; 
             cursor: pointer;
             box-shadow: 0 2px 6px rgba(0,0,0,0.2);
             border: 3px solid #fff;
             transition: background-color 0.2s, transform 0.1s;
         }
         input[type=range].custom-slider.active-slider::-webkit-slider-thumb {
-            background: #00b5d8; /* 選択時はシアン */
-            transform: scale(1.15); /* 少し大きくする */
+            background: #00b5d8; 
+            transform: scale(1.15); 
         }
         
-        /* Firefox用のスライダースタイル */
         input[type=range].custom-slider::-moz-range-thumb {
             height: 24px;
             width: 24px;
@@ -163,7 +161,6 @@ fetch('data.json')
                 const vals = params.get('s').split('-');
                 EVAL_QUESTIONS.forEach((q, i) => {
                     if (vals[i] !== '0') {
-                        // URLから値を復元する際にスライダーも更新するロジック
                         const wrapper = document.querySelector(`input[name="${q.id}"][value="0"]`).closest('.scale-wrapper');
                         if (wrapper) {
                             const slider = wrapper.querySelector('.custom-slider');
@@ -256,12 +253,11 @@ function createCheckbox(keyword) {
     return label;
 }
 
-// ★ ここからスライダーUIへの変更部分
 function renderStylesUI() {
     const container = document.getElementById('styles-container');
     EVAL_QUESTIONS.forEach(q => {
         const wrapper = document.createElement('div');
-        wrapper.className = 'scale-wrapper'; // クラスを追加して後から検索しやすくする
+        wrapper.className = 'scale-wrapper'; 
         wrapper.style.cssText = "background-color: #ffffff; padding: 16px 12px; border-radius: 12px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);";
         
         let html = `
@@ -275,10 +271,8 @@ function renderStylesUI() {
                 <span style="flex: 1; text-align: right; font-size: 0.8rem; font-weight: bold; color: #0f284a; line-height: 1.2; word-break: keep-all;">${q.left}</span>
                 
                 <div style="position: relative; flex: 1.5; min-width: 120px; height: 30px; display: flex; align-items: center;">
-                    <!-- スライダーの軸（横線） -->
                     <div style="position: absolute; top: 50%; left: 10px; right: 10px; height: 3px; background-color: #edf2f7; z-index: 1; transform: translateY(-50%); border-radius: 2px;"></div>
                     
-                    <!-- 背景の目盛りドット -->
                     <div style="position: absolute; top: 50%; left: 10px; right: 10px; display: flex; justify-content: space-between; transform: translateY(-50%); z-index: 2; pointer-events: none;">
                         <div style="width: 6px; height: 6px; border-radius: 50%; background-color: #cbd5e0;"></div>
                         <div style="width: 6px; height: 6px; border-radius: 50%; background-color: #cbd5e0;"></div>
@@ -287,10 +281,8 @@ function renderStylesUI() {
                         <div style="width: 6px; height: 6px; border-radius: 50%; background-color: #cbd5e0;"></div>
                     </div>
 
-                    <!-- スライダー本体（透明にして上に被せる） -->
                     <input type="range" class="custom-slider" min="1" max="5" step="1" value="3" style="width: 100%; -webkit-appearance: none; background: transparent; z-index: 3; position: relative; margin: 0; outline: none;">
                     
-                    <!-- 裏でデータを保持するための隠しラジオボタン（既存ロジックとの互換性維持） -->
                     <div style="display: none;">
                         <input type="radio" name="${q.id}" value="1">
                         <input type="radio" name="${q.id}" value="2">
@@ -309,27 +301,20 @@ function renderStylesUI() {
         const unspecRadio = wrapper.querySelector('input[value="0"]');
         const unspecLbl = wrapper.querySelector('.kw-label-unspec');
 
-        // スライダーを操作（ドラッグやタップ）した時の処理
         slider.addEventListener('input', function() {
-            // スライダーをアクティブカラー（シアン）に変更
             this.classList.add('active-slider');
-            // 対応する隠しラジオボタンを選択状態にする
             wrapper.querySelector(`input[name="${q.id}"][value="${this.value}"]`).checked = true;
             
-            // 「指定しない」ボタンをグレーアウトさせる
             unspecLbl.style.backgroundColor = '#f4f6f8';
             unspecLbl.style.color = '#a0aec0';
             unspecRadio.checked = false;
         });
 
-        // 「指定しない」ボタンをタップした時の処理
         unspecRadio.addEventListener('change', function() {
             if(this.checked) {
-                // スライダーの色をグレーに戻す
                 slider.classList.remove('active-slider');
-                slider.value = 3; // スライダーの位置を真ん中に戻す
+                slider.value = 3; 
                 
-                // 「指定しない」ボタンをアクティブカラーに戻す
                 unspecLbl.style.backgroundColor = '#e2e8f0';
                 unspecLbl.style.color = '#4a5568';
             }
@@ -443,7 +428,6 @@ function resetApp() {
     document.getElementById('form-area').style.display = 'none';
     if(diagSelectionArea) diagSelectionArea.style.display = 'none';
     
-    // スライダーのリセット
     document.querySelectorAll('.custom-slider').forEach(slider => {
         slider.classList.remove('active-slider');
         slider.value = 3;
@@ -530,14 +514,17 @@ function displayResults(results, isSelected, mode) {
         let dots = "";
         for (let i = 1; i <= 5; i++) {
             let isActive = (i == val);
-            let color = isActive ? "#00b5d8" : "#cbd5e0";
-            let size = isActive ? "10px" : "6px";
-            dots += `<div style="width: ${size}; height: ${size}; border-radius: 50%; background-color: ${color}; z-index: 2;"></div>`;
+            if (isActive) {
+                // ★ 該当箇所を白枠と影付きの立体的なツマミで表現
+                dots += `<div style="width: 16px; height: 16px; border-radius: 50%; background-color: #00b5d8; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.2); z-index: 3; margin: 0 -2px;"></div>`;
+            } else {
+                dots += `<div style="width: 5px; height: 5px; border-radius: 50%; background-color: #cbd5e0; z-index: 2;"></div>`;
+            }
         }
         return `
             <div style="display: flex; align-items: center; justify-content: space-between; margin: 8px 0; color: #4a5568; gap: 6px; width: 100%;">
                 <span style="flex: 1; text-align: right; font-size: 0.8rem; font-weight: bold; white-space: nowrap; letter-spacing: -0.5px;">${left}</span>
-                <div style="position: relative; display: flex; justify-content: space-between; align-items: center; width: 60px; flex-shrink: 0;">
+                <div style="position: relative; display: flex; justify-content: space-between; align-items: center; width: 70px; flex-shrink: 0;">
                     <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #cbd5e0; z-index: 1;"></div>
                     ${dots}
                 </div>
@@ -648,13 +635,13 @@ function displayResults(results, isSelected, mode) {
         }
 
         if (otherLabs.length > 0) {
-            const Title = document.createElement('h3');
-            Title.innerHTML = '<span class="material-symbols-outlined" style="vertical-align: middle; color:#a0aec0;">more_horiz</span> その他の研究室';
-            Title.style.marginTop = "32px";
-            Title.style.borderBottom = "2px solid #cbd5e0";
-            Title.style.paddingBottom = "8px";
-            Title.style.marginBottom = "12px";
-            container.appendChild(Title);
+            const otherTitle = document.createElement('h3');
+            otherTitle.innerHTML = '<span class="material-symbols-outlined" style="vertical-align: middle; color:#a0aec0;">more_horiz</span> その他の研究室';
+            otherTitle.style.marginTop = "32px";
+            otherTitle.style.borderBottom = "2px solid #cbd5e0";
+            otherTitle.style.paddingBottom = "8px";
+            otherTitle.style.marginBottom = "12px";
+            container.appendChild(otherTitle);
             otherLabs.forEach(lab => container.appendChild(createLabCard(lab, null)));
         }
     }

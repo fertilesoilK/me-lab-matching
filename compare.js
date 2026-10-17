@@ -100,22 +100,26 @@ function updateTable() {
             const val = lab[q.id];
             if (val && val !== "0" && val !== 0) {
                 let dots = "";
-                // ★数直線風のドットを生成
                 for (let i = 1; i <= 5; i++) {
                     let isActive = (i == val);
-                    let color = isActive ? "#00b5d8" : "#cbd5e0";
-                    let size = isActive ? "8px" : "5px"; // 該当箇所のみ大きく
-                    dots += `<div style="width: ${size}; height: ${size}; border-radius: 50%; background-color: ${color}; z-index: 2;"></div>`;
+                    if (isActive) {
+                        // ★ 該当箇所を白枠と影付きの立体的なツマミで表現
+                        dots += `<div style="width: 14px; height: 14px; border-radius: 50%; background-color: #00b5d8; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); z-index: 3; margin: 0 -2px;"></div>`;
+                    } else {
+                        // ★ それ以外は薄いグレーの小さなドット
+                        dots += `<div style="width: 4px; height: 4px; border-radius: 50%; background-color: #cbd5e0; z-index: 2;"></div>`;
+                    }
                 }
-                // ★1行に収まるようにフレックスボックスで構成
                 evalHtml += `
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; color: #4a5568; gap: 4px; width: 100%;">
-                        <span style="flex: 1; text-align: right; white-space: nowrap; font-size: 10px; letter-spacing: -0.5px;">${q.left}</span>
-                        <div style="position: relative; display: flex; justify-content: space-between; align-items: center; width: 45px; flex-shrink: 0;">
-                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #cbd5e0; z-index: 1;"></div>
-                            ${dots}
+                    <div style="margin-bottom: 8px; font-size: 0.85em;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; color: #4a5568; gap: 4px; width: 100%;">
+                            <span style="flex: 1; text-align: right; white-space: nowrap; font-size: 10px; letter-spacing: -0.5px;">${q.left}</span>
+                            <div style="position: relative; display: flex; justify-content: space-between; align-items: center; width: 50px; flex-shrink: 0;">
+                                <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #cbd5e0; z-index: 1;"></div>
+                                ${dots}
+                            </div>
+                            <span style="flex: 1; text-align: left; white-space: nowrap; font-size: 10px; letter-spacing: -0.5px;">${q.right}</span>
                         </div>
-                        <span style="flex: 1; text-align: left; white-space: nowrap; font-size: 10px; letter-spacing: -0.5px;">${q.right}</span>
                     </div>`;
             }
         });
