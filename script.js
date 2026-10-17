@@ -514,16 +514,16 @@ function displayResults(results, isSelected, mode) {
         for (let i = 1; i <= 5; i++) {
             let isActive = (i == val);
             if (isActive) {
-                dots += `<div style="width: 16px; height: 16px; border-radius: 50%; background-color: #00b5d8; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.2); z-index: 3; margin: 0 -2px;"></div>`;
+                dots += `<div style="width: 16px; height: 16px; border-radius: 50%; background-color: #00b5d8; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.2); z-index: 2; margin: 0 -2px;"></div>`;
             } else {
-                dots += `<div style="width: 5px; height: 5px; border-radius: 50%; background-color: #cbd5e0; z-index: 2;"></div>`;
+                dots += `<div style="width: 5px; height: 5px; border-radius: 50%; background-color: #cbd5e0; z-index: 1;"></div>`;
             }
         }
         return `
             <div style="display: flex; align-items: center; justify-content: space-between; margin: 8px 0; color: #4a5568; gap: 6px; width: 100%;">
                 <span style="flex: 1; text-align: right; font-size: 0.8rem; font-weight: bold; white-space: nowrap; letter-spacing: -0.5px;">${left}</span>
                 <div style="position: relative; display: flex; justify-content: space-between; align-items: center; width: 70px; flex-shrink: 0;">
-                    <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #cbd5e0; z-index: 1;"></div>
+                    <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #cbd5e0; z-index: 0;"></div>
                     ${dots}
                 </div>
                 <span style="flex: 1; text-align: left; font-size: 0.8rem; font-weight: bold; white-space: nowrap; letter-spacing: -0.5px;">${right}</span>
