@@ -86,12 +86,12 @@ function updateTable() {
     });
     thead += '</tr>';
 
-    // ★ リンクを分野のすぐ下に移動
     thead += '<tr><th class="row-header">リンク</th>';
     selectedLabs.forEach(lab => {
         let linkHtml = [];
         if (lab.公式HP) linkHtml.push(`<a href="${lab.公式HP}" target="_blank" style="color:#00b5d8; text-decoration:none;"><span class="material-symbols-outlined" style="font-size:1.1em; vertical-align:middle;">link</span> 公式HP</a>`);
-        if (lab.関連URL1) linkHtml.push(`<a href="${lab.関連URL1}" target="_blank" style="color:#00b5d8; text-decoration:none;"><span class="material-symbols-outlined" style="font-size:1.1em; vertical-align:middle;">link</span> 関連URL</a>`);
+        if (lab.関連URL1) linkHtml.push(`<a href="${lab.関連URL1}" target="_blank" style="color:#00b5d8; text-decoration:none;"><span class="material-symbols-outlined" style="font-size:1.1em; vertical-align:middle;">link</span> 関連URL1</a>`);
+        if (lab.関連URL2) linkHtml.push(`<a href="${lab.関連URL2}" target="_blank" style="color:#00b5d8; text-decoration:none;"><span class="material-symbols-outlined" style="font-size:1.1em; vertical-align:middle;">link</span> 関連URL2</a>`);
         thead += `<td class="data-cell" style="text-align: center; vertical-align: middle;">${linkHtml.join('<br>') || 'なし'}</td>`;
     });
     thead += '</tr>';

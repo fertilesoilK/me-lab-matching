@@ -562,7 +562,8 @@ function displayResults(results, isSelected, mode) {
 
         const links = [
             lab.公式HP ? `<a href="${lab.公式HP}" target="_blank" style="color:#00b5d8; text-decoration:none;"><span class="material-symbols-outlined" style="font-size:1.1em; vertical-align:middle;">link</span> 公式HP</a>` : null,
-            lab.関連URL1 ? `<a href="${lab.関連URL1}" target="_blank" style="color:#00b5d8; text-decoration:none;"><span class="material-symbols-outlined" style="font-size:1.1em; vertical-align:middle;">link</span> 関連URL</a>` : null
+            lab.関連URL1 ? `<a href="${lab.関連URL1}" target="_blank" style="color:#00b5d8; text-decoration:none;"><span class="material-symbols-outlined" style="font-size:1.1em; vertical-align:middle;">link</span> 関連URL1</a>` : null,
+            lab.関連URL2 ? `<a href="${lab.関連URL2}" target="_blank" style="color:#00b5d8; text-decoration:none;"><span class="material-symbols-outlined" style="font-size:1.1em; vertical-align:middle;">link</span> 関連URL2</a>` : null
         ].filter(Boolean).join(' &nbsp;&nbsp; ');
         
         let fieldDisplay = lab.分野;
