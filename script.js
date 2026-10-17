@@ -1,4 +1,3 @@
-// スライダー用のCSSを動的に追加
 if (!document.getElementById('spin-style')) {
     const style = document.createElement('style');
     style.id = 'spin-style';
@@ -469,7 +468,7 @@ function displayResults(results, isSelected, mode) {
     topRefDiv.innerHTML = `
         <span class="material-symbols-outlined" style="color: #a0aec0; margin-top: 2px;">info</span>
         <div style="font-size: 0.9em; color: #4a5568; line-height: 1.5;">
-            本サイトのデータは非公式情報です。正確な情報については、必ず<a href="https://www.rs.tus.ac.jp/me/laboratory.html" target="_blank" style="color: #00b5d8; text-decoration: underline; font-weight: bold;">学科公式ホームページ（研究室紹介）</a>等も併せて参考にしてください。<br>
+            本サイトのデータは非公式情報です。正確な情報については、必ず<a href="https://www.rs.tus.ac.jp/me/laboratory.html" target="_blank" style="color: #00b5d8; text-decoration: underline; font-weight: bold;">学科公式ホームページ</a>等も併せて参考にしてください。<br>
             <span style="color: #dd6b20;">※各研究室のB4学生が個別に情報を登録しているため、研究室ごとに情報量（キーワードの登録数など）にばらつきがあります。あらかじめご了承ください。</span>
         </div>
     `;
@@ -515,7 +514,6 @@ function displayResults(results, isSelected, mode) {
         for (let i = 1; i <= 5; i++) {
             let isActive = (i == val);
             if (isActive) {
-                // ★ 該当箇所を白枠と影付きの立体的なツマミで表現
                 dots += `<div style="width: 16px; height: 16px; border-radius: 50%; background-color: #00b5d8; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.2); z-index: 3; margin: 0 -2px;"></div>`;
             } else {
                 dots += `<div style="width: 5px; height: 5px; border-radius: 50%; background-color: #cbd5e0; z-index: 2;"></div>`;
@@ -635,19 +633,20 @@ function displayResults(results, isSelected, mode) {
         }
 
         if (otherLabs.length > 0) {
-            const otherTitle = document.createElement('h3');
-            otherTitle.innerHTML = '<span class="material-symbols-outlined" style="vertical-align: middle; color:#a0aec0;">more_horiz</span> その他の研究室';
-            otherTitle.style.marginTop = "32px";
-            otherTitle.style.borderBottom = "2px solid #cbd5e0";
-            otherTitle.style.paddingBottom = "8px";
-            otherTitle.style.marginBottom = "12px";
-            container.appendChild(otherTitle);
+            const Title = document.createElement('h3');
+            Title.innerHTML = '<span class="material-symbols-outlined" style="vertical-align: middle; color:#a0aec0;">more_horiz</span> その他の研究室';
+            Title.style.marginTop = "32px";
+            Title.style.borderBottom = "2px solid #cbd5e0";
+            Title.style.paddingBottom = "8px";
+            Title.style.marginBottom = "12px";
+            container.appendChild(Title);
             otherLabs.forEach(lab => container.appendChild(createLabCard(lab, null)));
         }
     }
 
     let descHtml = "";
     if (mode === 'keyword') {
+        // ★ スマホでのレイアウト崩れを防ぐために、フレックスボックス構造を整理し、折り返しを許可
         descHtml = `
             <div style="color: #0f284a; font-weight: bold; margin-bottom: 12px; display: flex; align-items: center; gap: 4px;">
                 <span class="material-symbols-outlined" style="font-size: 1.2em;">info</span> スコア算出の仕組み（キーワード）
@@ -657,13 +656,13 @@ function displayResults(results, isSelected, mode) {
                 <strong>【配点ルール】</strong><br>
                 ・主要キーワードの一致： <strong>+50点</strong><br>
                 ・専門キーワードの一致： <strong>+10点</strong><br><br>
-                <div style="background-color: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e0; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px;">
-                    <span>スコア ＝</span>
-                    <span style="display: flex; flex-direction: column; text-align: center;">
-                        <span style="border-bottom: 1px solid #4a5568; padding: 0 4px;">研究室が合致した点数の合計</span>
-                        <span style="padding: 0 4px;">あなたが選択した全キーワードの点数の合計</span>
+                <div style="background-color: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e0; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap;">
+                    <span style="white-space: nowrap;">スコア ＝</span>
+                    <span style="display: flex; flex-direction: column; text-align: center; min-width: 150px;">
+                        <span style="border-bottom: 1px solid #4a5568; padding: 0 4px; font-size: 0.85rem;">研究室が合致した点数の合計</span>
+                        <span style="padding: 0 4px; font-size: 0.85rem;">あなたが選択した全キーワードの点数の合計</span>
                     </span>
-                    <span>× 100</span>
+                    <span style="white-space: nowrap;">× 100</span>
                 </div>
             </div>
         `;
