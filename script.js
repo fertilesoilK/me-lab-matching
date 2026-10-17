@@ -470,7 +470,8 @@ function displayResults(results, isSelected, mode) {
         <span class="material-symbols-outlined" style="color: #a0aec0; margin-top: 2px;">info</span>
         <div style="font-size: 0.9em; color: #4a5568; line-height: 1.5;">
             本サイトのデータは非公式情報です。正確な情報については、必ず<a href="https://www.rs.tus.ac.jp/me/laboratory.html" target="_blank" style="color: #00b5d8; text-decoration: underline; font-weight: bold;">学科公式ホームページ</a>等も併せて参考にしてください。<br>
-            <span style="color: #dd6b20;">※各研究室のB4学生が個別に情報を登録しているため、研究室ごとに情報量（キーワードの登録数など）にばらつきがあります。あらかじめご了承ください。</span>
+            <span style="color: #e53e3e; font-weight: bold;">本サイトの情報の正確性・信頼性について、作成者は一切の責任を負いません。</span><br>
+            <span style="color: #e53e3e;">※各研究室のB4学生が個別に情報を登録しているため、研究室ごとに情報量（キーワードの登録数など）にばらつきがあります。あらかじめご了承ください。</span>
         </div>
     `;
     container.appendChild(topRefDiv);
@@ -585,9 +586,8 @@ function displayResults(results, isSelected, mode) {
                     <span class="no-print" style="color: #a0aec0;"><span class="material-symbols-outlined">expand_more</span></span>
                 </summary>
                 <div style="padding: 16px; border-top: 1px solid #edf2f7;">
-                    <p style="margin: 4px 0 12px 0; color:#4a5568;"><strong style="color:#0f284a;">分野：</strong> ${fieldDisplay || '未設定'}</p>
+                    <p style="margin: 4px 0; color:#4a5568;"><strong style="color:#0f284a;">分野：</strong> ${fieldDisplay || '未設定'}</p>
                     
-                    <!-- ★ 関連リンクを分野のすぐ下に移動 -->
                     <p style="margin: 4px 0 12px 0;"><strong style="color:#0f284a;">関連リンク：</strong> ${links || '<span style="color:#a0aec0;">なし</span>'}</p>
                     
                     <div style="background: #f8fafc; padding: 16px; border-radius: 8px; margin: 12px 0;">
@@ -604,7 +604,6 @@ function displayResults(results, isSelected, mode) {
                         ${kwHtml}
                     </div>
                     
-                    <!-- ★ 詳細の一番下に「閉じる」ボタンを追加 -->
                     <div style="text-align: center; margin-top: 20px;">
                         <button type="button" onclick="this.closest('details').removeAttribute('open');" style="background-color: #f4f6f8; color: #4a5568; border: 1px solid #cbd5e0; padding: 8px 20px; border-radius: 20px; font-size: 0.95em; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
                             <span class="material-symbols-outlined" style="font-size: 1.2em;">expand_less</span> 閉じる
