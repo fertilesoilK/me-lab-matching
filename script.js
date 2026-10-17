@@ -1,3 +1,4 @@
+// スライダー用のCSSを動的に追加
 if (!document.getElementById('spin-style')) {
     const style = document.createElement('style');
     style.id = 'spin-style';
@@ -584,7 +585,11 @@ function displayResults(results, isSelected, mode) {
                     <span class="no-print" style="color: #a0aec0;"><span class="material-symbols-outlined">expand_more</span></span>
                 </summary>
                 <div style="padding: 16px; border-top: 1px solid #edf2f7;">
-                    <p style="margin: 4px 0; color:#4a5568;"><strong style="color:#0f284a;">分野：</strong> ${fieldDisplay || '未設定'}</p>
+                    <p style="margin: 4px 0 12px 0; color:#4a5568;"><strong style="color:#0f284a;">分野：</strong> ${fieldDisplay || '未設定'}</p>
+                    
+                    <!-- ★ 関連リンクを分野のすぐ下に移動 -->
+                    <p style="margin: 4px 0 12px 0;"><strong style="color:#0f284a;">関連リンク：</strong> ${links || '<span style="color:#a0aec0;">なし</span>'}</p>
+                    
                     <div style="background: #f8fafc; padding: 16px; border-radius: 8px; margin: 12px 0;">
                         ${createEvalBlock("実験中心", lab.eval_1, "解析・計算中心")}
                         ${createEvalBlock("自主性重視", lab.eval_2, "進捗管理あり")}
@@ -598,7 +603,13 @@ function displayResults(results, isSelected, mode) {
                         <p style="margin-top: 0; margin-bottom: 8px;"><strong style="color:#0f284a;"><span class="material-symbols-outlined" style="font-size: 1.1em; vertical-align: middle;">vpn_key</span> 登録キーワード</strong></p>
                         ${kwHtml}
                     </div>
-                    <p style="margin-top: 16px; margin-bottom: 0;"><strong style="color:#0f284a;">関連リンク：</strong> ${links || '<span style="color:#a0aec0;">なし</span>'}</p>
+                    
+                    <!-- ★ 詳細の一番下に「閉じる」ボタンを追加 -->
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button type="button" onclick="this.closest('details').removeAttribute('open');" style="background-color: #f4f6f8; color: #4a5568; border: 1px solid #cbd5e0; padding: 8px 20px; border-radius: 20px; font-size: 0.95em; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                            <span class="material-symbols-outlined" style="font-size: 1.2em;">expand_less</span> 閉じる
+                        </button>
+                    </div>
                 </div>
             </details>
         `;
@@ -646,7 +657,6 @@ function displayResults(results, isSelected, mode) {
 
     let descHtml = "";
     if (mode === 'keyword') {
-        // ★ スマホでのレイアウト崩れを防ぐために、フレックスボックス構造を整理し、折り返しを許可
         descHtml = `
             <div style="color: #0f284a; font-weight: bold; margin-bottom: 12px; display: flex; align-items: center; gap: 4px;">
                 <span class="material-symbols-outlined" style="font-size: 1.2em;">info</span> スコア算出の仕組み（キーワード）

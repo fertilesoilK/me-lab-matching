@@ -85,6 +85,16 @@ function updateTable() {
         thead += `<td class="data-cell" style="font-weight:bold; color:#0f284a; text-align: center; vertical-align: middle;">${fieldDisplay}</td>`;
     });
     thead += '</tr>';
+
+    // ★ リンクを分野のすぐ下に移動
+    thead += '<tr><th class="row-header">リンク</th>';
+    selectedLabs.forEach(lab => {
+        let linkHtml = [];
+        if (lab.公式HP) linkHtml.push(`<a href="${lab.公式HP}" target="_blank" style="color:#00b5d8; text-decoration:none;"><span class="material-symbols-outlined" style="font-size:1.1em; vertical-align:middle;">link</span> 公式HP</a>`);
+        if (lab.関連URL1) linkHtml.push(`<a href="${lab.関連URL1}" target="_blank" style="color:#00b5d8; text-decoration:none;"><span class="material-symbols-outlined" style="font-size:1.1em; vertical-align:middle;">link</span> 関連URL</a>`);
+        thead += `<td class="data-cell" style="text-align: center; vertical-align: middle;">${linkHtml.join('<br>') || 'なし'}</td>`;
+    });
+    thead += '</tr>';
     
     thead += '<tr><th class="row-header">コアタイム</th>';
     selectedLabs.forEach(lab => {
@@ -103,19 +113,15 @@ function updateTable() {
                 for (let i = 1; i <= 5; i++) {
                     let isActive = (i == val);
                     if (isActive) {
-                        // ★ ヘッダーと被らないようにz-indexを下げ、ツマミを少し大きく
                         dots += `<div style="width: 16px; height: 16px; border-radius: 50%; background-color: #00b5d8; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); z-index: 1; position: relative; margin: 0 -2px;"></div>`;
                     } else {
-                        // ★ 未選択のドットも少し大きく
                         dots += `<div style="width: 6px; height: 6px; border-radius: 50%; background-color: #cbd5e0; z-index: 1; position: relative;"></div>`;
                     }
                 }
                 evalHtml += `
                     <div style="margin-bottom: 12px;">
                         <div style="display: flex; align-items: center; justify-content: space-between; color: #4a5568; gap: 6px; width: 100%;">
-                            <!-- ★ 文字を太字にし、サイズを拡大 -->
                             <span style="flex: 1; text-align: right; white-space: nowrap; font-size: 11.5px; font-weight: bold; letter-spacing: -0.5px;">${q.left}</span>
-                            <!-- ★ スライダーの幅を拡大（50px -> 80px） -->
                             <div style="position: relative; display: flex; justify-content: space-between; align-items: center; width: 80px; flex-shrink: 0;">
                                 <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #cbd5e0; z-index: 0;"></div>
                                 ${dots}
@@ -144,15 +150,6 @@ function updateTable() {
         let kws = parseKeywords(lab.キーワードデータ);
         kws.filter(k => k.level === '専門・詳細').forEach(k => { kwHtml += `<span class="kw-tag">${k.name}</span>`; });
         thead += `<td class="data-cell">${kwHtml || 'なし'}</td>`;
-    });
-    thead += '</tr>';
-
-    thead += '<tr><th class="row-header">リンク</th>';
-    selectedLabs.forEach(lab => {
-        let linkHtml = [];
-        if (lab.公式HP) linkHtml.push(`<a href="${lab.公式HP}" target="_blank" style="color:#00b5d8; text-decoration:none;"><span class="material-symbols-outlined" style="font-size:1.1em; vertical-align:middle;">link</span> 公式HP</a>`);
-        if (lab.関連URL1) linkHtml.push(`<a href="${lab.関連URL1}" target="_blank" style="color:#00b5d8; text-decoration:none;"><span class="material-symbols-outlined" style="font-size:1.1em; vertical-align:middle;">link</span> 関連URL</a>`);
-        thead += `<td class="data-cell">${linkHtml.join('<br>') || 'なし'}</td>`;
     });
     thead += '</tr>';
 
