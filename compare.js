@@ -103,22 +103,24 @@ function updateTable() {
                 for (let i = 1; i <= 5; i++) {
                     let isActive = (i == val);
                     if (isActive) {
-                        // ★ 該当箇所を白枠と影付きの立体的なツマミで表現
-                        dots += `<div style="width: 14px; height: 14px; border-radius: 50%; background-color: #00b5d8; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); z-index: 3; margin: 0 -2px;"></div>`;
+                        // ★ ヘッダーと被らないようにz-indexを下げ、ツマミを少し大きく
+                        dots += `<div style="width: 16px; height: 16px; border-radius: 50%; background-color: #00b5d8; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); z-index: 1; position: relative; margin: 0 -2px;"></div>`;
                     } else {
-                        // ★ それ以外は薄いグレーの小さなドット
-                        dots += `<div style="width: 4px; height: 4px; border-radius: 50%; background-color: #cbd5e0; z-index: 2;"></div>`;
+                        // ★ 未選択のドットも少し大きく
+                        dots += `<div style="width: 6px; height: 6px; border-radius: 50%; background-color: #cbd5e0; z-index: 1; position: relative;"></div>`;
                     }
                 }
                 evalHtml += `
-                    <div style="margin-bottom: 8px; font-size: 0.85em;">
-                        <div style="display: flex; align-items: center; justify-content: space-between; color: #4a5568; gap: 4px; width: 100%;">
-                            <span style="flex: 1; text-align: right; white-space: nowrap; font-size: 10px; letter-spacing: -0.5px;">${q.left}</span>
-                            <div style="position: relative; display: flex; justify-content: space-between; align-items: center; width: 50px; flex-shrink: 0;">
-                                <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #cbd5e0; z-index: 1;"></div>
+                    <div style="margin-bottom: 12px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; color: #4a5568; gap: 6px; width: 100%;">
+                            <!-- ★ 文字を太字にし、サイズを拡大 -->
+                            <span style="flex: 1; text-align: right; white-space: nowrap; font-size: 11.5px; font-weight: bold; letter-spacing: -0.5px;">${q.left}</span>
+                            <!-- ★ スライダーの幅を拡大（50px -> 80px） -->
+                            <div style="position: relative; display: flex; justify-content: space-between; align-items: center; width: 80px; flex-shrink: 0;">
+                                <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background-color: #cbd5e0; z-index: 0;"></div>
                                 ${dots}
                             </div>
-                            <span style="flex: 1; text-align: left; white-space: nowrap; font-size: 10px; letter-spacing: -0.5px;">${q.right}</span>
+                            <span style="flex: 1; text-align: left; white-space: nowrap; font-size: 11.5px; font-weight: bold; letter-spacing: -0.5px;">${q.right}</span>
                         </div>
                     </div>`;
             }
