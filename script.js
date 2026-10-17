@@ -1,7 +1,44 @@
+// ★スライダー用のCSSを動的に追加
 if (!document.getElementById('spin-style')) {
     const style = document.createElement('style');
     style.id = 'spin-style';
-    style.innerHTML = '@keyframes spin { 100% { transform: rotate(360deg); } }';
+    style.innerHTML = `
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        
+        /* カスタムスライダーのツマミ（サム）のスタイル */
+        input[type=range].custom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: #cbd5e0; /* 未選択時はグレー */
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            border: 3px solid #fff;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        input[type=range].custom-slider.active-slider::-webkit-slider-thumb {
+            background: #00b5d8; /* 選択時はシアン */
+            transform: scale(1.15); /* 少し大きくする */
+        }
+        
+        /* Firefox用のスライダースタイル */
+        input[type=range].custom-slider::-moz-range-thumb {
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: #cbd5e0;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            border: 3px solid #fff;
+            transition: background-color 0.2s, transform 0.1s;
+            box-sizing: border-box;
+        }
+        input[type=range].custom-slider.active-slider::-moz-range-thumb {
+            background: #00b5d8;
+            transform: scale(1.15);
+        }
+    `;
     document.head.appendChild(style);
 }
 
@@ -126,7 +163,21 @@ fetch('data.json')
                 const vals = params.get('s').split('-');
                 EVAL_QUESTIONS.forEach((q, i) => {
                     if (vals[i] !== '0') {
-                        document.querySelector(`input[name="${q.id}"][value="${vals[i]}"]`).checked = true;
+                        // URLから値を復元する際にスライダーも更新するロジック
+                        const wrapper = document.querySelector(`input[name="${q.id}"][value="0"]`).closest('.scale-wrapper');
+                        if (wrapper) {
+                            const slider = wrapper.querySelector('.custom-slider');
+                            const unspecRadio = wrapper.querySelector('input[value="0"]');
+                            const unspecLbl = wrapper.querySelector('.kw-label-unspec');
+                            
+                            slider.value = vals[i];
+                            slider.classList.add('active-slider');
+                            wrapper.querySelector(`input[name="${q.id}"][value="${vals[i]}"]`).checked = true;
+                            
+                            unspecLbl.style.backgroundColor = '#f4f6f8';
+                            unspecLbl.style.color = '#a0aec0';
+                            unspecRadio.checked = false;
+                        }
                     }
                 });
                 document.getElementById('diagnose-btn').click();
@@ -205,65 +256,83 @@ function createCheckbox(keyword) {
     return label;
 }
 
+// ★ ここからスライダーUIへの変更部分
 function renderStylesUI() {
     const container = document.getElementById('styles-container');
     EVAL_QUESTIONS.forEach(q => {
         const wrapper = document.createElement('div');
+        wrapper.className = 'scale-wrapper'; // クラスを追加して後から検索しやすくする
         wrapper.style.cssText = "background-color: #ffffff; padding: 16px 12px; border-radius: 12px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);";
         
-        // ★テキストとスライダーを横一列に並べる洗練されたUIに変更
         let html = `
-            <div style="display: flex; justify-content: flex-end; margin-bottom: 8px;">
-                <label class="kw-label-unspec" style="background-color: #e2e8f0; color: #4a5568; padding: 4px 12px; font-size: 0.8em; border-radius: 12px; cursor: pointer; display: inline-flex; align-items: center; transition: all 0.2s; margin: 0; font-weight: bold; position: relative; overflow: hidden;">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 12px;">
+                <label class="kw-label-unspec" style="background-color: #e2e8f0; color: #4a5568; padding: 4px 12px; font-size: 0.8em; border-radius: 12px; cursor: pointer; display: inline-flex; align-items: center; transition: all 0.2s; margin: 0; font-weight: bold;">
                     <input type="radio" name="${q.id}" value="0" checked style="display: none;"> 指定しない
                 </label>
             </div>
-            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 6px;">
-                <span style="flex: 1; text-align: right; font-size: 0.8rem; font-weight: bold; color: #0f284a; line-height: 1.3; word-break: keep-all;">${q.left}</span>
+            
+            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 8px;">
+                <span style="flex: 1; text-align: right; font-size: 0.8rem; font-weight: bold; color: #0f284a; line-height: 1.2; word-break: keep-all;">${q.left}</span>
                 
-                <div style="position: relative; display: flex; justify-content: space-between; align-items: center; width: 160px; flex-shrink: 0;">
+                <div style="position: relative; flex: 1.5; min-width: 120px; height: 30px; display: flex; align-items: center;">
                     <!-- スライダーの軸（横線） -->
                     <div style="position: absolute; top: 50%; left: 10px; right: 10px; height: 3px; background-color: #edf2f7; z-index: 1; transform: translateY(-50%); border-radius: 2px;"></div>
-        `;
-        
-        for (let i = 1; i <= 5; i++) {
-            html += `<label class="kw-label-num" style="position: relative; z-index: 2; font-size: 0.9em; width: 28px; min-width: 28px; height: 28px; justify-content: center; align-items: center; background-color: #ffffff; color: #4a5568; border-radius: 50%; cursor: pointer; display: inline-flex; padding: 0; transition: all 0.2s; margin: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: 2px solid #edf2f7; font-weight: bold; overflow: hidden;"><input type="radio" name="${q.id}" value="${i}" style="display: none;"> ${i}</label>`;
-        }
-        
-        html += `
+                    
+                    <!-- 背景の目盛りドット -->
+                    <div style="position: absolute; top: 50%; left: 10px; right: 10px; display: flex; justify-content: space-between; transform: translateY(-50%); z-index: 2; pointer-events: none;">
+                        <div style="width: 6px; height: 6px; border-radius: 50%; background-color: #cbd5e0;"></div>
+                        <div style="width: 6px; height: 6px; border-radius: 50%; background-color: #cbd5e0;"></div>
+                        <div style="width: 6px; height: 6px; border-radius: 50%; background-color: #cbd5e0;"></div>
+                        <div style="width: 6px; height: 6px; border-radius: 50%; background-color: #cbd5e0;"></div>
+                        <div style="width: 6px; height: 6px; border-radius: 50%; background-color: #cbd5e0;"></div>
+                    </div>
+
+                    <!-- スライダー本体（透明にして上に被せる） -->
+                    <input type="range" class="custom-slider" min="1" max="5" step="1" value="3" style="width: 100%; -webkit-appearance: none; background: transparent; z-index: 3; position: relative; margin: 0; outline: none;">
+                    
+                    <!-- 裏でデータを保持するための隠しラジオボタン（既存ロジックとの互換性維持） -->
+                    <div style="display: none;">
+                        <input type="radio" name="${q.id}" value="1">
+                        <input type="radio" name="${q.id}" value="2">
+                        <input type="radio" name="${q.id}" value="3">
+                        <input type="radio" name="${q.id}" value="4">
+                        <input type="radio" name="${q.id}" value="5">
+                    </div>
                 </div>
-                <span style="flex: 1; text-align: left; font-size: 0.8rem; font-weight: bold; color: #0f284a; line-height: 1.3; word-break: keep-all;">${q.right}</span>
+                
+                <span style="flex: 1; text-align: left; font-size: 0.8rem; font-weight: bold; color: #0f284a; line-height: 1.2; word-break: keep-all;">${q.right}</span>
             </div>
         `;
         wrapper.innerHTML = html;
 
-        wrapper.querySelectorAll('input[type="radio"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                const unspecLbl = wrapper.querySelector('.kw-label-unspec');
-                const numLbls = wrapper.querySelectorAll('.kw-label-num');
-                
-                // リセット（全てのボタンをデフォルト状態に戻す）
-                unspecLbl.style.backgroundColor = '#f4f6f8';
-                unspecLbl.style.color = '#a0aec0';
-                
-                numLbls.forEach(lbl => {
-                    lbl.style.backgroundColor = '#ffffff';
-                    lbl.style.color = '#4a5568';
-                    lbl.style.borderColor = '#edf2f7';
-                    lbl.style.transform = 'scale(1)';
-                });
+        const slider = wrapper.querySelector('.custom-slider');
+        const unspecRadio = wrapper.querySelector('input[value="0"]');
+        const unspecLbl = wrapper.querySelector('.kw-label-unspec');
 
-                // 選択されたボタンをハイライト
-                if (this.value === "0") {
-                    unspecLbl.style.backgroundColor = '#e2e8f0';
-                    unspecLbl.style.color = '#4a5568';
-                } else {
-                    this.parentElement.style.backgroundColor = '#00b5d8';
-                    this.parentElement.style.color = '#ffffff';
-                    this.parentElement.style.borderColor = '#00b5d8';
-                    this.parentElement.style.transform = 'scale(1.15)'; // 選択されたら少し大きくする
-                }
-            });
+        // スライダーを操作（ドラッグやタップ）した時の処理
+        slider.addEventListener('input', function() {
+            // スライダーをアクティブカラー（シアン）に変更
+            this.classList.add('active-slider');
+            // 対応する隠しラジオボタンを選択状態にする
+            wrapper.querySelector(`input[name="${q.id}"][value="${this.value}"]`).checked = true;
+            
+            // 「指定しない」ボタンをグレーアウトさせる
+            unspecLbl.style.backgroundColor = '#f4f6f8';
+            unspecLbl.style.color = '#a0aec0';
+            unspecRadio.checked = false;
+        });
+
+        // 「指定しない」ボタンをタップした時の処理
+        unspecRadio.addEventListener('change', function() {
+            if(this.checked) {
+                // スライダーの色をグレーに戻す
+                slider.classList.remove('active-slider');
+                slider.value = 3; // スライダーの位置を真ん中に戻す
+                
+                // 「指定しない」ボタンをアクティブカラーに戻す
+                unspecLbl.style.backgroundColor = '#e2e8f0';
+                unspecLbl.style.color = '#4a5568';
+            }
         });
 
         container.appendChild(wrapper);
@@ -374,6 +443,16 @@ function resetApp() {
     document.getElementById('form-area').style.display = 'none';
     if(diagSelectionArea) diagSelectionArea.style.display = 'none';
     
+    // スライダーのリセット
+    document.querySelectorAll('.custom-slider').forEach(slider => {
+        slider.classList.remove('active-slider');
+        slider.value = 3;
+    });
+    document.querySelectorAll('.kw-label-unspec').forEach(lbl => {
+        lbl.style.backgroundColor = '#e2e8f0';
+        lbl.style.color = '#4a5568';
+    });
+    
     const url = new URL(window.location);
     url.search = '';
     window.history.replaceState({}, '', url);
@@ -381,7 +460,6 @@ function resetApp() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// 時刻のバグを修正（日本時間でパースする）
 const formatTime = (timeStr) => {
     if (!timeStr) return '';
     if (timeStr.includes('T') && timeStr.includes('Z')) {
@@ -570,13 +648,13 @@ function displayResults(results, isSelected, mode) {
         }
 
         if (otherLabs.length > 0) {
-            const otherTitle = document.createElement('h3');
-            otherTitle.innerHTML = '<span class="material-symbols-outlined" style="vertical-align: middle; color:#a0aec0;">more_horiz</span> その他の研究室';
-            otherTitle.style.marginTop = "32px";
-            otherTitle.style.borderBottom = "2px solid #cbd5e0";
-            otherTitle.style.paddingBottom = "8px";
-            otherTitle.style.marginBottom = "12px";
-            container.appendChild(otherTitle);
+            const Title = document.createElement('h3');
+            Title.innerHTML = '<span class="material-symbols-outlined" style="vertical-align: middle; color:#a0aec0;">more_horiz</span> その他の研究室';
+            Title.style.marginTop = "32px";
+            Title.style.borderBottom = "2px solid #cbd5e0";
+            Title.style.paddingBottom = "8px";
+            Title.style.marginBottom = "12px";
+            container.appendChild(Title);
             otherLabs.forEach(lab => container.appendChild(createLabCard(lab, null)));
         }
     }
@@ -653,9 +731,8 @@ window.addEventListener('DOMContentLoaded', () => {
     }).catch(e => {});
 });
 
-// ★ 追加した新しいボタン（kw-label-unspec, kw-label-num）にも波紋エフェクトを適用
 document.addEventListener('mousedown', function(e) {
-    const target = e.target.closest('button, .menu-button, .kw-label, .kw-label-unspec, .kw-label-num, .lab-check-label, .custom-radio');
+    const target = e.target.closest('button, .menu-button, .kw-label, .kw-label-unspec, .lab-check-label, .custom-radio');
     if (!target) return;
 
     const circle = document.createElement('span');
