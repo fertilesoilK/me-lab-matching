@@ -726,7 +726,7 @@ window.checkGameAnswer = function(selectedIndex) {
 
         setTimeout(() => {
             const reason = selectedIndex === -1 ? "TIME OVER" : "MISSION FAILED...";
-            const text = selectedIndex === -1 ? "燃料が尽きました。時間内に計算を完了させてください。" : "ミッション失敗。軌道を外れました。";
+            const text = selectedIndex === -1 ? "燃料が尽きました．時間内に問題を解いてください．" : "ミッション失敗．軌道を外れました．";
             
             uiLayer.innerHTML = `
                 <button onclick="closeRocketGame()" class="pointer-auto" style="position:absolute; top:20px; right:20px; background:transparent; border:none; color:#fff; font-size:2rem; cursor:pointer;">×</button>
