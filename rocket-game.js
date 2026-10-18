@@ -493,7 +493,7 @@ function loadStage(stage) {
             <button onclick="closeRocketGame()" class="pointer-auto" style="position:absolute; top:20px; right:20px; background:transparent; border:none; color:#fff; font-size:2rem; cursor:pointer;">×</button>
             <div style="position:absolute; top:30vh; left:50%; transform:translateX(-50%); text-align:center; width:100%;">
                 <h2 style="color: #ffd700; font-size: 2rem; margin-bottom: 10px;">MISSION CLEAR!</h2>
-                <p style="font-size: 1.2rem; margin-bottom: 30px;">素晴らしい！探査機は太陽圏界面を突破し、星間空間へ到達しました。</p>
+                <p style="font-size: 1.2rem; margin-bottom: 30px;">何やってるんですか，勉強してください．</p>
                 <div style="margin-bottom: 20px; position:relative; width:100px; margin:0 auto; transform:translateY(-10px); animation: rocketFly 3s ease-in-out infinite;">
                     ${getDynamicRocketSVG(displayStage)}
                     ${setFlame('ion')}
