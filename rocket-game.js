@@ -6,7 +6,6 @@ if (!document.getElementById('rocket-game-style')) {
     const gameStyle = document.createElement('style');
     gameStyle.id = 'rocket-game-style';
     gameStyle.innerHTML = `
-        /* ★ 画面遷移時のアニメーションを適正サイズで滑らかに高速化 */
         @keyframes launchTransition {
             0%   { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; filter: blur(0px); }
             40%  { transform: translate(var(--tx), var(--ty)) scale(3) rotate(360deg); opacity: 1; filter: drop-shadow(0 10px 20px rgba(0,181,216,0.5)); }
@@ -19,21 +18,27 @@ if (!document.getElementById('rocket-game-style')) {
             50% { transform: translate(1px, -1px); }
             75% { transform: translate(-1px, -1px); }
         }
-        /* ★ 地球周回アニメーション（軌道半径25vh） */
+        @keyframes rocketFlameAnim {
+            0% { transform: scaleY(1) scaleX(1); opacity: 0.9; }
+            100% { transform: scaleY(1.1) scaleX(0.95); opacity: 1; }
+        }
         @keyframes orbitCircle {
             0%   { transform: rotate(0deg) translateY(-25vh) rotate(90deg); }
             100% { transform: rotate(360deg) translateY(-25vh) rotate(90deg); }
         }
-        /* ★ 地球脱出アニメーション（軌道の頂点から滑らかに放物線で脱出） */
         @keyframes earthEscapeFly {
             0%   { transform: rotate(0deg) translateY(-25vh) rotate(90deg); }
             30%  { transform: translate(15vw, -45vh) rotate(60deg); }
             100% { transform: translate(45vw, -120vh) rotate(45deg); }
         }
-        /* ★ スイングバイ専用の滑らかな放物線軌道 */
         @keyframes swingbyCurve {
-            0%   { transform: translate(10vw, -10vh) rotate(20deg); animation-timing-function: ease-in; }
-            50%  { transform: translate(45vw, -40vh) rotate(0deg); animation-timing-function: ease-out; }
+            0%   { transform: translate(10vw, -10vh) rotate(20deg); }
+            15%  { transform: translate(22vw, -15vh) rotate(15deg); }
+            30%  { transform: translate(34vw, -25vh) rotate(10deg); }
+            45%  { transform: translate(42vw, -40vh) rotate(0deg); }
+            60%  { transform: translate(45vw, -60vh) rotate(-15deg); }
+            75%  { transform: translate(35vw, -85vh) rotate(-30deg); }
+            90%  { transform: translate(10vw, -115vh) rotate(-45deg); }
             100% { transform: translate(-30vw, -150vh) rotate(-60deg); }
         }
         @keyframes crashDown {
@@ -46,23 +51,12 @@ if (!document.getElementById('rocket-game-style')) {
         }
         .game-opt-btn:hover { background: rgba(255,255,255,0.2) !important; }
 
-        /* 13段階（1300vh）の巨大なグラデーション背景 */
         #rocket-game-bg {
             position: fixed; bottom: 0; left: 0; width: 100vw; height: 1300vh;
             background: linear-gradient(to top,
-                #87CEEB 0%,          /* STAGE 1: 地上 */
-                #4682B4 8.33%,       /* STAGE 2: リフトオフ */
-                #1E90FF 16.66%,      /* STAGE 3: SRB分離 */
-                #00008B 25.00%,      /* STAGE 4: フェアリング */
-                #000033 33.33%,      /* STAGE 5: 第1段分離 */
-                #000011 41.66%,      /* STAGE 6: LEO(地球周回) */
-                #0a0a2a 50.00%,      /* STAGE 7: 地球脱出 */
-                #111111 58.33%,      /* STAGE 8: 月 */
-                #1a0505 66.66%,      /* STAGE 9: 火星 */
-                #2a1b0a 75.00%,      /* STAGE 10: 木星 */
-                #1a1a00 83.33%,      /* STAGE 11: 土星 */
-                #000022 91.66%,      /* STAGE 12: 海王星 */
-                #000000 100%         /* CLEAR: 太陽圏突破 */
+                #87CEEB 0%, #4682B4 8.33%, #1E90FF 16.66%, #00008B 25.00%, #000033 33.33%, 
+                #000011 41.66%, #0a0a2a 50.00%, #111111 58.33%, #1a0505 66.66%, 
+                #2a1b0a 75.00%, #1a1a00 83.33%, #000022 91.66%, #000000 100%
             );
             z-index: 100000;
         }
@@ -71,36 +65,23 @@ if (!document.getElementById('rocket-game-style')) {
     document.head.appendChild(gameStyle);
 }
 
-// ダミー問題の配列
-const GAME_QUESTIONS = [
-    { q: "【第1問】ロケットを地球周回軌道に乗せるために必要な「第一宇宙速度」は、約何 km/s でしょう？", options: ["約 7.9 km/s", "約 11.2 km/s", "約 16.7 km/s", "約 3.0 km/s"], ans: 0 },
-    { q: "【第2問】流体力学において、慣性力と粘性力の比を表す無次元数はどれでしょう？", options: ["マッハ数", "プラントル数", "レイノルズ数", "ヌセルト数"], ans: 2 },
-    { q: "【第3問】材料力学において、明確な降伏点を持たない材料の「耐力」を求める際、通常用いられる永久ひずみの大きさは？", options: ["0.05 %", "0.2 %", "1.0 %", "2.0 %"], ans: 1 },
-    { q: "【第4問】熱力学において、理想的な可逆サイクルである「カルノーサイクル」の熱効率を決定する要素はどれでしょう？", options: ["作動流体の種類", "高温熱源と低温熱源の温度", "圧力の変化量", "比熱比"], ans: 1 },
-    { q: "【第5問】制御工学において、システムの出力の一部を入力側に戻して比較し、目標値に近づける制御方式を何と呼ぶでしょう？", options: ["フィードバック制御", "シーケンス制御", "フィードフォワード制御", "オープンループ制御"], ans: 0 },
-    { q: "【第6問】地球の重力圏を完全に脱出し、太陽を回る人工惑星になるために必要な最小初速度「第二宇宙速度」は？", options: ["約 7.9 km/s", "約 11.2 km/s", "約 16.7 km/s", "約 29.8 km/s"], ans: 1 },
-    { q: "【第7問】定常な非粘性・非圧縮性流体において、流線上のエネルギー保存則を表す定理は？", options: ["パスカルの原理", "アルキメデスの原理", "ベルヌーイの定理", "オイラーの定理"], ans: 2 },
-    { q: "【第8問】材料に開いた円孔などの形状変化部において、局所的に応力が増大する現象を何と呼ぶ？", options: ["応力緩和", "応力集中", "クリープ", "疲労"], ans: 1 },
-    { q: "【第9問】流体のせん断応力が、速度勾配に比例することを示す法則は？", options: ["ニュートンの粘性法則", "フックの法則", "ボイル・シャルルの法則", "ストークスの法則"], ans: 0 },
-    { q: "【第10問】弾性限度内において、材料の応力とひずみが比例関係にあることを示す法則は？", options: ["フックの法則", "ポアソン比", "ヤング率", "バウシンガー効果"], ans: 0 },
-    { q: "【第11問】粘性を持つ流体の運動を記述する、流体力学における最も基本的な微分方程式は？", options: ["ラプラス方程式", "波動方程式", "ナビエ・ストークス方程式", "マクスウェル方程式"], ans: 2 },
-    { q: "【第12問】人工物として初めて太陽圏（ヘリオスフィア）を離脱し、星間空間に到達した探査機はどれでしょう？", options: ["ボイジャー1号", "パイオニア10号", "ニュー・ホライズンズ", "カッシーニ"], ans: 0 }
-];
+// 外部ファイルからランダム生成される問題を格納する変数
+let GAME_QUESTIONS = [];
 
 const MILESTONES = [
     { name: "地上発射設備（カウントダウン）" },
-    { name: "リフトオフ（メインエンジン着火）" },
-    { name: "SRB-3（固体ブースタ）分離" },
-    { name: "フェアリング（衛星カバー）分離" },
+    { name: "リフトオフ" },
+    { name: "固体ブースタ分離" },
+    { name: "フェアリング分離" },
     { name: "第1段分離 ＆ 第2段着火" },
-    { name: "地球周回軌道（LEO）到達" },
-    { name: "地球重力圏脱出（第二宇宙速度）" },
-    { name: "月スイングバイ（加速）" },
-    { name: "火星スイングバイ（加速）" },
-    { name: "木星スイングバイ（大加速）" },   
-    { name: "土星スイングバイ（軌道変更）" }, 
-    { name: "海王星スイングバイ（最終加速）" }, 
-    { name: "太陽圏界面（ヘリオポーズ）突破" }  
+    { name: "地球周回軌道到達" },
+    { name: "地球重力圏脱出" },
+    { name: "月スイングバイ" },
+    { name: "火星スイングバイ" },
+    { name: "木星スイングバイ" },   
+    { name: "土星スイングバイ" }, 
+    { name: "海王星スイングバイ" }, 
+    { name: "太陽圏脱出" }  
 ];
 
 let currentGameQ = 0;
@@ -112,7 +93,6 @@ window.addEventListener('DOMContentLoaded', () => {
     if (rocketIcon) rocketIcon.addEventListener('click', initRocketGame);
 });
 
-// 高精細な人工衛星を含むSVGの生成
 function getDynamicRocketSVG(stage) {
     const hasSRB = stage <= 1;       
     const hasFairing = stage <= 2;   
@@ -144,18 +124,15 @@ function getDynamicRocketSVG(stage) {
         <line x1="50" y1="0" x2="50" y2="30" stroke="#cbd5e0" stroke-width="1" />
     ` : `
         <g transform="${hasSecondStage ? 'translate(0, 0)' : 'translate(0, 20) scale(1.1)'}">
-            <!-- アンテナ -->
             <path d="M 20 5 Q 50 -15 80 5 Q 50 15 20 5 Z" fill="#e2e8f0"/>
             <path d="M 20 5 Q 50 -5 80 5 Q 50 10 20 5 Z" fill="#cbd5e0"/>
             <line x1="50" y1="5" x2="50" y2="-10" stroke="#718096" stroke-width="2"/>
             <circle cx="50" cy="-10" r="3" fill="#ecc94b"/>
-            <!-- ボディ -->
             <rect x="35" y="10" width="30" height="35" fill="#ecc94b" rx="2"/>
             <rect x="38" y="13" width="24" height="29" fill="#d69e2e" rx="1"/>
             <line x1="38" y1="20" x2="62" y2="20" stroke="#b7791f" stroke-width="1"/>
             <line x1="38" y1="28" x2="62" y2="28" stroke="#b7791f" stroke-width="1"/>
             <line x1="38" y1="36" x2="62" y2="36" stroke="#b7791f" stroke-width="1"/>
-            <!-- パドル -->
             <rect x="-15" y="17" width="50" height="20" fill="#1A365D" stroke="#63b3ed" stroke-width="1"/>
             <line x1="-5" y1="17" x2="-5" y2="37" stroke="#4299E1" stroke-width="0.5"/>
             <line x1="5" y1="17" x2="5" y2="37" stroke="#4299E1" stroke-width="0.5"/>
@@ -168,7 +145,6 @@ function getDynamicRocketSVG(stage) {
             <line x1="95" y1="17" x2="95" y2="37" stroke="#4299E1" stroke-width="0.5"/>
             <line x1="105" y1="17" x2="105" y2="37" stroke="#4299E1" stroke-width="0.5"/>
             <line x1="65" y1="27" x2="115" y2="27" stroke="#4299E1" stroke-width="0.5"/>
-            <!-- スラスター -->
             ${!hasSecondStage ? `<polygon points="44,45 56,45 53,52 47,52" fill="#4a5568" />` : ''}
         </g>
     `;
@@ -198,35 +174,148 @@ function getDynamicRocketSVG(stage) {
 function getPlanetSVG(stage) {
     let svgContent = ''; let filter = '';
     if (stage === 7) { 
-        svgContent = `<circle cx="50" cy="50" r="45" fill="#e2e8f0"/><circle cx="30" cy="30" r="8" fill="#cbd5e0"/><circle cx="70" cy="45" r="12" fill="#cbd5e0"/><circle cx="45" cy="70" r="10" fill="#cbd5e0"/>`;
+        svgContent = `
+            <circle cx="50" cy="50" r="48" fill="#e2e8f0"/>
+            <circle cx="30" cy="35" r="8" fill="#cbd5e0"/>
+            <circle cx="65" cy="45" r="12" fill="#cbd5e0"/>
+            <circle cx="45" cy="70" r="10" fill="#cbd5e0"/>
+            <path d="M 2 50 A 48 48 0 0 0 98 50 A 48 48 0 0 1 2 50 Z" fill="#000" opacity="0.1"/>
+        `;
         filter = `drop-shadow(0 0 15px rgba(255,255,255,0.4))`;
     } else if (stage === 8) { 
-        svgContent = `<circle cx="50" cy="50" r="45" fill="#c53030"/><path d="M 20 40 Q 50 20 80 50 T 30 80 Q 10 60 20 40 Z" fill="#9b2c2c" opacity="0.6"/>`;
+        svgContent = `
+            <circle cx="50" cy="50" r="48" fill="#f56565"/>
+            <path d="M 20 30 Q 50 20 80 40 T 30 80 Z" fill="#c53030" opacity="0.8"/>
+            <path d="M 35 6 A 48 48 0 0 1 65 6 Q 50 15 35 6 Z" fill="#fff" opacity="0.9"/>
+            <path d="M 40 94 A 48 48 0 0 0 60 94 Q 50 88 40 94 Z" fill="#fff" opacity="0.9"/>
+            <path d="M 2 50 A 48 48 0 0 0 98 50 A 48 48 0 0 1 2 50 Z" fill="#000" opacity="0.2"/>
+        `;
         filter = `drop-shadow(0 0 20px rgba(229,62,62,0.5))`;
     } else if (stage === 9) { 
-        svgContent = `<circle cx="50" cy="50" r="45" fill="#d69e2e"/><rect x="5" y="30" width="90" height="8" fill="#b7791f" opacity="0.7"/><rect x="5" y="55" width="90" height="12" fill="#975a16" opacity="0.7"/><circle cx="65" cy="60" r="6" fill="#744210"/>`;
+        svgContent = `
+            <circle cx="50" cy="50" r="48" fill="#fbd38d"/>
+            <rect x="5" y="25" width="90" height="10" fill="#d69e2e"/>
+            <rect x="2" y="45" width="96" height="15" fill="#b7791f"/>
+            <rect x="8" y="70" width="84" height="8" fill="#d69e2e"/>
+            <ellipse cx="65" cy="52" rx="10" ry="5" fill="#c53030"/>
+            <path d="M 2 50 A 48 48 0 0 0 98 50 A 48 48 0 0 1 2 50 Z" fill="#000" opacity="0.1"/>
+        `;
         filter = `drop-shadow(0 0 25px rgba(214,158,46,0.5))`;
     } else if (stage === 10) { 
-        svgContent = `<path d="M 5 50 A 45 15 0 0 1 95 50" fill="none" stroke="#f6e05e" stroke-width="8" transform="rotate(-20 50 50)"/><circle cx="50" cy="50" r="30" fill="#ecc94b"/><path d="M 5 50 A 45 15 0 0 0 95 50" fill="none" stroke="#f6e05e" stroke-width="8" transform="rotate(-20 50 50)"/>`;
+        svgContent = `
+            <path d="M -10 50 A 60 15 0 0 1 110 50" fill="none" stroke="#fef08a" stroke-width="10" transform="rotate(-20 50 50)"/>
+            <circle cx="50" cy="50" r="35" fill="#f6e05e"/>
+            <path d="M -10 50 A 60 15 0 0 0 110 50" fill="none" stroke="#fef08a" stroke-width="10" transform="rotate(-20 50 50)"/>
+            <path d="M -10 50 A 60 15 0 0 0 110 50" fill="none" stroke="#ca8a04" stroke-width="2" transform="rotate(-20 50 50)"/>
+            <path d="M 15 50 A 35 35 0 0 0 85 50 A 35 35 0 0 1 15 50 Z" fill="#000" opacity="0.1"/>
+        `;
         filter = `drop-shadow(0 0 20px rgba(236,201,75,0.5))`;
     } else if (stage === 11) { 
-        svgContent = `<circle cx="50" cy="50" r="45" fill="#2b6cb0"/><path d="M 20 30 Q 50 40 80 30" fill="none" stroke="#63b3ed" stroke-width="3" opacity="0.5"/>`;
+        svgContent = `
+            <circle cx="50" cy="50" r="48" fill="#4299e1"/>
+            <ellipse cx="60" cy="40" rx="12" ry="6" fill="#2b6cb0" transform="rotate(-15 60 40)"/>
+            <path d="M 40 30 Q 60 25 75 35" fill="none" stroke="#fff" stroke-width="2" opacity="0.8" stroke-linecap="round"/>
+            <path d="M 2 50 A 48 48 0 0 0 98 50 A 48 48 0 0 1 2 50 Z" fill="#000" opacity="0.2"/>
+        `;
         filter = `drop-shadow(0 0 20px rgba(43,108,176,0.5))`;
     }
     if (!svgContent) return '';
-    return `<svg viewBox="0 0 100 100" width="130px" height="130px" xmlns="http://www.w3.org/2000/svg" style="filter: ${filter}; animation: planetFloat 4s ease-in-out infinite;">${svgContent}</svg>`;
+    return `<svg viewBox="0 0 100 100" width="160px" height="160px" xmlns="http://www.w3.org/2000/svg" style="filter: ${filter}; animation: planetFloat 4s ease-in-out infinite; overflow: visible;">${svgContent}</svg>`;
 }
 
 function setFlame(type) {
-    const baseStyle = 'position:absolute; top:98px; left:0; width:100px; display:flex; justify-content:center; align-items:flex-start; pointer-events:none;';
-    if(type === 'big') return `<div style="${baseStyle}"><div style="font-size:3.5rem; margin-top:-15px; animation: rocketShake 0.1s infinite;">🔥</div></div>`;
-    if(type === 'med') return `<div style="${baseStyle}"><div style="font-size:2.5rem; margin-top:-10px; animation: rocketShake 0.1s infinite;">🔥</div></div>`;
-    if(type === 'ion') return `<div style="${baseStyle}"><div style="width:8px; height:25px; background:linear-gradient(to bottom, #63b3ed, transparent); border-radius:50%; margin-top:2px; animation: rocketShake 0.1s infinite; filter:blur(2px);"></div></div>`;
+    const baseStyle = 'position:absolute; top:98px; left:50%; transform:translateX(-50%); width:0px; height:0px; pointer-events:none; display:flex; justify-content:center; align-items:flex-start;';
+    
+    const defs = `
+        <defs>
+            <linearGradient id="flameOuter" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#fffb00" stop-opacity="0.9" />
+                <stop offset="30%" stop-color="#ff6600" stop-opacity="0.8" />
+                <stop offset="100%" stop-color="#ff0000" stop-opacity="0" />
+            </linearGradient>
+            <linearGradient id="flameInner" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
+                <stop offset="40%" stop-color="#ffffcc" stop-opacity="0.9" />
+                <stop offset="100%" stop-color="#ff9900" stop-opacity="0" />
+            </linearGradient>
+            <linearGradient id="ionFlame" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="20%" stop-color="#00ffff" />
+                <stop offset="100%" stop-color="#0022ff" stop-opacity="0" />
+            </linearGradient>
+        </defs>
+    `;
+
+    const mainEngineBig = `
+        <div style="position:absolute; left:-15px; top:0;">
+            <svg viewBox="0 0 60 120" width="30px" height="80px" style="animation: rocketFlameAnim 0.05s infinite alternate; transform-origin: top center;">
+                ${defs}
+                <path d="M 10 0 C 5 40, 20 120, 30 120 C 40 120, 55 40, 50 0 Z" fill="url(#flameOuter)"/>
+                <path d="M 18 0 C 18 30, 25 80, 30 80 C 35 80, 42 30, 42 0 Z" fill="url(#flameInner)"/>
+                <polygon points="25,10 35,10 30,25" fill="#ffffff" opacity="0.8"/>
+                <polygon points="26,30 34,30 30,45" fill="#ffffff" opacity="0.5"/>
+            </svg>
+        </div>
+    `;
+
+    const srbFlameLeft = `
+        <div style="position:absolute; left:-31px; top:-5px;">
+            <svg viewBox="0 0 60 90" width="14px" height="40px" style="animation: rocketFlameAnim 0.05s infinite alternate-reverse; transform-origin: top center;">
+                ${defs}
+                <path d="M 15 0 C 15 30, 25 90, 30 90 C 35 90, 45 30, 45 0 Z" fill="url(#flameOuter)"/>
+                <path d="M 22 0 C 22 20, 27 60, 30 60 C 33 60, 38 20, 38 0 Z" fill="url(#flameInner)"/>
+            </svg>
+        </div>
+    `;
+
+    const srbFlameRight = `
+        <div style="position:absolute; left:17px; top:-5px;">
+            <svg viewBox="0 0 60 90" width="14px" height="40px" style="animation: rocketFlameAnim 0.06s infinite alternate; transform-origin: top center;">
+                ${defs}
+                <path d="M 15 0 C 15 30, 25 90, 30 90 C 35 90, 45 30, 45 0 Z" fill="url(#flameOuter)"/>
+                <path d="M 22 0 C 22 20, 27 60, 30 60 C 33 60, 38 20, 38 0 Z" fill="url(#flameInner)"/>
+            </svg>
+        </div>
+    `;
+
+    const mainEngineMed = `
+        <div style="position:absolute; left:-10px; top:-2px;">
+            <svg viewBox="0 0 60 90" width="20px" height="50px" style="animation: rocketFlameAnim 0.05s infinite alternate; transform-origin: top center;">
+                ${defs}
+                <path d="M 15 0 C 15 30, 25 90, 30 90 C 35 90, 45 30, 45 0 Z" fill="url(#flameOuter)"/>
+                <path d="M 22 0 C 22 20, 27 60, 30 60 C 33 60, 38 20, 38 0 Z" fill="url(#flameInner)"/>
+                <polygon points="26,10 34,10 30,20" fill="#ffffff" opacity="0.6"/>
+            </svg>
+        </div>
+    `;
+
+    const ionEngine = `
+        <div style="position:absolute; left:-6px; top:-5px;">
+            <svg viewBox="0 0 40 100" width="12px" height="40px" style="animation: rocketFlameAnim 0.1s infinite alternate; transform-origin: top center; filter: blur(1px);">
+                ${defs}
+                <path d="M 10 0 C 15 30, 20 100, 20 100 C 20 100, 25 30, 30 0 Z" fill="url(#ionFlame)"/>
+                <path d="M 16 0 C 18 15, 20 50, 20 50 C 20 50, 22 15, 24 0 Z" fill="#ffffff" opacity="0.9"/>
+            </svg>
+        </div>
+    `;
+
+    if(type === 'liftoff') return `<div style="${baseStyle}">${srbFlameLeft}${mainEngineBig}${srbFlameRight}</div>`;
+    if(type === 'main') return `<div style="${baseStyle}">${mainEngineBig}</div>`;
+    if(type === 'med') return `<div style="${baseStyle}">${mainEngineMed}</div>`;
+    if(type === 'ion') return `<div style="${baseStyle}">${ionEngine}</div>`;
     return '';
 }
 
 function initRocketGame(e) {
     if (document.getElementById('rocket-game-bg')) return;
+    
+    // ★ 外部ファイルの作問データをランダムにセット
+    if (typeof generateRandomQuestions === 'function') {
+        GAME_QUESTIONS = generateRandomQuestions();
+    } else {
+        console.error("作問データが見つかりません。rocket-questions.js が正しく読み込まれているか確認してください。");
+        return;
+    }
 
     const rect = e.target.getBoundingClientRect();
     const startX = rect.left + rect.width / 2;
@@ -235,7 +324,7 @@ function initRocketGame(e) {
     const ty = window.innerHeight / 2 - startY;
 
     const transRocket = document.createElement('div');
-    transRocket.innerHTML = `<div style="position:relative; width:100px; height:100px;">${getDynamicRocketSVG(0)}${setFlame('big')}</div>`;
+    transRocket.innerHTML = `<div style="position:relative; width:100px; height:100px;">${getDynamicRocketSVG(0)}${setFlame('liftoff')}</div>`;
     transRocket.style.cssText = `position: fixed; left: ${startX}px; top: ${startY}px; --tx: ${tx}px; --ty: ${ty}px; transform-origin: center center; margin-left: -50px; margin-top: -50px; z-index: 999999; pointer-events: none; animation: launchTransition 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;`;
     document.body.appendChild(transRocket);
 
@@ -263,7 +352,36 @@ function initRocketGame(e) {
         const earthContainer = document.createElement('div');
         earthContainer.id = 'earth-container';
         earthContainer.style.cssText = 'position:fixed; bottom:-100vh; left:50vw; transform:translate(-50%, 0) scale(1); transition: bottom 2s cubic-bezier(0.4, 0, 0.2, 1), transform 2.5s ease-in, opacity 2.5s ease-in; z-index:100001;';
-        earthContainer.innerHTML = `<svg viewBox="0 0 100 100" width="40vh" height="40vh" style="filter:drop-shadow(0 -10px 30px rgba(66,153,225,0.4));"><circle cx="50" cy="50" r="48" fill="#2b6cb0"/><path d="M 10 30 Q 30 10 60 20 T 90 40 Q 70 70 30 60 Z" fill="#48bb78" opacity="0.8"/></svg>`;
+        earthContainer.innerHTML = `
+        <svg viewBox="0 0 100 100" width="40vh" height="40vh" style="filter:drop-shadow(0 0 20px rgba(30,58,138,0.5)); overflow:visible;">
+            <defs>
+                <linearGradient id="earthWater" x1="10%" y1="10%" x2="90%" y2="90%">
+                    <stop offset="0%" stop-color="#3b82f6"/>
+                    <stop offset="100%" stop-color="#1e3a8a"/>
+                </linearGradient>
+                <clipPath id="earthClip"><circle cx="50" cy="50" r="49" /></clipPath>
+            </defs>
+            <circle cx="50" cy="50" r="49" fill="url(#earthWater)"/>
+            <g clip-path="url(#earthClip)" fill="#a7d58b">
+                <path d="M -10 0 C 10 5, 25 15, 30 25 C 32 30, 20 35, 15 40 C 10 45, 15 50, 10 55 C 5 60, -5 55, -10 60 Z"/>
+                <path d="M 15 -10 C 25 5, 45 5, 55 10 C 65 15, 60 25, 50 30 C 40 35, 35 25, 25 20 C 15 15, 5 -10, 15 -10 Z"/>
+                
+                <path d="M 45 23 C 48 21, 52 26, 50 29 C 48 31, 44 26, 45 23 Z"/> 
+                <path d="M 44 32 C 48 30, 49 33, 45 38 C 41 43, 34 45, 33 43 C 32 41, 40 40, 44 32 Z"/> 
+                <circle cx="35" cy="46" r="1.5"/> 
+                <circle cx="39" cy="43" r="1"/> 
+                
+                <path d="M 22 62 C 28 60, 33 65, 30 68 C 26 71, 18 64, 22 62 Z"/>
+                <path d="M 34 55 C 38 53, 40 58, 37 60 C 34 62, 32 57, 34 55 Z"/>
+                <path d="M 27 68 C 37 65, 47 68, 54 70 C 57 71, 54 74, 50 73 C 42 71, 32 71, 27 70 C 24 69, 25 68, 27 68 Z"/>
+                
+                <path d="M 42 80 C 48 74, 55 72, 62 74 C 68 76, 68 84, 63 90 C 58 94, 48 94, 42 87 C 40 82, 40 82, 42 80 Z"/>
+                
+                <path d="M 85 -10 C 90 5, 82 15, 87 25 C 92 35, 105 38, 110 38 L 110 -10 Z"/>
+                
+                <path d="M 97 55 C 90 65, 92 75, 87 85 L 110 85 L 110 55 Z"/>
+            </g>
+        </svg>`;
         document.body.appendChild(earthContainer);
 
         const launchPad = document.createElement('div');
@@ -274,7 +392,7 @@ function initRocketGame(e) {
 
         const planetContainer = document.createElement('div');
         planetContainer.id = 'planet-container';
-        planetContainer.style.cssText = 'position:fixed; top:15vh; right:15vw; z-index:100003; opacity:0; transition: opacity 1s, transform 2.5s;';
+        planetContainer.style.cssText = 'position:fixed; top:15vh; right:15vw; z-index:100003; opacity:0; transition: opacity 1.5s ease-in;';
         document.body.appendChild(planetContainer);
 
         const rocketWrapper = document.createElement('div');
@@ -312,7 +430,6 @@ function initRocketGame(e) {
     }, 1500); 
 }
 
-// 待機座標のセット
 function setRestingPos(stage) {
     const wrap = document.getElementById('rocket-wrapper');
     const inner = document.getElementById('rocket-inner');
@@ -335,7 +452,11 @@ function setRestingPos(stage) {
         wrap.style.transform = 'translateY(0)'; 
         inner.style.transform = 'rotate(0deg)';
         if(pad) pad.style.transform = 'translateY(20vh)';
-        flame.innerHTML = setFlame(stage <= 3 ? 'big' : 'med');
+        
+        if (stage === 1) flame.innerHTML = setFlame('liftoff');
+        else if (stage === 2 || stage === 3) flame.innerHTML = setFlame('main');
+        else if (stage === 4) flame.innerHTML = setFlame('med');
+
         svgCont.style.animation = 'rocketShake 0.1s infinite';
     } else if (stage === 5) {
         if(earth) {
@@ -365,6 +486,7 @@ function setRestingPos(stage) {
 
 function loadStage(stage) {
     const uiLayer = document.getElementById('rocket-game-ui');
+    const bg = document.getElementById('rocket-game-bg');
     
     if (stage >= GAME_QUESTIONS.length) {
         uiLayer.innerHTML = `
@@ -379,9 +501,11 @@ function loadStage(stage) {
                 <p style="color: #00b5d8; font-weight:bold; font-size:1.3rem;">最終到達点：${MILESTONES[stage].name}</p>
             </div>
         `;
-        const bg = document.getElementById('rocket-game-bg');
-        bg.style.transition = 'transform 30s linear';
-        bg.style.transform = `translateY(1250vh)`; 
+        if (bg) {
+            bg.style.transition = 'none';
+            bg.style.animation = 'none';
+            bg.style.transform = `translateY(${stage * 100}vh)`; 
+        }
         document.getElementById('rocket-wrapper').style.display = 'none';
         return;
     }
@@ -394,9 +518,8 @@ function loadStage(stage) {
 
     const pc = document.getElementById('planet-container');
     if (stage >= 6 && stage <= 10) {
-        pc.style.transition = 'opacity 2s ease-in';
+        pc.style.transition = 'opacity 1.5s ease-in';
         pc.style.opacity = '1';
-        pc.style.transform = 'translate(0,0) scale(1)';
         pc.innerHTML = getPlanetSVG(stage + 1); 
     } else {
         if(pc) pc.style.opacity = '0';
@@ -408,9 +531,9 @@ function loadStage(stage) {
         </div>
         <button onclick="closeRocketGame()" class="pointer-auto" style="position:absolute; top:20px; right:20px; background:transparent; border:none; color:#fff; font-size:2rem; cursor:pointer;">×</button>
         <div style="position:absolute; top:30px; left:20px;">
-            <p style="margin:0; font-size:0.9rem; color:#cbd5e0;">STAGE ${stage + 1} / ${GAME_QUESTIONS.length}</p>
-            <p style="margin:5px 0 0 0; font-weight:bold; font-size:1.1rem; color:#00b5d8;">現在：${MILESTONES[stage].name}</p>
-            <p style="margin:5px 0 0 0; font-size:0.85rem; color:#a0aec0;">Next ➔ ${MILESTONES[stage + 1].name}</p>
+            <p id="ui-stage-num" style="margin:0; font-size:0.9rem; color:#cbd5e0;">STAGE ${stage + 1} / ${GAME_QUESTIONS.length}</p>
+            <p id="ui-stage-current" style="margin:5px 0 0 0; font-weight:bold; font-size:1.1rem; color:#00b5d8;">ミッション：${MILESTONES[stage + 1].name}</p>
+            <p id="ui-stage-next" style="margin:5px 0 0 0; font-size:0.85rem; color:#a0aec0;">Next ➔ ${stage + 2 < MILESTONES.length ? MILESTONES[stage + 2].name : 'ミッションコンプリート'}</p>
         </div>
         <div id="q-container" class="pointer-auto" style="position:absolute; top:15vh; left:50%; transform:translateX(-50%); width: 90%; max-width: 500px; background: rgba(0, 0, 0, 0.6); padding: 24px; border-radius: 12px; backdrop-filter: blur(4px); box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
             <h3 style="margin-top:0; font-size:1.2rem; line-height:1.5;">${qData.q}</h3>
@@ -478,10 +601,7 @@ window.checkGameAnswer = function(selectedIndex) {
         if (currentGameQ === 5) {
             let elapsed = Date.now() - window.orbitStartTime;
             let remain = 1 - ((elapsed % 12000) / 12000);
-            
-            if ((remain * 12000) / 8 < 1000) {
-                remain += 1;
-            }
+            if ((remain * 12000) / 8 < 1000) { remain += 1; }
             waitTime = (remain * 12000) / 8;
 
             const anims = wrap.getAnimations();
@@ -499,14 +619,34 @@ window.checkGameAnswer = function(selectedIndex) {
         setTimeout(() => {
             svgCont.style.animation = 'rocketShake 0.1s infinite'; 
 
+            const nextStage = currentGameQ + 1;
+            if (nextStage < GAME_QUESTIONS.length) {
+                const uiStageNum = document.getElementById('ui-stage-num');
+                const uiStageCurrent = document.getElementById('ui-stage-current');
+                const uiStageNext = document.getElementById('ui-stage-next');
+                if (uiStageNum) uiStageNum.innerText = `STAGE ${nextStage + 1} / ${GAME_QUESTIONS.length}`;
+                if (uiStageCurrent) uiStageCurrent.innerText = `ミッション：${MILESTONES[nextStage + 1].name}`;
+                if (uiStageNext) {
+                    if (nextStage + 2 < MILESTONES.length) {
+                        uiStageNext.innerText = `Next ➔ ${MILESTONES[nextStage + 2].name}`;
+                    } else {
+                        uiStageNext.innerText = `Next ➔ 全ミッション完了`;
+                    }
+                }
+            }
+
             if (currentGameQ === 0) {
                 if(pad) {
                     pad.style.transition = 'transform 2s cubic-bezier(0.4, 0, 0.2, 1)';
                     pad.style.transform = 'translateY(20vh)';
                 }
-                flame.innerHTML = setFlame('big');
+                flame.innerHTML = setFlame('liftoff');
                 animDuration = 2000;
-            } else if (currentGameQ >= 1 && currentGameQ <= 3) {
+            } else if (currentGameQ === 1) {
+                flame.innerHTML = setFlame('main');
+                animDuration = 1000;
+            } else if (currentGameQ === 2 || currentGameQ === 3) {
+                flame.innerHTML = setFlame('main');
                 animDuration = 1000;
             } else if (currentGameQ === 4) {
                 wrap.style.transition = 'transform 2s ease-in-out, bottom 2s ease-in-out';
@@ -516,6 +656,7 @@ window.checkGameAnswer = function(selectedIndex) {
                     earth.style.transition = 'bottom 2s ease-in-out';
                     earth.style.bottom = '5vh'; 
                 }
+                flame.innerHTML = setFlame('med');
                 animDuration = 2000;
             } else if (currentGameQ === 5) {
                 wrap.style.animation = 'earthEscapeFly 3s ease-in forwards';
@@ -527,31 +668,32 @@ window.checkGameAnswer = function(selectedIndex) {
                 flame.innerHTML = setFlame('ion');
                 animDuration = 3000;
             } else if (currentGameQ >= 6 && currentGameQ <= 10) {
-                // ★ 惑星拡大と放物線移動の完全分離
-                
-                // 前半1.5秒：惑星が迫り、衛星は軌道に乗る準備（少し前進）
-                wrap.style.transition = 'transform 1.5s ease-in-out';
-                wrap.style.transform = 'translate(10vw, -10vh) rotate(20deg)';
-                if(planet) {
-                    planet.style.transition = 'transform 1.5s ease-in-out';
-                    planet.style.transform = 'translate(-25vw, 40vh) scale(3)';
-                    planet.style.opacity = '1';
-                }
+                wrap.style.animation = 'none';
+                void wrap.offsetWidth;
+                wrap.style.animation = 'swingbyCurve 3s linear forwards';
                 flame.innerHTML = setFlame('ion');
-                
-                // 後半1.5秒：滑らかな放物線（双曲線）を描いて加速脱出
-                setTimeout(() => {
-                    wrap.style.transition = 'none';
-                    void wrap.offsetWidth;
-                    wrap.style.animation = 'swingbyCurve 1.5s forwards';
-                    if(planet) {
-                        planet.style.transition = 'transform 1.5s ease-in, opacity 1.5s ease-in';
-                        planet.style.transform = 'translate(-70vw, 120vh) scale(5)';
-                        planet.style.opacity = '0';
-                    }
-                }, 1500);
-
                 animDuration = 3000;
+                
+                if(planet) {
+                    setTimeout(() => {
+                        planet.style.transition = 'opacity 1s ease-in';
+                        planet.style.opacity = '0';
+                    }, 2000);
+                }
+            } else if (currentGameQ === 11) {
+                // ★ 最終問題（STAGE 12）正解時：真っ直ぐ深宇宙の奥へ消え去る
+                wrap.style.animation = 'none';
+                void wrap.offsetWidth;
+                wrap.style.transition = 'transform 3s cubic-bezier(0.5, 0, 0.2, 1), opacity 3s ease-in';
+                wrap.style.transform = 'translateY(-100vh) scale(0.2)';
+                wrap.style.opacity = '0';
+                flame.innerHTML = setFlame('ion');
+                animDuration = 3000;
+                
+                if(planet) {
+                    planet.style.transition = 'opacity 1s ease-in';
+                    planet.style.opacity = '0';
+                }
             }
 
             if (bg) {
