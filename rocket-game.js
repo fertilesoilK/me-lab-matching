@@ -309,7 +309,6 @@ function setFlame(type) {
 function initRocketGame(e) {
     if (document.getElementById('rocket-game-bg')) return;
     
-    // ★ 外部ファイルの作問データをランダムにセット
     if (typeof generateRandomQuestions === 'function') {
         GAME_QUESTIONS = generateRandomQuestions();
     } else {
@@ -619,22 +618,6 @@ window.checkGameAnswer = function(selectedIndex) {
         setTimeout(() => {
             svgCont.style.animation = 'rocketShake 0.1s infinite'; 
 
-            const nextStage = currentGameQ + 1;
-            if (nextStage < GAME_QUESTIONS.length) {
-                const uiStageNum = document.getElementById('ui-stage-num');
-                const uiStageCurrent = document.getElementById('ui-stage-current');
-                const uiStageNext = document.getElementById('ui-stage-next');
-                if (uiStageNum) uiStageNum.innerText = `STAGE ${nextStage + 1} / ${GAME_QUESTIONS.length}`;
-                if (uiStageCurrent) uiStageCurrent.innerText = `ミッション：${MILESTONES[nextStage + 1].name}`;
-                if (uiStageNext) {
-                    if (nextStage + 2 < MILESTONES.length) {
-                        uiStageNext.innerText = `Next ➔ ${MILESTONES[nextStage + 2].name}`;
-                    } else {
-                        uiStageNext.innerText = `Next ➔ 全ミッション完了`;
-                    }
-                }
-            }
-
             if (currentGameQ === 0) {
                 if(pad) {
                     pad.style.transition = 'transform 2s cubic-bezier(0.4, 0, 0.2, 1)';
@@ -681,7 +664,6 @@ window.checkGameAnswer = function(selectedIndex) {
                     }, 2000);
                 }
             } else if (currentGameQ === 11) {
-                // ★ 最終問題（STAGE 12）正解時：真っ直ぐ深宇宙の奥へ消え去る
                 wrap.style.animation = 'none';
                 void wrap.offsetWidth;
                 wrap.style.transition = 'transform 3s cubic-bezier(0.5, 0, 0.2, 1), opacity 3s ease-in';
