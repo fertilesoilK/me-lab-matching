@@ -461,6 +461,13 @@ function displayResults(results, isSelected, mode) {
     const container = document.getElementById('results-container');
     container.innerHTML = '<h2 style="display: flex; align-items: center; gap: 8px; font-size: 1.4rem; color: #0f284a;"><span class="material-symbols-outlined" style="color: #dd6b20;">workspace_premium</span> 診断結果</h2>';
 
+    // ★ 追加: ユーザーが選択したキーワードを再取得
+    let selectedThemes = [];
+    if (mode === 'keyword') {
+        const checkedInputs = document.querySelectorAll('#keywords-container input[type="checkbox"]:checked');
+        selectedThemes = Array.from(checkedInputs).map(input => input.value);
+    }
+
     const topRefDiv = document.createElement('div');
     topRefDiv.className = 'no-print';
     topRefDiv.style.cssText = "background-color: #f8fafc; padding: 16px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0; display: flex; align-items: flex-start; gap: 12px;";
@@ -552,13 +559,26 @@ function displayResults(results, isSelected, mode) {
         });
 
         const sortedCats = CATEGORY_ORDER.filter(cat => categorizedKws[cat]);
-        const kwHtml = sortedCats.map(cat => `
+        // ★ 変更: 選択したキーワードを赤色＆太字にするフォーマット関数を適用
+        const kwHtml = sortedCats.map(cat => {
+            const formatKw = (kw) => {
+                if (selectedThemes.includes(kw)) {
+                    return `<span style="color: #e53e3e; font-weight: bold;">${kw}</span>`;
+                }
+                return kw;
+            };
+
+            const mainKws = categorizedKws[cat]["主要"].map(formatKw).join('， ');
+            const advKws = categorizedKws[cat]["専門・詳細"].map(formatKw).join('， ');
+
+            return `
             <div style="margin-bottom: 8px;">
                 <strong style="color: #0f284a; font-size: 0.95em;">・${cat}</strong>
-                ${categorizedKws[cat]["主要"].length > 0 ? `<div style="margin-left:15px; font-size:0.85em; color:#4a5568;"><em style="color:#dd6b20;">[主要]</em> ${categorizedKws[cat]["主要"].join('， ')}</div>` : ''}
-                ${categorizedKws[cat]["専門・詳細"].length > 0 ? `<div style="margin-left:15px; font-size:0.85em; color:#718096;"><em>[専門]</em> ${categorizedKws[cat]["専門・詳細"].join('， ')}</div>` : ''}
+                ${categorizedKws[cat]["主要"].length > 0 ? `<div style="margin-left:15px; font-size:0.85em; color:#4a5568;"><em style="color:#dd6b20;">[主要]</em> ${mainKws}</div>` : ''}
+                ${categorizedKws[cat]["専門・詳細"].length > 0 ? `<div style="margin-left:15px; font-size:0.85em; color:#718096;"><em>[専門]</em> ${advKws}</div>` : ''}
             </div>
-        `).join('');
+            `;
+        }).join('');
 
         const links = [
             lab.公式HP ? `<a href="${lab.公式HP}" target="_blank" style="color:#00b5d8; text-decoration:none;"><span class="material-symbols-outlined" style="font-size:1.1em; vertical-align:middle;">link</span> 公式HP</a>` : null,
