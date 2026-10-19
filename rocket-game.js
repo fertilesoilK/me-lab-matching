@@ -6,12 +6,11 @@ if (!document.getElementById('rocket-game-style')) {
     const gameStyle = document.createElement('style');
     gameStyle.id = 'rocket-game-style';
     gameStyle.innerHTML = `
-        /* ★ 画面遷移時のアニメーションを軽量化・高速化 */
         @keyframes launchTransition {
-            0%   { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; filter: brightness(1); }
-            30%  { transform: translate(calc(var(--tx) * 0.2), calc(var(--ty) * 0.2)) scale(1.2) rotate(15deg); opacity: 1; filter: brightness(1.2); }
-            70%  { transform: translate(calc(var(--tx) * 0.8), calc(var(--ty) * 0.8)) scale(0.5) rotate(45deg); opacity: 1; filter: brightness(2) drop-shadow(0 0 20px #00b5d8); }
-            100% { transform: translate(var(--tx), var(--ty)) scale(0) rotate(90deg); opacity: 0; filter: brightness(3); }
+            0%   { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; filter: blur(0px); }
+            40%  { transform: translate(var(--tx), var(--ty)) scale(3) rotate(360deg); opacity: 1; filter: drop-shadow(0 10px 20px rgba(0,181,216,0.5)); }
+            80%  { transform: translate(var(--tx), var(--ty)) scale(15) rotate(720deg); opacity: 1; filter: blur(0px); }
+            100% { transform: translate(var(--tx), var(--ty)) scale(40) rotate(900deg); opacity: 0; filter: blur(10px); }
         }
         @keyframes rocketShake {
             0%, 100% { transform: translate(0, 0); }
@@ -65,9 +64,6 @@ if (!document.getElementById('rocket-game-style')) {
     `;
     document.head.appendChild(gameStyle);
 }
-
-// 外部ファイルからランダム生成される問題を格納する変数
-let GAME_QUESTIONS = [];
 
 const MILESTONES = [
     { name: "地上発射設備（カウントダウン）" },
@@ -310,6 +306,18 @@ function setFlame(type) {
 function initRocketGame(e) {
     if (document.getElementById('rocket-game-bg')) return;
     
+    // ★ ゲーム開始のアクセスログを送信
+    const GAS_LOG_URL = "https://script.google.com/macros/s/AKfycbxpc4VrxQXak5nvJWXWUL8M56YO5fZK5Zgy6DEIEdikhdjar4wqya5KijWdV1-KXiOtdA/exec";
+    let userId = localStorage.getItem('me_user_id');
+    if (!userId) {
+        userId = 'user_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('me_user_id', userId);
+    }
+    fetch(GAS_LOG_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: "log", type: "Event", page: "極秘ミッション(ゲーム)開始", userId: userId })
+    }).catch(err => {});
+
     if (typeof generateRandomQuestions === 'function') {
         GAME_QUESTIONS = generateRandomQuestions();
     } else {
@@ -323,19 +331,16 @@ function initRocketGame(e) {
     const tx = window.innerWidth / 2 - startX;
     const ty = window.innerHeight / 2 - startY;
 
-    // ★ トランジションアニメーションを軽量・高速化（1.0sに短縮）
     const transRocket = document.createElement('div');
     transRocket.innerHTML = `<div style="position:relative; width:100px; height:100px;">${getDynamicRocketSVG(0)}${setFlame('liftoff')}</div>`;
     transRocket.style.cssText = `position: fixed; left: ${startX}px; top: ${startY}px; --tx: ${tx}px; --ty: ${ty}px; transform-origin: center center; margin-left: -50px; margin-top: -50px; z-index: 999999; pointer-events: none; animation: launchTransition 1.0s cubic-bezier(0.2, 0, 0.2, 1) forwards;`;
     document.body.appendChild(transRocket);
 
-    // ★ 背景のフェードインも早くする
     const bgFade = document.createElement('div');
     bgFade.style.cssText = "position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; opacity: 0; z-index: 99998; transition: opacity 0.3s ease 0.5s;";
     document.body.appendChild(bgFade);
     setTimeout(() => { bgFade.style.opacity = '1'; }, 10);
 
-    // ★ 待機時間を1.0sに変更
     setTimeout(() => {
         transRocket.remove(); bgFade.remove();
         currentGameQ = 0; displayStage = 0;
@@ -430,7 +435,7 @@ function initRocketGame(e) {
             }
         }, 1000);
 
-    }, 1000); // ★ ここも1.0sに変更
+    }, 1000); 
 }
 
 function setRestingPos(stage) {
